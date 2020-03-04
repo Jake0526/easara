@@ -1,0 +1,4 @@
+node_modules/
+packages/
+./settings.json
+version.desktop

@@ -1,0 +1,24 @@
+{
+    "public": {
+        "hydraAdmin": "https://ssocentral.davaocity.gov.ph/admin",
+        "oathkeeperRule": "https://ssocentral.davaocity.gov.ph/oathkeeper",
+        "ketoPolicy": "https://ssocentral.davaocity.gov.ph/keto",
+        "loginProvider": "https://accounts.davaocity.gov.ph"
+    },
+    "Config": {
+        "db_host": "localhost"
+    },
+    "ssoAdministrator": {
+        "loginProvider": "https://accounts.davaocity.gov.ph",
+        "hydraAdmin": "https://ssocentral.davaocity.gov.ph/admin",
+        "apiProxy": "http://192.168.1.15:4455",
+        "authorizationURL": "https://ssocentral.davaocity.gov.ph/oauth2/auth",
+        "tokenURL": "https://ssocentral.davaocity.gov.ph/oauth2/token",
+        "clientID": "spms-client-meteor-local",
+        "clientSecret": "this_is_my_secret",
+        "callbackURL": "http://localhost:3000/callback",
+        "host": "http://localhost:3000/",
+        "scope": "spms",
+        "clientName": "spms-local"
+    }
+}

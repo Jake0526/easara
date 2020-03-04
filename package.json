@@ -1,0 +1,59 @@
+{
+  "name": "spms",
+  "private": true,
+  "scripts": {
+    "start": "meteor --settings ./settings.json --port 3000",
+    "test": "meteor test --once --driver-package meteortesting:mocha",
+    "test-app": "TEST_WATCH=1 meteor test --full-app --driver-package meteortesting:mocha",
+    "visualize": "meteor --production --extra-packages bundle-visualizer",
+    "desktop": "meteor-desktop",
+    "start-local": "meteor --settings ./settings.json --port 3000"
+  },
+  "dependencies": {
+    "@babel/runtime": "^7.1.5",
+    "axios": "^0.19.0",
+    "babel-runtime": "^6.23.0",
+    "classnames": "^2.2.5",
+    "express": "^4.16.4",
+    "express-session": "^1.15.6",
+    "fibers": "^3.1.1",
+    "jsonwebtoken": "^8.5.1",
+    "meteor-node-stubs": "~0.3.3",
+    "moment": "^2.22.2",
+    "mysql": "^2.16.0",
+    "mysql-ssh": "^1.0.6",
+    "passport": "^0.4.0",
+    "passport-oauth2": "^1.4.0",
+    "passport-oauth2-refresh": "^1.1.0",
+    "prop-types": "^15.6.1",
+    "react": "^16.2.0",
+    "react-addons-pure-render-mixin": "^15.1.0",
+    "react-autosuggest": "^9.4.3",
+    "react-bootstrap": "^0.33.1",
+    "react-confirm-alert": "^2.3.0",
+    "react-datepicker": "^1.8.0",
+    "react-dom": "^16.2.0",
+    "react-flip-move": "^3.0.3",
+    "react-modal": "^3.6.1",
+    "react-number-format": "^4.0.8",
+    "react-router": "^4.2.0",
+    "react-router-dom": "^4.2.2",
+    "react-table": "^6.8.6",
+    "request": "^2.88.0",
+    "simpl-schema": "^1.5.5",
+    "uniforms": "^1.31.1",
+    "uniforms-bootstrap4": "^1.31.1",
+    "uniforms-semantic": "^1.31.1"
+  },
+  "meteor": {
+    "mainModule": {
+      "client": "client/main.js",
+      "server": "server/main.js"
+    },
+    "testModule": "tests/main.js"
+  },
+  "devDependencies": {
+    "eslint": "^5.16.0",
+    "eslint-plugin-react": "^7.12.4"
+  }
+}

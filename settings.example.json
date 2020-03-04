@@ -1,0 +1,24 @@
+{
+    "public": {
+        "hydraAdmin": "https://staging.hydraadmin.hrmis.davaocity.gov.ph",
+        "oathkeeperRule": "https://staging.oathkeeper.hrmis.davaocity.gov.ph/",
+        "ketoPolicy": "https://staging.keto.hrmis.davaocity.gov.ph",
+        "loginProvider": "https://staging.ssocentral.hrmis.davaocity.gov.ph"
+    },
+    "Config": {
+        "db_host": "172.28.0.10"
+    },
+    "ssoAdministrator": {
+        "loginProvider": "https://staging.ssocentral.hrmis.davaocity.gov.ph",
+        "hydraAdmin": "https://staging.hydraadmin.hrmis.davaocity.gov.ph",
+        "apiProxy": "https://staging.api.hrmis.davaocity.gov.ph",
+        "authorizationURL": "https://staging.hydra.hrmis.davaocity.gov.ph/oauth2/auth",
+        "tokenURL": "https://staging.hydra.hrmis.davaocity.gov.ph/oauth2/token",
+        "clientID": "portal-staging",
+        "clientSecret": "portal_secrect_staging",
+        "callbackURL": "https://staging.base.hrmis.davaocity.gov.ph/callback",
+        "host": "https://staging.base.hrmis.davaocity.gov.ph",
+        "scope": "portal",
+        "clientName": "Portal Staging"
+    }
+}
