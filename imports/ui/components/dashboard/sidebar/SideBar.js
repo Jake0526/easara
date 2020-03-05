@@ -10,9 +10,6 @@ export default class SideBar extends Component {
     super(props);
 
     this.employeeInfomation = this.props.middleware.employeeInformation.data.completeProfileForActivePlantillaNonPlantillaByEmpno[0];
-
-    console.log(this.employeeInfomation);
-
     this.userDisplayName = this.userDisplayName.bind(this);
   }
 
