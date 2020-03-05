@@ -8,6 +8,7 @@ export default class ProtectedRoute extends Component {
     this.state = {
       allEmployeeInformation: {},
       employeeInformation: {},
+      applicantsProfiles: [],
       introspect: {},
       isLogin: null,
       isLoad: false,
@@ -154,10 +155,18 @@ export default class ProtectedRoute extends Component {
       }
     );
 
-    this.queryAllEmployee();
+    this.selectApplicantsProfile();
   }
 
-  queryAllEmployee = () => {};
+  selectApplicantsProfile = () => {
+    Meteor.call('select-profiles', (error, result) => {
+      if (!error) {
+        this.setState({
+          applicantsProfiles: result,
+        });
+      }
+    });
+  };
 
   render() {
     const { component: Component, ...props } = this.props;
