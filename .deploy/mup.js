@@ -13,7 +13,7 @@ module.exports = {
   app: {
     // TODO: change app name and path
     name: 'easara',
-    path: '/home/jake/Documents/meteor_apps/easara',
+    path: '../',
     type: 'meteor',
 
     servers: {
@@ -23,7 +23,7 @@ module.exports = {
     buildOptions: {
       serverOnly: true,
       debug: false,
-      buildLocation: '/home/jake/Documents/meteor_apps/builds',
+      buildLocation: '/home/jake/Documents/builds/easara',
     },
 
     env: {
@@ -35,7 +35,7 @@ module.exports = {
 
     docker: {
       image: 'abernix/meteord:node-8.4.0-base',
-      args: ['--net=sso_intranet', '--ip=172.28.0.14', '--link=auth-server-mysql:mysqld']
+      args: ['--net=sso_intranet', '--ip=172.28.0.17', '--link=auth-server-mysql:mysqld']
     },
 
     deployCheckWaitTime: 60,
