@@ -5,9 +5,6 @@
         "ketoPolicy": "https://ssocentral.davaocity.gov.ph/keto",
         "loginProvider": "https://accounts.davaocity.gov.ph"
     },
-    "Config": {
-        "db_host": "localhost"
-    },
     "ssoAdministrator": {
         "loginProvider": "https://accounts.davaocity.gov.ph",
         "hydraAdmin": "https://ssocentral.davaocity.gov.ph/admin",

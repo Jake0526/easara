@@ -1,0 +1,21 @@
+{
+  "public": {
+      "hydraAdmin": "https://ssocentral.davaocity.gov.ph/admin",
+      "oathkeeperRule": "https://ssocentral.davaocity.gov.ph/oathkeeper",
+      "ketoPolicy": "https://ssocentral.davaocity.gov.ph/keto",
+      "loginProvider": "https://accounts.davaocity.gov.ph"
+  },
+  "ssoAdministrator": {
+      "loginProvider": "https://accounts.davaocity.gov.ph",
+      "hydraAdmin": "https://ssocentral.davaocity.gov.ph/admin",
+      "apiProxy": "http://192.168.1.15:4455",
+      "authorizationURL": "https://ssocentral.davaocity.gov.ph/oauth2/auth",
+      "tokenURL": "https://ssocentral.davaocity.gov.ph/oauth2/token",
+      "clientID": "easara-client-meteor-deployment",
+      "clientSecret": "this_is_my_secret",
+      "callbackURL": "https://easara.hrmis.davaocity.gov.ph/callback",
+      "host": "https://easara.hrmis.davaocity.gov.ph/",
+      "scope": "easara",
+      "clientName": "easara-deployment"
+  }
+}
