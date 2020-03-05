@@ -7,7 +7,7 @@ import AppFooter from '../../app/app_footer.js';
 import PreviousIcon from '../../react-table-custom-component/PreviousComponent';
 import NextIcon from '../../react-table-custom-component/NextComponent';
 //COMPONENTS
-import ApplicationModal from '../../modal/application-modal';
+import ApplicationModal from '../../modal/ApplicationModal';
 
 import 'react-confirm-alert/src/react-confirm-alert.css';
 import '../../css/app.css';
@@ -44,74 +44,97 @@ export default class Application extends Component {
     const { showApplicationModal } = this.state;
     const { applicantsProfiles } = this.state.data.state;
 
-    let reactTablePageSize = Math.floor(window.innerHeight - 202) * 0.0232;
+    let reactTablePageSize = Math.floor(window.innerHeight - 220) * 0.0232;
 
     let applicantsColumn = [
       {
-        Header: '#',
-        accessor: 'id',
-        minWidth: 25,
+        Header: (
+          <div>
+            <h4>Applicant List</h4>
+          </div>
+        ),
         className: 'center',
-      },
-      {
-        Header: 'First Name',
-        accessor: 'first_name',
-        minWidth: 50,
-      },
-      {
-        Header: 'Last Name',
-        accessor: 'last_name',
-        minWidth: 50,
-      },
-      {
-        Header: 'Address',
-        accessor: 'address',
-        minWidth: 50,
-      },
-      {
-        Header: 'Phone Number',
-        accessor: 'phone_number',
-        minWidth: 65,
-        className: 'right',
-      },
-      {
-        Header: 'Cell Number',
-        accessor: 'cell_number',
-        minWidth: 50,
-        className: 'right',
-      },
-      {
-        Header: 'Citizenship',
-        accessor: 'citizenship',
-        minWidth: 50,
-      },
-      {
-        Header: 'Birth Date',
-        id: 'birth_date',
-        accessor: d => {
-          return moment(d.birth_date).format('DD-MM-YYYY');
-        },
-        minWidth: 50,
-      },
-      {
-        Header: 'Blood Type',
-        accessor: 'blood_type',
-        minWidth: 50,
-      },
-      {
-        Header: 'Height',
-        accessor: 'height',
-        minWidth: 50,
-      },
-      {
-        Header: 'Sex',
-        accessor: 'sex',
-        minWidth: 40,
-      },
-      {
-        Header: 'Civil Status',
-        accessor: 'civil_status',
-        minWidth: 50,
+        width: 1000,
+        columns: [
+          {
+            Header: '#',
+            accessor: 'id',
+            minWidth: 25,
+            className: 'center',
+            headerClassName: 'wordwrap',
+          },
+          {
+            Header: 'First Name',
+            accessor: 'first_name',
+            minWidth: 50,
+            headerClassName: 'wordwrap',
+          },
+          {
+            Header: 'Last Name',
+            accessor: 'last_name',
+            minWidth: 50,
+            headerClassName: 'wordwrap',
+          },
+          {
+            Header: 'Address',
+            accessor: 'address',
+            minWidth: 100,
+            headerClassName: 'wordwrap',
+          },
+          {
+            Header: 'Phone Number',
+            accessor: 'phone_number',
+            minWidth: 65,
+            className: 'right',
+            headerClassName: 'wordwrap',
+          },
+          {
+            Header: 'Cell Number',
+            accessor: 'cell_number',
+            minWidth: 65,
+            className: 'right',
+            headerClassName: 'wordwrap',
+          },
+          {
+            Header: 'Citizenship',
+            accessor: 'citizenship',
+            minWidth: 50,
+            headerClassName: 'wordwrap',
+          },
+          {
+            Header: 'Birth Date',
+            id: 'birth_date',
+            accessor: d => {
+              return moment(d.birth_date).format('DD-MM-YYYY');
+            },
+            minWidth: 50,
+            headerClassName: 'wordwrap',
+          },
+          {
+            Header: 'Blood Type',
+            accessor: 'blood_type',
+            minWidth: 50,
+            headerClassName: 'wordwrap',
+          },
+          {
+            Header: 'Height',
+            accessor: 'height',
+            minWidth: 50,
+            headerClassName: 'wordwrap',
+          },
+          {
+            Header: 'Sex',
+            accessor: 'sex',
+            minWidth: 40,
+            headerClassName: 'wordwrap',
+          },
+          {
+            Header: 'Civil Status',
+            accessor: 'civil_status',
+            minWidth: 50,
+            headerClassName: 'wordwrap',
+          },
+        ],
       },
     ];
     return (
@@ -122,7 +145,9 @@ export default class Application extends Component {
         <div className="content-wrapper" style={contentMinHeight}>
           <div className="plantilla-content" id="content-area">
             <section className="content-header">
-              <h1>Application</h1>
+              <h1 style={{ color: 'rgb(63,57,51)', fontSize: '20px' }}>
+                <i className="fa fa-cog"></i> Manage Applicants
+              </h1>
             </section>
 
             <section className="content">
@@ -147,7 +172,7 @@ export default class Application extends Component {
                 bsStyle="primary"
                 onClick={() => this.toggleApplicationModal()}
               >
-                Create Application
+                <i className="fa fa-pencil" aria-hidden="true"></i> Record Applicant
               </Button>
             </section>
           </div>

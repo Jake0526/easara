@@ -170,7 +170,6 @@ export default class ProtectedRoute extends Component {
 
   render() {
     const { component: Component, ...props } = this.props;
-    console.log(this.state);
     if (this.state.isLoad) {
       if (this.state.isLogin) {
         return <Route {...this} render={props => <Component {...this} />} />;
