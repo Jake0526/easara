@@ -11,7 +11,7 @@ import {
   InputGroup,
   Modal,
 } from 'react-bootstrap';
-import { GridForm, Fieldset, Row, Field } from 'react-gridforms';
+import { GridForm, Fieldset, Row, Field } from '../../../startup/utils/react-gridforms/lib';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import Autosuggest from 'react-autosuggest';

@@ -1,0 +1,79 @@
+{
+  "_from": "react-gridforms",
+  "_id": "react-gridforms@1.0.2",
+  "_inBundle": false,
+  "_integrity": "sha1-tQVUFaTQCkxAoz98UdGg6xbWP78=",
+  "_location": "/react-gridforms",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "tag",
+    "registry": true,
+    "raw": "react-gridforms",
+    "name": "react-gridforms",
+    "escapedName": "react-gridforms",
+    "rawSpec": "",
+    "saveSpec": null,
+    "fetchSpec": "latest"
+  },
+  "_requiredBy": [
+    "#USER",
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/react-gridforms/-/react-gridforms-1.0.2.tgz",
+  "_shasum": "b5055415a4d00a4c40a33f7c51d1a0eb16d63fbf",
+  "_spec": "react-gridforms",
+  "_where": "/home/jetalictic/Documents/Revolving",
+  "author": {
+    "name": "Jonny Buchanan",
+    "email": "jonathan.buchanan@gmail.com"
+  },
+  "bugs": {
+    "url": "https://github.com/insin/react-gridforms/issues"
+  },
+  "bundleDependencies": false,
+  "dependencies": {},
+  "deprecated": false,
+  "description": "React components for form layout with Gridforms",
+  "devDependencies": {
+    "eslint-config-jonnybuchanan": "2.0.x",
+    "karma-tap": "1.0.3",
+    "nwb": "0.6.x",
+    "react": "0.14.x",
+    "react-addons-test-utils": "0.14.x",
+    "react-dom": "0.14.x",
+    "tape": "4.4.0"
+  },
+  "files": [
+    "es6",
+    "lib",
+    "umd",
+    "vendor"
+  ],
+  "homepage": "https://github.com/insin/react-gridforms",
+  "jsnext:main": "es6/index.js",
+  "keywords": [
+    "react",
+    "react-component",
+    "responsive",
+    "grid",
+    "forms",
+    "gridforms"
+  ],
+  "license": "MIT",
+  "main": "lib/index.js",
+  "name": "react-gridforms",
+  "peerDependencies": {
+    "react": ">=0.14.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/insin/react-gridforms.git"
+  },
+  "scripts": {
+    "build": "npm run lint && nwb build",
+    "lint": "eslint src tests",
+    "start": "nwb serve",
+    "test": "npm run build && nwb test"
+  },
+  "version": "1.0.2"
+}

@@ -50,7 +50,9 @@ export default class Application extends Component {
       {
         Header: (
           <div>
-            <h4>Applicant List</h4>
+            <h4>
+              <i className="fa fa-list" aria-hidden="true"></i> Applicant List
+            </h4>
           </div>
         ),
         className: 'center',
@@ -152,7 +154,7 @@ export default class Application extends Component {
 
             <section className="content">
               <div className="box box-primary">
-                <div className="box-body">
+                <div className="box-body" style={{ padding: '0px' }}>
                   <ReactTable
                     className="-striped -highlight"
                     data={applicantsProfiles}
