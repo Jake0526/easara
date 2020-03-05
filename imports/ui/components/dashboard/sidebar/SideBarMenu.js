@@ -16,7 +16,7 @@ export default class SideBarMenu extends Component {
 
         <li className={this.page == 'dashboard' ? 'active' : ''}>
           <Link to="/">
-            <i className="fa fa-user-secret" /> <span> Dashboard </span>
+            <i className="fa fa-bar-chart" /> <span> Dashboard </span>
           </Link>
         </li>
 

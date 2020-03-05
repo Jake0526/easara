@@ -35,6 +35,9 @@ export default class SideBarUserPanel extends Component {
         </div>
         <div className="pull-left info">
           <p>{this.userDisplayName()}</p>
+          <a href="#">
+            <i className="fa fa-circle text-success" /> Online
+          </a>
         </div>
       </div>
     );
