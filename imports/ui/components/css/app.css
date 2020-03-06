@@ -267,3 +267,39 @@
   white-space: pre-line !important;
   word-wrap: break-word;
 }
+
+.ReactTable.-highlight .rt-tbody .rt-tr:not(.-padRow):hover {
+  cursor: pointer;
+}
+
+.swal2-title {
+  -webkit-font-smoothing: antialiased !important;
+  -moz-osx-font-smoothing: grayscale !important;
+  font-family: 'Open Sans', sans-serif !important;
+  position: relative;
+  max-width: 100%;
+  margin: 0 0 0.4em;
+  padding: 0;
+  color: #595959;
+  font-size: 22px !important;
+  font-weight: 600;
+  text-align: center;
+  text-transform: none;
+  word-wrap: break-word;
+  font-style: bold;
+}
+
+.swal2-popup.swal2-toast .swal2-title {
+  -webkit-font-smoothing: antialiased !important;
+  -moz-osx-font-smoothing: grayscale !important;
+  font-family: 'Open Sans', sans-serif !important;
+  flex-grow: 1;
+  justify-content: flex-start;
+  margin: 0 0.6em;
+  font-size: 20px !important;
+  font-weight: 500 !important;
+}
+
+.ReactTable .rt-thead {
+  overflow-y: scroll;
+}
