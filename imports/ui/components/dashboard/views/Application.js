@@ -20,6 +20,7 @@ export default class Application extends Component {
     this.state = {
       data: props,
       showApplicationModal: false,
+      updateData: null,
     };
   }
 
@@ -31,20 +32,35 @@ export default class Application extends Component {
     this.setState({ data: nextProps });
   }
 
-  toggleApplicationModal = () => {
-    this.setState(prevState => ({
-      showApplicationModal: !prevState.showApplicationModal,
-    }));
+  toggleApplicationModal = type => {
+    if (type === 'close') {
+      this.setState(prevState => ({
+        showApplicationModal: !prevState.showApplicationModal,
+        updateData: null,
+        update: false,
+      }));
+    } else {
+      this.setState(prevState => ({
+        showApplicationModal: !prevState.showApplicationModal,
+      }));
+    }
   };
 
+  updateInformation = data => {
+    this.setState({ updateData: data, showApplicationModal: true, update: true });
+  };
+
+  removeUpdateData = () => {};
+
   render() {
+    const { data } = this.state;
     const contentMinHeight = {
       minHeight: `${window.innerHeight - 101}px`,
     };
-    const { showApplicationModal } = this.state;
+    const { showApplicationModal, updateData, update } = this.state;
     const { applicantsProfiles } = this.state.data.state;
 
-    let reactTablePageSize = Math.floor(window.innerHeight - 220) * 0.0232;
+    let reactTablePageSize = Math.floor(window.innerHeight - 330) * 0.0232;
 
     let applicantsColumn = [
       {
@@ -64,24 +80,28 @@ export default class Application extends Component {
             minWidth: 25,
             className: 'center',
             headerClassName: 'wordwrap',
+            style: { whiteSpace: 'unset' },
           },
           {
             Header: 'First Name',
             accessor: 'first_name',
             minWidth: 50,
             headerClassName: 'wordwrap',
+            style: { whiteSpace: 'unset' },
           },
           {
             Header: 'Last Name',
             accessor: 'last_name',
             minWidth: 50,
             headerClassName: 'wordwrap',
+            style: { whiteSpace: 'unset' },
           },
           {
             Header: 'Address',
             accessor: 'address',
             minWidth: 100,
             headerClassName: 'wordwrap',
+            style: { whiteSpace: 'unset' },
           },
           {
             Header: 'Phone Number',
@@ -89,6 +109,7 @@ export default class Application extends Component {
             minWidth: 65,
             className: 'right',
             headerClassName: 'wordwrap',
+            style: { whiteSpace: 'unset' },
           },
           {
             Header: 'Cell Number',
@@ -96,12 +117,14 @@ export default class Application extends Component {
             minWidth: 65,
             className: 'right',
             headerClassName: 'wordwrap',
+            style: { whiteSpace: 'unset' },
           },
           {
             Header: 'Citizenship',
             accessor: 'citizenship',
             minWidth: 50,
             headerClassName: 'wordwrap',
+            style: { whiteSpace: 'unset' },
           },
           {
             Header: 'Birth Date',
@@ -111,30 +134,35 @@ export default class Application extends Component {
             },
             minWidth: 50,
             headerClassName: 'wordwrap',
+            style: { whiteSpace: 'unset' },
           },
           {
             Header: 'Blood Type',
             accessor: 'blood_type',
             minWidth: 50,
             headerClassName: 'wordwrap',
+            style: { whiteSpace: 'unset' },
           },
           {
             Header: 'Height',
             accessor: 'height',
             minWidth: 50,
             headerClassName: 'wordwrap',
+            style: { whiteSpace: 'unset' },
           },
           {
             Header: 'Sex',
             accessor: 'sex',
             minWidth: 40,
             headerClassName: 'wordwrap',
+            style: { whiteSpace: 'unset' },
           },
           {
             Header: 'Civil Status',
             accessor: 'civil_status',
             minWidth: 50,
             headerClassName: 'wordwrap',
+            style: { whiteSpace: 'unset' },
           },
         ],
       },
@@ -166,6 +194,13 @@ export default class Application extends Component {
                     style={{
                       height: window.innerHeight - 202,
                     }}
+                    getTrProps={(state, rowInfo) => {
+                      return {
+                        onClick: e => {
+                          this.updateInformation(rowInfo.row._original);
+                        },
+                      };
+                    }}
                   />
                 </div>
               </div>
@@ -185,6 +220,9 @@ export default class Application extends Component {
         <ApplicationModal
           show={showApplicationModal}
           toggleApplicationModal={this.toggleApplicationModal}
+          selectApplicantsProfile={data.selectApplicantsProfile}
+          updateData={updateData}
+          update={update}
         />
       </div>
     );

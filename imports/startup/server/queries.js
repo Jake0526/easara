@@ -33,17 +33,51 @@ Meteor.method(
 Meteor.method(
   'insert-new-applicant',
   function(applicantData) {
+    function addslashes(str) {
+      if (str == null) {
+        return '';
+      } else {
+        return (str + '').replace(/[\\"']/g, '\\$&').replace(/\u0000/g, '\\0');
+      }
+    }
+
     var sql = `
       INSERT INTO applicants_profile
       (religion_code, first_name, last_name, middle_name, maiden_name, name_ext, address, phone_number, cell_number, political_district, congressional_district,
         citizenship, birth_date, birth_place, blood_type, height, sex, civil_status, tin, phil_health, sss, is_licensed,
-        emergency_name, emergency_relation, emergency_address, emergency_contact_number)
-      VALUES ('${applicantData.religionCode}' ,'${applicantData.firstName}', '${applicantData.lastName}', '${applicantData.middleName}',
-      '${applicantData.maidenName}', '${applicantData.nameExtension}', '${applicantData.address}', '${applicantData.phoneNumber}', 
-      '${applicantData.cellNumber}', '${applicantData.politicalDistrict}', '${applicantData.congressionalDistrict}', '${applicantData.citizenship}', 
-      '${moment(applicantData.birthDate).format("YYYY-MM-DD HH:mm:ss")}', '${applicantData.birthPlace}', '${applicantData.bloodType}', '${applicantData.height}', '${applicantData.sex}', 
-      '${applicantData.civilStatus}', '${applicantData.tin}', '${applicantData.philHealth}','${applicantData.sss}',
-      '${applicantData.isLicensed}', '${applicantData.emergencyName}', '${applicantData.emergencyRelation}', '${applicantData.emergencyAddress}', '${applicantData.emergencyNumber}');`;
+        emergency_name, emergency_relation, emergency_address, emergency_contact_number, employee_number ${
+          applicantData.beginDate === '' ? '' : ', last_begin_date'
+        })
+      VALUES ('${addslashes(applicantData.religionCode)}' ,'${addslashes(
+      applicantData.firstName
+    )}', '${addslashes(applicantData.lastName)}', '${addslashes(applicantData.middleName)}',
+      '${addslashes(applicantData.maidenName)}', '${addslashes(
+      applicantData.nameExtension
+    )}', '${addslashes(applicantData.address)}', '${addslashes(applicantData.phoneNumber)}', 
+      '${addslashes(applicantData.cellNumber)}', '${addslashes(
+      applicantData.politicalDistrict
+    )}', '${addslashes(applicantData.congressionalDistrict)}', '${addslashes(
+      applicantData.citizenship
+    )}', 
+      '${moment(applicantData.birthDate).format('YYYY-MM-DD HH:mm:ss')}', '${addslashes(
+      applicantData.birthPlace
+    )}', '${addslashes(applicantData.bloodType)}', '${addslashes(
+      applicantData.height
+    )}', '${addslashes(applicantData.sex)}', 
+      '${addslashes(applicantData.civilStatus)}', '${addslashes(applicantData.tin)}', '${addslashes(
+      applicantData.philHealth
+    )}','${addslashes(applicantData.sss)}',
+      '${addslashes(applicantData.isLicensed)}', '${addslashes(
+      applicantData.emergencyName
+    )}', '${addslashes(applicantData.emergencyRelation)}', '${addslashes(
+      applicantData.emergencyAddress
+    )}', '${addslashes(applicantData.emergencyNumber)}', '${addslashes(
+      applicantData.employeeNumber === '000000' ? '' : applicantData.employeeNumber
+    )}' ${
+      applicantData.beginDate === ''
+        ? ''
+        : '"' + moment(applicantData.beginDate).format('YYYY-MM-DD HH:mm:ss') + '"'
+    });`;
     var fut = new Future();
 
     easara(sql, function(err, result) {
@@ -54,6 +88,77 @@ Meteor.method(
   },
   {
     url: 'insert-new-applicant',
+    httpMethod: 'post',
+    getArgsFromRequest: function(request) {
+      var content = request.body;
+      return [content.applicantData];
+    },
+  }
+);
+
+Meteor.method(
+  'update-profile',
+  function(applicantData) {
+    function addslashes(str) {
+      if (str == null) {
+        return '';
+      } else {
+        return (str + '').replace(/[\\"']/g, '\\$&').replace(/\u0000/g, '\\0');
+      }
+    }
+
+    var sql = `
+    UPDATE applicants_profile
+    SET religion_code = '${addslashes(applicantData.religionCode)}', first_name = '${addslashes(
+      applicantData.firstName
+    )}', last_name = '${addslashes(applicantData.lastName)}', middle_name = '${addslashes(
+      applicantData.middleName
+    )}',
+    maiden_name = '${addslashes(applicantData.maidenName)}', name_ext = '${addslashes(
+      applicantData.nameExtension
+    )}', address = '${addslashes(applicantData.address)}',
+    phone_number = '${addslashes(applicantData.phoneNumber)}', cell_number = '${addslashes(
+      applicantData.cellNumber
+    )}', political_district = '${addslashes(applicantData.politicalDistrict)}',
+    congressional_district =  '${addslashes(
+      applicantData.congressionalDistrict
+    )}', citizenship = '${addslashes(applicantData.citizenship)}',
+    birth_date = '${moment(applicantData.birthDate).format(
+      'YYYY-MM-DD HH:mm:ss'
+    )}', birth_place = '${addslashes(applicantData.birthPlace)}',
+    blood_type = '${addslashes(applicantData.bloodType)}', height = '${addslashes(
+      applicantData.height
+    )}', sex = '${addslashes(applicantData.sex)}', 
+    civil_status = '${addslashes(applicantData.civilStatus)}', tin =  '${addslashes(
+      applicantData.tin
+    )}', phil_health = '${addslashes(applicantData.philHealth)}',
+    sss = '${addslashes(applicantData.sss)}', is_licensed = '${addslashes(
+      applicantData.isLicensed
+    )}', emergency_name = '${addslashes(applicantData.emergencyName)}',
+    emergency_relation = '${addslashes(
+      applicantData.emergencyRelation
+    )}', emergency_address = '${addslashes(applicantData.emergencyAddress)}',     
+    emergency_contact_number = '${addslashes(applicantData.emergencyNumber)}'
+    ${
+      applicantData.beginDate === ''
+        ? ''
+        : ',last_begin_date = "' +
+          moment(applicantData.beginDate).format('YYYY-MM-DD HH:mm:ss') +
+          '"'
+    }
+    WHERE id = ${applicantData.applicantProfileId}`;
+    var fut = new Future();
+
+    console.log(sql);
+
+    easara(sql, function(err, result) {
+      if (err) throw err;
+      fut.return('success');
+    });
+    return fut.wait();
+  },
+  {
+    url: 'update-profile',
     httpMethod: 'post',
     getArgsFromRequest: function(request) {
       var content = request.body;

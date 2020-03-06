@@ -14,10 +14,11 @@ import {
 import { GridForm, Fieldset, Row, Field } from '../../../startup/utils/react-gridforms/lib';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-export default class ApplicationModal extends Component {
+import Autosuggest from 'react-autosuggest';
+export default class ApplicationInformationModal extends Component {
   constructor(props) {
     super(props);
-    console.log(props);
+
     this.state = {
       data: props,
       lastName: '',
@@ -86,78 +87,13 @@ export default class ApplicationModal extends Component {
           Tugbok
         </option>,
       ],
-
-      //EXISTING PERSONNEL
-      employeeNumber: '000000',
-      existingPersonnel: false,
-      applicantProfileId: '',
-      beginDate: '',
-
-      //UPDATE
-      update: false,
     };
 
     this.errors = [];
   }
 
   componentWillReceiveProps(nextProps) {
-    console.log(nextProps.updateData);
-    this.setState({
-      data: nextProps,
-      lastName: nextProps.updateData != null ? nextProps.updateData.last_name : '',
-      firstName: nextProps.updateData != null ? nextProps.updateData.first_name : '',
-      middleName: nextProps.updateData != null ? nextProps.updateData.middle_name : '',
-      maidenName: nextProps.updateData != null ? nextProps.updateData.maiden_name : '',
-      nameExtension: nextProps.updateData != null ? nextProps.updateData.name_ext : '',
-      address: nextProps.updateData != null ? nextProps.updateData.address : '',
-      phoneNumber: nextProps.updateData != null ? nextProps.updateData.phone_number : '',
-      cellNumber: nextProps.updateData != null ? nextProps.updateData.cell_number : '',
-      politicalDistrict:
-        nextProps.updateData != null ? nextProps.updateData.political_district : '',
-      congressionalDistrict:
-        nextProps.updateData != null ? nextProps.updateData.congressional_district : '',
-      citizenship: nextProps.updateData != null ? nextProps.updateData.citizenship : '',
-      birthDate:
-        nextProps.updateData != null ? new Date(nextProps.updateData.birth_date) : new Date(),
-      birthPlace: nextProps.updateData != null ? nextProps.updateData.birth_place : '',
-      bloodType: nextProps.updateData != null ? nextProps.updateData.blood_type : '',
-      height: nextProps.updateData != null ? nextProps.updateData.height : '',
-      sex: nextProps.updateData != null ? nextProps.updateData.sex : '',
-      civilStatus: nextProps.updateData != null ? nextProps.updateData.civil_status : '',
-      tin: nextProps.updateData != null ? nextProps.updateData.tin : '',
-      philHealth: nextProps.updateData != null ? nextProps.updateData.phil_health : '',
-      sss: nextProps.updateData != null ? nextProps.updateData.sss : '',
-      isLicensed: nextProps.updateData != null ? nextProps.updateData.is_licensed : '',
-      emergencyName: nextProps.updateData != null ? nextProps.updateData.emergency_name : '',
-      emergencyRelation: nextProps.updateData ? nextProps.updateData.emergency_relation : '',
-      emergencyAddress: nextProps.updateData != null ? nextProps.updateData.emergency_address : '',
-      emergencyNumber:
-        nextProps.updateData != null ? nextProps.updateData.emergency_contact_number : '',
-      update: nextProps.update,
-      existingPersonnel: nextProps.updateData
-        ? nextProps.updateData.employee_number
-          ? true
-          : false
-        : false,
-      employeeNumber:
-        nextProps.updateData != null
-          ? nextProps.updateData.employee_number
-            ? nextProps.updateData.employee_number
-            : '000000'
-          : '000000',
-      applicantProfileId:
-        nextProps.updateData != null
-          ? nextProps.updateData.id
-            ? nextProps.updateData.id
-            : ''
-          : '',
-      beginDate:
-        nextProps.updateData != null
-          ? nextProps.updateData.last_begin_date
-            ? nextProps.updateData.last_begin_date
-            : ''
-          : '',
-    });
+    this.setState({ data: nextProps });
   }
 
   handleChange = (value, id) => {
@@ -194,6 +130,7 @@ export default class ApplicationModal extends Component {
         cellNumber: value,
       });
     } else if (id === 'politicalDistrict') {
+      console.log(value);
       this.setState({
         politicalDistrict: value,
       });
@@ -321,15 +258,14 @@ export default class ApplicationModal extends Component {
   };
 
   insertNewApplicant = () => {
-    const { selectApplicantsProfile, toggleApplicationModal } = this.state.data;
     Swal.fire({
-      title: 'Submit Form?',
+      title: 'Are you sure?',
       text: "You won't be able to revert this!",
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#3085d6',
       cancelButtonColor: '#d33',
-      confirmButtonText: 'Continue',
+      confirmButtonText: 'Yes, delete it!',
     }).then(result => {
       if (result.value) {
         const {
@@ -358,8 +294,6 @@ export default class ApplicationModal extends Component {
           emergencyRelation,
           emergencyAddress,
           emergencyNumber,
-          employeeNumber,
-          beginDate,
         } = this.state;
         let data = {
           firstName,
@@ -387,26 +321,22 @@ export default class ApplicationModal extends Component {
           emergencyRelation,
           emergencyAddress,
           emergencyNumber,
-          employeeNumber,
-          beginDate,
         };
         Meteor.call('insert-new-applicant', data, (error, result) => {
           if (!error) {
             if (result === 'success') {
-              selectApplicantsProfile();
               Swal.fire({
                 position: 'center',
                 icon: 'success',
-                title: 'Application has been successfuly recorded',
+                text: 'Application has been successfuly recorded',
                 showConfirmButton: false,
                 timer: 2500,
               });
-              toggleApplicationModal();
             } else {
               Swal.fire({
                 position: 'center',
                 icon: 'error',
-                title: 'Submission failed. Please try again',
+                text: 'Query error',
                 showConfirmButton: false,
                 timer: 2500,
               });
@@ -415,114 +345,7 @@ export default class ApplicationModal extends Component {
             Swal.fire({
               position: 'center',
               icon: 'error',
-              text: 'Submission failed. Please try again',
-              showConfirmButton: false,
-              timer: 2500,
-            });
-          }
-        });
-      }
-    });
-  };
-
-  updateInformation = id => {
-    const { selectApplicantsProfile, toggleApplicationModal } = this.state.data;
-    Swal.fire({
-      title: 'Submit Form?',
-      text: "You won't be able to revert this!",
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Continue',
-    }).then(result => {
-      if (result.value) {
-        const {
-          firstName,
-          lastName,
-          middleName,
-          maidenName,
-          nameExtension,
-          address,
-          phoneNumber,
-          cellNumber,
-          politicalDistrict,
-          congressionalDistrict,
-          citizenship,
-          birthDate,
-          birthPlace,
-          bloodType,
-          height,
-          sex,
-          civilStatus,
-          tin,
-          philHealth,
-          sss,
-          isLicensed,
-          emergencyName,
-          emergencyRelation,
-          emergencyAddress,
-          emergencyNumber,
-          employeeNumber,
-          beginDate,
-          applicantProfileId
-        } = this.state;
-        let data = {
-          firstName,
-          lastName,
-          middleName,
-          maidenName,
-          nameExtension,
-          address,
-          phoneNumber,
-          cellNumber,
-          politicalDistrict,
-          congressionalDistrict,
-          citizenship,
-          birthDate,
-          birthPlace,
-          bloodType,
-          height,
-          sex,
-          civilStatus,
-          tin,
-          philHealth,
-          sss,
-          isLicensed,
-          emergencyName,
-          emergencyRelation,
-          emergencyAddress,
-          emergencyNumber,
-          employeeNumber,
-          beginDate,
-          applicantProfileId,
-        };
-        Meteor.call('update-profile', data, (error, result) => {
-          if (!error) {
-            if (result === 'success') {
-              selectApplicantsProfile();
-              Swal.fire({
-                position: 'center',
-                icon: 'success',
-                title: 'Personnel information has been successfuly updated',
-                showConfirmButton: false,
-                timer: 2500,
-              });
-              toggleApplicationModal('close');
-            } else {
-              Swal.fire({
-                position: 'center',
-                icon: 'error',
-                title: 'Submission failed. Please try again',
-                showConfirmButton: false,
-                timer: 2500,
-              });
-            }
-          } else {
-            Swal.fire({
-              position: 'center',
-              icon: 'error',
-              text: 'Submission failed. Please try again',
+              text: 'Submission failed',
               showConfirmButton: false,
               timer: 2500,
             });
@@ -538,198 +361,6 @@ export default class ApplicationModal extends Component {
     });
   };
 
-  fetchExistingPersonnelData = () => {
-    this.fixBootstrapModal();
-    Swal.fire({
-      title: 'Submit Employee Number',
-      input: 'text',
-      inputAttributes: {
-        autocapitalize: 'off',
-      },
-      showCancelButton: true,
-      confirmButtonText: 'Look up',
-      showLoaderOnConfirm: true,
-      preConfirm: login => {
-        let getSomePromise = myVar => {
-          let fetchExistingPersonnelApiData = new Promise((resolve, reject) => {
-            HTTP.post(
-              '/graphqlv2',
-              {
-                headers: {
-                  'Content-Type': 'application/json',
-                  Accept: 'application/json',
-                },
-                data: {
-                  query: `
-                  {
-                    allEmployee(employeeNumber: "${myVar}") {
-                      employeeNumber
-                      employee {
-                        lastName
-                        firstName
-                        extensionName
-                        middleName
-                        maidenName
-                        nickName
-                        fullName
-                        fullNameReverse
-                      }
-                      address
-                      phoneNumber
-                      cellNumber
-                      politicalDistrict
-                      congressionalDistrict
-                      citizenship
-                      birthDate
-                      birthPlace
-                      religionCode
-                      bloodType
-                      height
-                      weight
-                      sex
-                      civilStatus
-                      tin
-                      gsis
-                      hdmf
-                      philHealth
-                      contact {
-                        name
-                        relationship
-                        address
-                        number
-                      }
-                      beginDate
-                      employed
-                    }
-                  }`,
-                },
-              },
-              (err, res) => {
-                console.log(res);
-                if (!err) {
-                  let employeeInformation = JSON.parse(res.content);
-                  let result_j_data = employeeInformation.data.allEmployee[0];
-                  if (employeeInformation.data.allEmployee.length === 0) {
-                    reject('Personnel not found');
-                  } else {
-                    resolve(result_j_data);
-                  }
-                } else {
-                  reject(err);
-                }
-              }
-            );
-          });
-          return fetchExistingPersonnelApiData;
-        };
-
-        return getSomePromise(login)
-          .then(function(x) {
-            if (x.employed === '1') {
-              Swal.showValidationMessage(`Error: Personnel is currently employed.`);
-            } else {
-              return x;
-            }
-          })
-          .catch(function(err) {
-            Swal.showValidationMessage(`Error: ${err}`);
-          });
-      },
-      allowOutsideClick: () => !Swal.isLoading(),
-    }).then(result => {
-      if (result.value) {
-        const {
-          address,
-          employeeNumber,
-          phoneNumber,
-          cellNumber,
-          politicalDistrict,
-          congressionalDistrict,
-          citizenship,
-          birthDate,
-          birthPlace,
-          bloodType,
-          height,
-          sex,
-          civilStatus,
-          tin,
-          philHealth,
-          sss,
-          beginDate,
-        } = result.value;
-        const {
-          lastName,
-          firstName,
-          extensionName,
-          middleName,
-          maidenName,
-        } = result.value.employee;
-        const { name, relationship, number } = result.value.contact;
-        this.setState({
-          employeeNumber: employeeNumber ? employeeNumber : '',
-          lastName: lastName ? lastName : '',
-          firstName: firstName ? firstName : '',
-          middleName: middleName ? middleName : '',
-          maidenName: maidenName ? maidenName : '',
-          nameExtension: extensionName ? extensionName : '',
-          address: address ? address : '',
-          phoneNumber: phoneNumber ? phoneNumber : '',
-          cellNumber: cellNumber ? cellNumber : '',
-          politicalDistrict: politicalDistrict ? politicalDistrict : '',
-          congressionalDistrict: congressionalDistrict ? congressionalDistrict : '',
-          citizenship: citizenship ? citizenship : '',
-          birthDate: birthDate ? new Date(birthDate) : new Date(),
-          birthPlace: birthPlace ? birthPlace : '',
-          bloodType: bloodType ? bloodType : '',
-          height: height ? height : '',
-          sex: sex ? sex : '',
-          civilStatus: civilStatus ? civilStatus : '',
-          tin: tin ? tin : '',
-          philHealth: philHealth ? philHealth : '',
-          sss: sss ? sss : '',
-          emergencyName: name ? name : '',
-          emergencyRelation: relationship ? relationship : '',
-          emergencyAddress: result.value.contact.address ? result.value.contact.address : '',
-          emergencyNumber: number ? number : '',
-          existingPersonnel: true,
-          beginDate: beginDate ? beginDate : '',
-        });
-        const Toast = Swal.mixin({
-          toast: true,
-          position: 'top-end',
-          showConfirmButton: false,
-          timer: 3000,
-          timerProgressBar: true,
-          onOpen: toast => {
-            toast.addEventListener('mouseenter', Swal.stopTimer);
-            toast.addEventListener('mouseleave', Swal.resumeTimer);
-          },
-        });
-
-        Toast.fire({
-          icon: 'success',
-          title: 'Employee data fetched successfully',
-        });
-      }
-    });
-  };
-
-  fixBootstrapModal = () => {
-    var modalNode = document.querySelector('.modal[tabindex="-1"]');
-    if (!modalNode) return;
-
-    modalNode.removeAttribute('tabindex');
-    modalNode.classList.add('js-swal-fixed');
-  };
-
-  restoreBootstrapModal = () => {
-    var modalNode = document.querySelector('.modal.js-swal-fixed');
-    if (!modalNode) return;
-
-    modalNode.setAttribute('tabindex', '-1');
-    modalNode.classList.remove('js-swal-fixed');
-  };
-
   render() {
     const { show, toggleApplicationModal } = this.state.data;
     const {
@@ -742,12 +373,10 @@ export default class ApplicationModal extends Component {
       phoneNumber,
       cellNumber,
       congressionalDistrict,
-      politicalDistrict,
       citizenship,
       birthDate,
       birthPlace,
       bloodType,
-      sex,
       height,
       civilStatus,
       tin,
@@ -762,34 +391,24 @@ export default class ApplicationModal extends Component {
       firstDistrict,
       secondDistrict,
       thirdDistrict,
-
-      //EXISTING PERSONNEL
-      employeeNumber,
-      existingPersonnel,
-
-      //UPDATE
-      update,
-      applicantProfileId,
     } = this.state;
-    let personelLegend = existingPersonnel ? '- ' + employeeNumber : '';
-    let legend = 'Personal Information ' + personelLegend;
     return (
       <Modal dialogClassName="custom-modal" role="document" show={show}>
         <Modal.Header>
-          <Modal.Title id="contained-modal-title-lg">
-            Application Form
-            <Button
-              bsStyle="primary"
-              className="pull-right"
-              onClick={() => this.fetchExistingPersonnelData()}
-            >
-              <i className="fa fa-search" aria-hidden="true"></i> Existing Personnel
-            </Button>
-          </Modal.Title>
+          <Modal.Title id="contained-modal-title-lg">Application Form</Modal.Title>
         </Modal.Header>
         <Modal.Body>
+          {/* <GridForms.fieldRows data-row-span="3" /> */}
+          {/* <Autosuggest
+            suggestions={suggestions}
+            onSuggestionsFetchRequested={this.onSuggestionsFetchRequested}
+            onSuggestionsClearRequested={this.onSuggestionsClearRequested}
+            getSuggestionValue={getSuggestionValue}
+            renderSuggestion={renderSuggestion}
+            inputProps={inputProps}
+          /> */}
           <GridForm>
-            <Fieldset legend={legend} style={{ fontSize: '16px' }}>
+            <Fieldset legend="Personal Information" style={{ fontSize: '16px' }}>
               <Row span={4}>
                 <Field span={1}>
                   {/* FIRSTNAME */}
@@ -950,15 +569,6 @@ export default class ApplicationModal extends Component {
                       autoComplete="off"
                       componentClass="select"
                       onChange={e => this.handleChange(e.target.value, 'congressionalDistrict')}
-                      value={
-                        congressionalDistrict === '1'
-                          ? '1'
-                          : congressionalDistrict === '2'
-                          ? '2'
-                          : congressionalDistrict === '3'
-                          ? '3'
-                          : ''
-                      }
                     >
                       <option value={''}>Please Select</option>
                       <option value="1">1st</option>
@@ -982,7 +592,6 @@ export default class ApplicationModal extends Component {
                         this.getValidationState('politicalDistrict') !== null ? true : false
                       }
                       onChange={e => this.handleChange(e.target.value, 'politicalDistrict')}
-                      value={politicalDistrict ? politicalDistrict : ''}
                     >
                       <option value={''}>Please Select</option>
                       {congressionalDistrict === '1'
@@ -1094,10 +703,9 @@ export default class ApplicationModal extends Component {
                       componentClass="select"
                       placeholder="Please Select"
                       onChange={e => this.handleChange(e.target.value, 'sex')}
-                      value={sex !== '' ? (sex === 'Male' ? 'Male' : 'Female') : ''}
                     >
-                      <option value="Male">Male</option>
-                      <option value="Female">Female</option>
+                      <option value="male">Male</option>
+                      <option value="female">Female</option>
                     </FormControl>
                   </FormGroup>
                 </Field>
@@ -1222,15 +830,11 @@ export default class ApplicationModal extends Component {
             <Button
               disabled={this.errors.length > 0 ? true : false}
               bsStyle="success"
-              onClick={
-                update
-                  ? () => this.updateInformation(applicantProfileId)
-                  : () => this.insertNewApplicant()
-              }
+              onClick={() => this.insertNewApplicant()}
             >
-              <i className="fa fa-check" aria-hidden="true"></i> {update ? 'Update' : 'Submit'}
+              <i className="fa fa-check" aria-hidden="true"></i> Submit
             </Button>
-            <Button onClick={() => toggleApplicationModal('close')}>Close</Button>
+            <Button onClick={() => toggleApplicationModal()}>Close</Button>
           </ButtonGroup>
         </Modal.Footer>
       </Modal>
