@@ -1,43 +1,13 @@
-import { Meteor } from 'meteor/meteor';
 import React, { Component } from 'react';
-import ReactTable from 'react-table';
-import ReactModal from 'react-modal';
-import { confirmAlert } from 'react-confirm-alert';
-import { Link } from 'react-router-dom';
-import axios from 'axios';
-import SimpleSchema from 'simpl-schema';
-import {
-  AutoForm,
-  AutoField,
-  TextField,
-  LongTextField,
-  RadioField,
-  SubmitField,
-  ErrorsField,
-} from 'uniforms-bootstrap4';
-
 import 'react-confirm-alert/src/react-confirm-alert.css';
 import '../../css/app.css';
-
 import SideBar from '../sidebar/SideBar.js';
 import AppHeader from '../../app/AppHeader.js';
 import AppFooter from '../../app/app_footer.js';
-import LoadingComponent from '../../app/CustomTableLoader.js';
-//import Future from 'fibers/future';
-
-
 var Chart = require('chart.js');
-
-//Component
-
 export default class HelloWorld extends Component {
   constructor(props) {
     super(props);
-
-    this.users = [];
-    // this.users = Meteor.users.find().fetch();
-    // this.currentUser = Meteor.user();
-
     this.state = {
       data: props,
       test: 'This is a test',
