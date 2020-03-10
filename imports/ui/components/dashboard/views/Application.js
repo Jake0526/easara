@@ -43,7 +43,7 @@ export default class Application extends Component {
     };
     const { showApplicationModal } = this.state;
     const { applicantsProfiles } = this.state.data.state;
-
+ 
     let reactTablePageSize = Math.floor(window.innerHeight - 220) * 0.0232;
 
     let applicantsColumn = [
