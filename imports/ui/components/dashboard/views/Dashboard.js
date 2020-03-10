@@ -368,36 +368,30 @@ export default class HelloWorld extends Component {
       <div className="wrapper">
         <AppHeader middleware={this.props.state} history={this.props.history} />
         <SideBar middleware={this.props.state} page="dashboard" />
-
         <div className="content-wrapper" style={contentMinHeight}>
-
           <section className="content-header">
-            <h1>Dashboard</h1>
+            <h1 style={{ color: 'rgb(63,57,51)', fontSize: '20px' }}>
+              <i className="fa fa-bar-chart"></i> Dashboard
+              </h1>
           </section>
-
           <section className="content body">
-
             <div className="row">
               <div className="col-lg-3 col-xs-6">
 
                 <div className="small-box bg-green">
                   <div className="inner">
                     <h3>{this.state.newEmployee}</h3>
-
                     <p>New Applicants</p>
                   </div>
                   <div className="icon">
                     <i className="fa fa-user-plus"></i>
                   </div>
-
                 </div>
               </div>
               <div className="col-lg-3 col-xs-6">
-
                 <div className="small-box bg-aqua">
                   <div className="inner">
                     <h3>{this.state.exisingEmployee}</h3>
-
                     <p>Total Existing Employees</p>
                   </div>
                   <div className="icon">
@@ -436,94 +430,81 @@ export default class HelloWorld extends Component {
             </div>
 
             <section className="Graph">
-
               <div className="row">
                 <div className="col-sm-12 col-lg-12 col-md-12" >
+                  <div className="row">
+                    <div className="col-md-12">
+                      <h3>
+                        <p className="text-center">
+                          <strong>Application: Date From - Date To</strong>
+                        </p>
+                      </h3>
+                    </div>
+                  </div>
+                  <div className="row">
+                    <div className="col-sm-12 col-md-6 col-lg-6 " >
+                      <div className="box box-primary">
+                        <div className="box-header with-border"  >
+                          <h4><label>Application</label></h4>
+                        </div>
+                        <div className="box-body no-padding">
+                          <canvas id="showApplication" className="chartjs" style={{ display: "block", width: "100", height: "100" }}></canvas>
+                        </div>
+                        <div className="box-footer">
 
-                  {/* style={{ margin: "0 0 5em 0" }} */}
-
-                  <div className="box-body collapse in" id="collapseBorderApplication">
-                    <div className="row">
-                      <div className="col-md-12">
-                        <h3>
-                          <p className="text-center">
-                            <strong>Application: Date From - Date To</strong>
-                          </p>
-                        </h3>
+                          <label>Total:<span style={{ color: "green" }}> {exisingEmployee + newEmployee + " " + converter.toWords(exisingEmployee + newEmployee)}</span></label>
+                        </div>
                       </div>
                     </div>
-                    <div className="row">
 
-                      <div className="col-sm-12 col-md-6 col-lg-6 " >
+                    <div className="col-sm-12 col-md-6 col-lg-6">
+                      <div className="box box-primary">
+                        <div className="box-header with-border">
+                          <h4><label> Gender</label></h4>
+                        </div>
+                        <div className="box-body no-padding">
+                          <canvas id="showGender" className="chartjs" style={{ display: "block", width: "100", height: "100" }}></canvas>
+                        </div>
+                        <div className="box-footer">
 
-                        <div className="box box-primary">
-                          <div className="box-header with-border"  >
-                            <h4><label>Application</label></h4>
-                          </div>
-                          <div className="box-body no-padding">
-                            <canvas id="showApplication" className="chartjs" style={{ display: "block", width: "100", height: "100" }}></canvas>
-                          </div>
-                          <div class="box-footer">
-                            <label>Total:<span style={{ color: "green" }}> {exisingEmployee + newEmployee + " " + converter.toWords(exisingEmployee + newEmployee)}</span></label>
-                          </div>
+                          <label>Total:<span style={{ color: "green" }}> {exisingEmployee + newEmployee + " " + converter.toWords(exisingEmployee + newEmployee)}</span></label>
                         </div>
                       </div>
-                      <div className="col-sm-12 col-md-6 col-lg-6">
-                        <div className="box box-primary">
-                          <div className="box-header with-border">
-                            <div className="chart tab-pane active">
-                              <div className="box-header with-border">
-                                <h3 className="box-title">   <label> Gender</label></h3>
-                              </div>
-                              <canvas id="showGender" className="chartjs" width="100px" height="55px" style={{ display: "block", width: "100", height: "100" }}></canvas>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
                     </div>
-
-                    <div className="row" >
-                      <div className="col-sm-12 col-md-6 col-lg-6" >
-                        <div className="box box-primary">
-                          <div className="box-header with-border"  >
-
-                            <div className="chart">
-                              <div className="box-header with-border">
-                                <h3 className="box-title">   <label> Religion</label></h3>
-                              </div>
-                              <canvas id="showReligion" className="chartjs" width="100px" height="55px" style={{ display: "block", width: "100", height: "100" }}></canvas>
-                            </div>
-                          </div>
-                        </div>
-
-
-                      </div>
-
-                      <div className="col-sm-12 col-md-6 col-lg-6" >
-                        <div className="box box-primary">
-                          <div className="box-header with-border"  >
-
-                            <div className="chart">
-                              <div className="box-header with-border">
-                                <h3 className="box-title">   <label> Congressional District</label></h3>
-                              </div>
-                              <canvas id="showCongressionalDistrict" className="chartjs" width="100px" height="55px" style={{ display: "block", width: "100", height: "100" }}></canvas>
-                            </div>
-                          </div>
-                        </div>
-
-                      </div>
-
-                    </div>
-
                   </div>
 
+                  <div className="row" >
+                    <div className="col-sm-12 col-md-6 col-lg-6" >
+                      <div className="box box-primary">
+                        <div className="box-header with-border">
+                          <h4><label> Religion</label></h4>
+                        </div>
+                        <div className="box-body no-padding">
+                          <canvas id="showReligion" className="chartjs" style={{ display: "block", width: "100", height: "100" }}></canvas>
+                        </div>
+                        <div className="box-footer">
+                          <label>Total:<span style={{ color: "green" }}> {exisingEmployee + newEmployee + " " + converter.toWords(exisingEmployee + newEmployee)}</span></label>
+                        </div>
+                      </div>
+                    </div>
 
+                    <div className="col-sm-12 col-md-6 col-lg-6" >
+                      <div className="box box-primary">
+                        <div className="box-header with-border">
+                          <h4><label> Congressional District</label></h4>
+                        </div>
+
+                        <div className="box-body no-padding">
+                          <canvas id="showCongressionalDistrict" className="chartjs" style={{ display: "block", width: "100", height: "100" }}></canvas>
+                        </div>
+                        <div className="box-footer">
+                          <label>Total:<span style={{ color: "green" }}> {exisingEmployee + newEmployee + " " + converter.toWords(exisingEmployee + newEmployee)}</span></label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
-
-
             </section>
 
             <section className="content-header"  >
@@ -640,7 +621,7 @@ export default class HelloWorld extends Component {
 
         <AppFooter />
         <div className="control-sidebar-bg"></div>
-      </div>
+      </div >
     );
 
   }
