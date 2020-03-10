@@ -52,7 +52,7 @@ export default class Ranking extends Component {
                 console.log(applicants[x]);
     
                 if(applicants[x].existing) {
-                    console.lop(applicants[x].id);
+                    console.log(applicants[x].id);
                 }else {
                     console.lop(applicants[x].id);
                 }
