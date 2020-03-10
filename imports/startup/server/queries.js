@@ -31,7 +31,15 @@ Meteor.method(
 Meteor.method(
   'select-ranking',
   function() {
-    var sql = `SELECT * FROM applicants_ranking`;
+    var sql = `
+      SELECT 
+          *
+      FROM
+          applicants_ranking
+      INNER JOIN
+        applicants_profile on applicants_profile.id = applicants_ranking.applicant_profile_id
+    `;
+    
     var fut = new Future();
 
     easara(sql, function(err, result) {
@@ -181,6 +189,62 @@ Meteor.method(
     getArgsFromRequest: function(request) {
       var content = request.body;
       return [content.applicantData];
+    },
+  }
+);
+
+Meteor.method(
+  'insert-rank',
+  function(rankData) {
+    console.log(rankData);
+
+    var sql = `
+      INSERT INTO applicants_ranking
+      (
+        applicant_profile_id, 
+        rank_no
+      )
+      VALUES(
+        ${rankData.applicantProfileId},
+        ${rankData.rankNo}
+      );`;
+    var fut = new Future();
+
+    easara(sql, function(err, result) {
+      if (err) throw err;
+      fut.return('success');
+    });
+    return fut.wait();
+  },
+  {
+    url: 'insert-rank',
+    httpMethod: 'post',
+    getArgsFromRequest: function(request) {
+      var content = request.body;
+      return [content.rankData];
+    },
+  }
+);
+
+Meteor.method(
+  'truncate-rank',
+  function() {
+    var sql = `
+      TRUNCATE TABLE applicants_ranking;`;
+    var fut = new Future();
+
+    easara(sql, function(err, result) {
+      if (err) throw err;
+      fut.return('success');
+    });
+    return fut.wait();
+  },
+  {
+    url: 'truncate-rank',
+    httpMethod: 'post',
+    getArgsFromRequest: function(request) {
+      var content = request.body;
+      return [];
     },
   }
 );

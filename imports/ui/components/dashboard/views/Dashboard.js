@@ -1,24 +1,6 @@
-import { Meteor } from 'meteor/meteor';
 import React, { Component } from 'react';
-import ReactTable from 'react-table';
-import ReactModal from 'react-modal';
-import { confirmAlert } from 'react-confirm-alert';
-import { Link } from 'react-router-dom';
-import axios from 'axios';
-import SimpleSchema from 'simpl-schema';
-import {
-  AutoForm,
-  AutoField,
-  TextField,
-  LongTextField,
-  RadioField,
-  SubmitField,
-  ErrorsField,
-} from 'uniforms-bootstrap4';
-
 import 'react-confirm-alert/src/react-confirm-alert.css';
 import '../../css/app.css';
-
 import SideBar from '../sidebar/SideBar.js';
 import AppHeader from '../../app/AppHeader.js';
 import AppFooter from '../../app/app_footer.js';
@@ -439,12 +421,20 @@ export default class HelloWorld extends Component {
                         </p>
                       </h3>
                     </div>
-                  </div>
-                  <div className="row">
-                    <div className="col-sm-12 col-md-6 col-lg-6 " >
-                      <div className="box box-primary">
-                        <div className="box-header with-border"  >
-                          <h4><label>Application</label></h4>
+                    <div className="row">
+
+                      <div className="col-sm-12 col-md-6 col-lg-6 " >
+
+                        <div className="box box-primary">
+                          <div className="box-header with-border"  >
+                            <h4><label>Application</label></h4>
+                          </div>
+                          <div className="box-body no-padding">
+                            <canvas id="showApplication" className="chartjs" style={{ display: "block", width: "100", height: "100" }}></canvas>
+                          </div>
+                          <div className="box-footer">
+                            <label>Total:<span style={{ color: "green" }}> {exisingEmployee + newEmployee + " " + converter.toWords(exisingEmployee + newEmployee)}</span></label>
+                          </div>
                         </div>
                         <div className="box-body no-padding">
                           <canvas id="showApplication" className="chartjs" style={{ display: "block", width: "100", height: "100" }}></canvas>
