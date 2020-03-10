@@ -248,8 +248,7 @@ export default class HelloWorld extends Component {
       let randomColor = (Math.random() * (1 - 0.0) + 0.0)
 
       var decider = d3.interpolateRainbow(randomColor)
-      console.log(randomColor)
-      console.log(decider)
+      
       randomColorResult.push(decider)
 
     }
