@@ -167,8 +167,9 @@ export default class ProtectedRoute extends Component {
         });
       }
     });
+  
+  console.log(this.state.applicantsProfiles)
   };
-
   render() {
     const { component: Component, ...props } = this.props;
     if (this.state.isLoad) {

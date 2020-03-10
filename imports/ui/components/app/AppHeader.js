@@ -10,8 +10,6 @@ export default class AppHeader extends Component {
 
     this.employeeInfomation = this.props.middleware.employeeInformation.data.completeProfileForActivePlantillaNonPlantillaByEmpno[0];
 
-    console.log(this.employeeInfomation);
-
     this.logout = this.logout.bind(this);
     this.userDisplayName = this.userDisplayName.bind(this);
   }
@@ -30,7 +28,6 @@ export default class AppHeader extends Component {
   }
 
   render() {
-    console.log(this.props);
     return (
       <header className="main-header">
         <a href="#" className="logo">
