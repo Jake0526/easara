@@ -326,3 +326,6 @@ h6,
 body:not(.modal-open) {
   padding-right: 0px !important;
 }
+body:not(.modal-close) {
+  padding-right: 0px !important;
+}

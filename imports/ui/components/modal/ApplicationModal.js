@@ -634,7 +634,11 @@ export default class ApplicationModal extends Component {
 
         return getSomePromise(login)
           .then(function(x) {
-            return x;
+            if (x.employed === '1') {
+              Swal.showValidationMessage(`Error: Personnel is currently employed.`);
+            } else {
+              return x;
+            }
           })
           .catch(function(err) {
             Swal.showValidationMessage(`Error: ${err}`);
