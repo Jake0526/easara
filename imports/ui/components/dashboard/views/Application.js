@@ -59,8 +59,8 @@ export default class Application extends Component {
     };
     const { showApplicationModal, updateData, update } = this.state;
     const { applicantsProfiles } = this.state.data.state;
-
-    let reactTablePageSize = Math.floor(window.innerHeight - 330) * 0.0232;
+ 
+    let reactTablePageSize = Math.floor(window.innerHeight - 220) * 0.0232;
 
     let applicantsColumn = [
       {
@@ -160,6 +160,17 @@ export default class Application extends Component {
           {
             Header: 'Civil Status',
             accessor: 'civil_status',
+            minWidth: 50,
+            headerClassName: 'wordwrap',
+            style: { whiteSpace: 'unset' },
+          },
+          {
+            Header: 'In Service',
+            id: 'existing',
+            accessor: d => {
+              if (d.existing === 1) return 'Yes';
+              else return 'No';
+            },
             minWidth: 50,
             headerClassName: 'wordwrap',
             style: { whiteSpace: 'unset' },

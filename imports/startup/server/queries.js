@@ -1,8 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 import { easara } from '../../database/connections.js';
 import Future from 'fibers/future';
-
-const request = require('request');
+import { check } from 'meteor/check';
 var moment = require('moment');
 JsonRoutes.setResponseHeaders({
   'Cache-Control': 'no-store',
@@ -17,7 +16,6 @@ Meteor.method(
   function() {
     var sql = `SELECT * FROM applicants_profile`;
     var fut = new Future();
-
     easara(sql, function(err, result) {
       if (err) throw err;
       fut.return(result);
@@ -51,6 +49,7 @@ Meteor.method(
 Meteor.method(
   'insert-new-applicant',
   function(applicantData) {
+    check(applicantData, Object);
     function addslashes(str) {
       if (str == null) {
         return '';
@@ -63,7 +62,7 @@ Meteor.method(
       INSERT INTO applicants_profile
       (religion_code, first_name, last_name, middle_name, maiden_name, name_ext, address, phone_number, cell_number, political_district, congressional_district,
         citizenship, birth_date, birth_place, blood_type, height, sex, civil_status, tin, phil_health, sss, is_licensed,
-        emergency_name, emergency_relation, emergency_address, emergency_contact_number, employee_number ${
+        emergency_name, emergency_relation, emergency_address, emergency_contact_number, employee_number, existing ${
           applicantData.beginDate === '' ? '' : ', last_begin_date'
         })
       VALUES ('${addslashes(applicantData.religionCode)}' ,'${addslashes(
@@ -91,10 +90,10 @@ Meteor.method(
       applicantData.emergencyAddress
     )}', '${addslashes(applicantData.emergencyNumber)}', '${addslashes(
       applicantData.employeeNumber === '000000' ? '' : applicantData.employeeNumber
-    )}' ${
+    )}', ${applicantData.existing} ${
       applicantData.beginDate === ''
         ? ''
-        : '"' + moment(applicantData.beginDate).format('YYYY-MM-DD HH:mm:ss') + '"'
+        : ', "' + moment(applicantData.beginDate).format('YYYY-MM-DD HH:mm:ss') + '"'
     });`;
     var fut = new Future();
 
@@ -117,6 +116,7 @@ Meteor.method(
 Meteor.method(
   'update-profile',
   function(applicantData) {
+    check(applicantData, Object);
     function addslashes(str) {
       if (str == null) {
         return '';

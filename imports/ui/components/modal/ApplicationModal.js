@@ -10,6 +10,7 @@ import {
   HelpBlock,
   InputGroup,
   Modal,
+  NavItem,
 } from 'react-bootstrap';
 import { GridForm, Fieldset, Row, Field } from '../../../startup/utils/react-gridforms/lib';
 import DatePicker from 'react-datepicker';
@@ -92,6 +93,7 @@ export default class ApplicationModal extends Component {
       existingPersonnel: false,
       applicantProfileId: '',
       beginDate: '',
+      existing: 0,
 
       //UPDATE
       update: false,
@@ -157,6 +159,12 @@ export default class ApplicationModal extends Component {
             ? nextProps.updateData.last_begin_date
             : ''
           : '',
+      existing:
+        nextProps.updateData != null
+          ? nextProps.updateData.existing
+            ? nextProps.updateData.existing
+            : 0
+          : 0,
     });
   }
 
@@ -360,6 +368,7 @@ export default class ApplicationModal extends Component {
           emergencyNumber,
           employeeNumber,
           beginDate,
+          existing,
         } = this.state;
         let data = {
           firstName,
@@ -389,6 +398,7 @@ export default class ApplicationModal extends Component {
           emergencyNumber,
           employeeNumber,
           beginDate,
+          existing,
         };
         Meteor.call('insert-new-applicant', data, (error, result) => {
           if (!error) {
@@ -465,7 +475,7 @@ export default class ApplicationModal extends Component {
           emergencyNumber,
           employeeNumber,
           beginDate,
-          applicantProfileId
+          applicantProfileId,
         } = this.state;
         let data = {
           firstName,
@@ -625,11 +635,7 @@ export default class ApplicationModal extends Component {
 
         return getSomePromise(login)
           .then(function(x) {
-            if (x.employed === '1') {
-              Swal.showValidationMessage(`Error: Personnel is currently employed.`);
-            } else {
-              return x;
-            }
+            return x;
           })
           .catch(function(err) {
             Swal.showValidationMessage(`Error: ${err}`);
@@ -656,6 +662,7 @@ export default class ApplicationModal extends Component {
           philHealth,
           sss,
           beginDate,
+          employed,
         } = result.value;
         const {
           lastName,
@@ -693,6 +700,7 @@ export default class ApplicationModal extends Component {
           emergencyNumber: number ? number : '',
           existingPersonnel: true,
           beginDate: beginDate ? beginDate : '',
+          existing: employed ? employed : '',
         });
         const Toast = Swal.mixin({
           toast: true,
