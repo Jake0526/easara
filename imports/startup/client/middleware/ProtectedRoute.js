@@ -161,6 +161,7 @@ export default class ProtectedRoute extends Component {
   selectApplicantsProfile = () => {
     Meteor.call('select-profiles', (error, result) => {
       if (!error) {
+        console.log(result);
         this.setState({
           applicantsProfiles: result,
         });
