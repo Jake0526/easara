@@ -445,7 +445,7 @@ export default class HelloWorld extends Component {
                           <div className="box-body no-padding">
                             <canvas id="showApplication" className="chartjs" style={{ display: "block", width: "100", height: "100" }}></canvas>
                           </div>
-                          <div class="box-footer">
+                          <div className="box-footer">
                             <label>Total:<span style={{ color: "green" }}> {exisingEmployee + newEmployee + " " + converter.toWords(exisingEmployee + newEmployee)}</span></label>
                           </div>
                         </div>
