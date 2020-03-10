@@ -6,6 +6,7 @@ import AppHeader from '../../app/AppHeader.js';
 import AppFooter from '../../app/app_footer.js';
 import PreviousIcon from '../../react-table-custom-component/PreviousComponent';
 import NextIcon from '../../react-table-custom-component/NextComponent';
+import Swal from 'sweetalert2';
 //COMPONENTS
 import ApplicationModal from '../../modal/ApplicationModal';
 
@@ -21,10 +22,10 @@ export default class Ranking extends Component {
             data: props,
             showApplicationModal: false,
             updateData: null,
-            applicantsRanking: []
+            applicantsRanking: [],
+            prioApplicants: [],
+            lessPrioApplicants: []
         };
-
-        this.getRanking();
     }
 
     componentDidMount() {
@@ -35,18 +36,28 @@ export default class Ranking extends Component {
         this.setState({ data: nextProps });
     }
 
-    getRanking = () => {
-        Meteor.call('select-ranking', (error, result) => {
-            if (!error) {
-                this.setState({
-                    applicantsRanking: result,
-                });
-            }
-        });
-    }
-
     generateNewRanking = () => {
-        console.log(this.state.data.state.applicantsProfiles);
+        let applicants = this.state.data.state.applicantsProfiles;
+
+        if(applicants.length == 0) {
+            Swal.fire({
+                position: 'center',
+                icon: 'error',
+                title: 'No applicants recorded',
+                showConfirmButton: false,
+                timer: 2500,
+            });
+        }else {
+            for(let x = 0; x < applicants.length; x+=1) {
+                console.log(applicants[x]);
+    
+                if(applicants[x].existing) {
+                    console.lop(applicants[x].id);
+                }else {
+                    console.lop(applicants[x].id);
+                }
+            }
+        } 
     }
 
     toggleApplicationModal = type => {
