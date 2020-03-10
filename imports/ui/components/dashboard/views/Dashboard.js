@@ -4,13 +4,19 @@ import '../../css/app.css';
 import SideBar from '../sidebar/SideBar.js';
 import AppHeader from '../../app/AppHeader.js';
 import AppFooter from '../../app/app_footer.js';
+
+var converter = require('number-to-words');
 var Chart = require('chart.js');
+
+var d3 = require('d3-scale-chromatic')
+//Component
+
 export default class HelloWorld extends Component {
   constructor(props) {
     super(props);
+
     this.state = {
       data: props,
-      test: 'This is a test',
       showAge: "",
       showApplication: "",
       showReligion: "",
@@ -19,9 +25,13 @@ export default class HelloWorld extends Component {
       exisingEmployee: 0,
       newEmployee: 0,
       totalEmployee: 0,
-      applicantsProfiles: []
+      applicantsProfiles: [],
+      colorsAvailApplication: [],
+      colorsAvailGender: [],
+      colorsAvailReligion: [],
+      colorsAvailCongressionalDistrict: []
     };
-    this.selectApplicantsProfile()
+    //this.selectApplicantsProfile()
   }
   selectApplicantsProfile = () => {
     HTTP.post("/select-profiles", {
@@ -32,62 +42,36 @@ export default class HelloWorld extends Component {
 
     }, (err, result) => {
       if (!err) {
-        this.setState({
-          applicantsProfiles: result.data,
-        });
-        let chartData = result.data
-        this.showApplication(chartData)
-        this.showGender(chartData)
-        this.showReligion(chartData)
-        this.showCongressionalDistrict(chartData)
+
       }
     })
 
 
   };
 
-
   componentDidMount() {
     $('body').addClass('sidebar-mini');
+    let chartData = this.state.data.state.applicantsProfiles
+    this.showApplication(chartData)
+    this.showGender(chartData)
+    this.showReligion(chartData)
+    this.showCongressionalDistrict(chartData)
+
+  }
+  componentWillUnmount() {
 
   }
 
-
   componentWillReceiveProps(nextProps) {
-    this.setState({ data: nextProps, applicantsProfiles: nextProps });
+    this.setState({
+      data: nextProps,
+      applicantsProfiles: nextProps,
+    });
     this.showApplication(nextProps.state.applicantsProfiles)
     this.showGender(nextProps.state.applicantsProfiles)
     this.showReligion(nextProps.state.applicantsProfiles)
     this.showCongressionalDistrict(nextProps.state.applicantsProfiles)
-
   }
-
-
-
-
-
-  // componentDidUpdate(nextProps) {
-  //   if (nextProps.state.applicantsProfiles != this.props.state.applicantsProfiles) {
-  //     console.log("result1")
-  //     console.log(nextProps)
-  //     console.log("result2")
-  //     console.log(this.props.state.applicantsProfiles)
-
-  //     this.setState({ data: this.props.state.applicantsProfiles });
-  //     nextProps.state.applicantsProfiles = this.props.state.applicantsProfiles
-  //     console.log("the new state is ")
-  //     console.log(this.state.data.state.applicantsProfiles)
-  //     this.getAllData(this.state.data.state.applicantsProfiles)
-  //     this.showApplication(this.state.data.state.applicantsProfiles)
-  //     this.showGender(this.state.data.state.applicantsProfiles)
-  //     this.showReligion(this.state.data.state.applicantsProfiles)
-  //     this.showPoliticalDistrict(this.state.data.state.applicantsProfiles)
-  //   }
-  //   else {
-  //     console.log("wala diri")
-  //   }
-  // }
-
 
 
   createChart = (ctx, dataChart, typeChart, optionsChart) => {
@@ -104,6 +88,22 @@ export default class HelloWorld extends Component {
     myChart.update()
 
   }
+  destroyChart = (ctx, dataChart, typeChart, optionsChart) => {
+    var myChart = new Chart(ctx, {
+      type: typeChart,
+      data: dataChart,
+      options: optionsChart
+    });
+    Chart.defaults.global.defaultFontSize = 16
+    Chart.defaults.global.tooltips.titleFontSize = 12
+    Chart.defaults.global.tooltips.titleFontColor = '#fff'
+
+    $(window).bind("resize", function () { myChart.resize() });
+    myChart.destroy()
+
+  }
+
+
   // extractTotal = object => {
   //   for (let [key, value] of Object.entries(object)) {
   //     currentlyEmployed.push(value.male);
@@ -114,8 +114,7 @@ export default class HelloWorld extends Component {
   // };
 
   showApplication = (data) => {
-
-
+    // let colormap = interpolate(['black', 'gray', 'white'])([100]);
     let currentlyEmployed = 0
     let notEmployed = 0
     data.forEach(element => {
@@ -155,20 +154,23 @@ export default class HelloWorld extends Component {
       responsive: true,
     }
     let type = 'pie'
-    this.createChart(ctx, dataChart, type, options)
+    if ((Array.isArray(data) && data.length)) {
+      this.createChart(ctx, dataChart, type, options)
+    }
+    else {
+      this.destroyChart(ctx, dataChart, type, options)
+    }
+
 
   }
 
 
   showGender = (data) => {
-
     let male = 0
     let female = 0
     data.forEach(element => {
       element.sex == "male" ? male += 1 : female += 1
     });
-
-
     var ctx = document.getElementById('showGender').getContext('2d');
     let dataChart = {
       labels: ['Male', 'Female'],
@@ -199,16 +201,18 @@ export default class HelloWorld extends Component {
 
     }
     let type = 'doughnut'
-    this.createChart(ctx, dataChart, type, options)
+    if ((Array.isArray(data) && data.length)) {
+      this.createChart(ctx, dataChart, type, options)
+    }
+    else {
+      this.destroyChart(ctx, dataChart, type, options)
+    }
 
   }
 
 
   showReligion = (data) => {
     let religion = []
-    // const distinct = (value,index,self)=>{
-    //   return self.indexOf(value) === index
-    // }
     data.forEach(element => {
       element.religion_code !== null && element.religion_code !== "" ? religion.push(element.religion_code) : ''
     });
@@ -216,27 +220,31 @@ export default class HelloWorld extends Component {
     let answer = (fileterReligion.join('" ,"'));
 
     var ctx = document.getElementById('showReligion').getContext('2d');
-    //NAAY MALI sa SHOW RELIGION LABEL
+
+    /* Total length: filter  color: deciding../ */
+
+
+
+    let randomColorResult = []
+    for (let i = 0; i < fileterReligion.length; i++) {
+      let randomColor = (Math.random() * (1 - 0.0) + 0.0)
+
+      var decider = d3.interpolateRainbow(randomColor)
+      console.log(randomColor)
+      console.log(decider)
+      randomColorResult.push(decider)
+
+    }
+
+
     let dataChart = {
       labels: fileterReligion,
       fill: true,
       datasets: [{
         label: 'Religions',
         data: [70, 50, 40, 50, 40],
-        backgroundColor: [
-          '#003f5c',
-          '#58508d',
-          '#bc5090',
-          '#ff6361',
-          '#ffa600',
-        ],
-        borderColor: [
-          '#003f5c',
-          '#58508d',
-          '#bc5090',
-          '#ff6361',
-          '#ffa600',
-        ],
+        backgroundColor: randomColorResult,
+        borderColor: randomColorResult,
         borderWidth: 2,
         borderColor: '#fff'
       }]
@@ -256,7 +264,12 @@ export default class HelloWorld extends Component {
 
 
     let type = 'polarArea'
-    this.createChart(ctx, dataChart, type, options)
+    if ((Array.isArray(fileterReligion) && fileterReligion.length)) {
+      this.createChart(ctx, dataChart, type, options)
+    }
+    else {
+      this.destroyChart(ctx, dataChart, type, options)
+    }
 
   }
 
@@ -316,13 +329,19 @@ export default class HelloWorld extends Component {
 
     }
     let type = 'bar'
-    this.createChart(ctx, dataChart, type, options)
+    if ((Array.isArray(data) && data.length)) {
+      this.createChart(ctx, dataChart, type, options)
+    }
+    else {
+      this.destroyChart(ctx, dataChart, type, options)
+    }
+
 
   }
 
 
   render() {
-
+    const { exisingEmployee, newEmployee } = this.state
     const contentMinHeight = {
       minHeight: `${window.innerHeight - 101}px`,
     };
@@ -397,12 +416,12 @@ export default class HelloWorld extends Component {
                 </div>
               </div>
             </div>
-  
+
             <section className="Graph">
 
               <div className="row">
                 <div className="col-sm-12 col-lg-12 col-md-12" >
-        
+
                   {/* style={{ margin: "0 0 5em 0" }} */}
 
                   <div className="box-body collapse in" id="collapseBorderApplication">
@@ -421,13 +440,13 @@ export default class HelloWorld extends Component {
 
                         <div className="box box-primary">
                           <div className="box-header with-border"  >
-
-                            <div className="chart tab-pane active ">
-                              <div className="box-header with-border">
-                                <h3 className="box-title">   <label> Application</label></h3>
-                              </div>
-                              <canvas id="showApplication" className="chartjs" width="100px" height="55px" style={{ display: "block", width: "100", height: "100" }}></canvas>
-                            </div>
+                            <h4><label>Application</label></h4>
+                          </div>
+                          <div className="box-body no-padding">
+                            <canvas id="showApplication" className="chartjs" style={{ display: "block", width: "100", height: "100" }}></canvas>
+                          </div>
+                          <div class="box-footer">
+                            <label>Total:<span style={{ color: "green" }}> {exisingEmployee + newEmployee + " " + converter.toWords(exisingEmployee + newEmployee)}</span></label>
                           </div>
                         </div>
                       </div>

@@ -9,6 +9,7 @@ export default class ProtectedRoute extends Component {
       allEmployeeInformation: {},
       employeeInformation: {},
       applicantsProfiles: [],
+      applicantsRanking: [],
       introspect: {},
       isLogin: null,
       isLoad: false,
@@ -155,7 +156,9 @@ export default class ProtectedRoute extends Component {
       }
     );
 
+    //Queries
     this.selectApplicantsProfile();
+    this.getRanking();
   }
 
   selectApplicantsProfile = () => {
@@ -167,9 +170,20 @@ export default class ProtectedRoute extends Component {
         });
       }
     });
-  
-  console.log(this.state.applicantsProfiles)
+
+    console.log(this.state.applicantsProfiles)
   };
+
+  getRanking = () => {
+    Meteor.call('select-ranking', (error, result) => {
+      if (!error) {
+        this.setState({
+          applicantsRanking: result,
+        });
+      }
+    });
+  }
+
   render() {
     const { component: Component, ...props } = this.props;
     if (this.state.isLoad) {

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 
-import Dashboard from '../../ui/components/dashboard/views/HelloWorld.js';
+import Dashboard from '../../ui/components/dashboard/views/Dashboard';
 import Application from '../../ui/components/dashboard/views/Application.js';
 import Ranking from '../../ui/components/dashboard/views/Ranking.js';
 
