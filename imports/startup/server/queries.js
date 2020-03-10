@@ -31,6 +31,24 @@ Meteor.method(
 );
 
 Meteor.method(
+  'select-ranking',
+  function() {
+    var sql = `SELECT * FROM applicants_ranking`;
+    var fut = new Future();
+
+    easara(sql, function(err, result) {
+      if (err) throw err;
+      fut.return(result);
+    });
+    return fut.wait();
+  },
+  {
+    url: 'select-ranking',
+    httpMethod: 'post',
+  }
+);
+
+Meteor.method(
   'insert-new-applicant',
   function(applicantData) {
     function addslashes(str) {
