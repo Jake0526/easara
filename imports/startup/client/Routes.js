@@ -13,6 +13,7 @@ export default class Routes extends Component {
       <Router>
         <Switch>
           <ProtectedRoute path="/application" name="application" component={Application} />
+          <ProtectedRoute path="/application" name="application" component={Application} />
           <ProtectedRoute path="/" name="dashboard" component={Dashboard} />
         </Switch>
       </Router>

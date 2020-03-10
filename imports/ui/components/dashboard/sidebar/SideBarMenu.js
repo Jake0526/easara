@@ -25,6 +25,11 @@ export default class SideBarMenu extends Component {
             <i className="fa fa-book" /> <span> Application </span>
           </Link>
         </li>
+        <li className={this.page == 'ranking' ? 'active' : ''}>
+          <Link to="/ranking">
+            <i className="fa fa-users" /> <span> Ranking </span>
+          </Link>
+        </li>
       </ul>
     );
   }
