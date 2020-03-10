@@ -22,9 +22,9 @@ export default class Ranking extends Component {
             data: props,
             showApplicationModal: false,
             updateData: null,
-            applicantsRanking: [],
-            prioApplicants: [],
-            lessPrioApplicants: []
+            rankedApplicants: [],
+            rankingStatus: 0,
+            rankingLength: 0
         };
     }
 
@@ -38,8 +38,42 @@ export default class Ranking extends Component {
 
     generateNewRanking = () => {
         let applicants = this.state.data.state.applicantsProfiles;
+        let prioApplicants = [];
+        let lessPrioApplicants = [];
+        let rankedApplicants = [];
 
-        if(applicants.length == 0) {
+        let recursionLoop = () => {
+            if (this.state.rankingStatus < rankedApplicants.length) {
+
+                Meteor.call('insert-rank', rankedApplicants[this.state.rankingStatus], (error, result) => {
+                    if (!error) {
+                        if (result === 'success') {
+
+                            this.setState({
+                                rankingStatus: this.state.rankingStatus + 1
+                            })
+
+                            recursionLoop();
+                        }
+                    }
+                });
+            } else {
+                Swal.fire({
+                    position: 'center',
+                    icon: 'success',
+                    title: 'New ranks updated',
+                    showConfirmButton: false,
+                    timer: 2500,
+                });
+
+                this.props.getRanking();
+
+                $('#modal-loading').modal('hide');
+                
+            }
+        };
+
+        if (applicants.length == 0) {
             Swal.fire({
                 position: 'center',
                 icon: 'error',
@@ -47,17 +81,47 @@ export default class Ranking extends Component {
                 showConfirmButton: false,
                 timer: 2500,
             });
-        }else {
-            for(let x = 0; x < applicants.length; x+=1) {
-                console.log(applicants[x]);
+        } else {
+            let rankNum = 1;
+            for (let x = 0; x < applicants.length; x += 1) {
+                if (applicants[x].existing) {
+                    lessPrioApplicants.push({
+                        applicantProfileId: applicants[x].id,
+                        rankNo: rankNum
+                    })
+                } else {
+                    prioApplicants.push({
+                        applicantProfileId: applicants[x].id,
+                        rankNo: rankNum
+                    })
+                }
+
+                rankNum++;
+                if (x == (applicants.length - 1)) {
+                    rankedApplicants = prioApplicants;
+                    rankedApplicants.concat(lessPrioApplicants);
+
+                    this.setState({
+                        rankingLength: rankedApplicants.length
+                    })
+
+                    $('#modal-loading').modal({
+                        backdrop: 'static',
+                        keyboard: false,
+                        show: true
+                    })
+
+                    Meteor.call('truncate-rank', (error, result) => {
+                        if (!error) {
+                            if (result === 'success') {
     
-                if(applicants[x].existing) {
-                    console.log(applicants[x].id);
-                }else {
-                    console.lop(applicants[x].id);
+                                recursionLoop();
+                            }
+                        }
+                    });
                 }
             }
-        } 
+        };
     }
 
     toggleApplicationModal = type => {
@@ -94,8 +158,8 @@ export default class Ranking extends Component {
                 width: 1000,
                 columns: [
                     {
-                        Header: '#',
-                        accessor: 'id',
+                        Header: 'Rank',
+                        accessor: 'rank_no',
                         minWidth: 25,
                         className: 'center',
                         headerClassName: 'wordwrap',
@@ -144,7 +208,7 @@ export default class Ranking extends Component {
                                 <div className="box-body" style={{ padding: '0px' }}>
                                     <ReactTable
                                         className="-striped -highlight"
-                                        data={this.state.applicantsRanking}
+                                        data={this.state.data.state.applicantsRanking}
                                         columns={applicantsColumn}
                                         defaultPageSize={reactTablePageSize}
                                         PreviousComponent={PreviousIcon}
@@ -176,13 +240,23 @@ export default class Ranking extends Component {
 
                 <AppFooter />
                 <div className="control-sidebar-bg"></div>
-                {/* <ApplicationModal
-                    show={showApplicationModal}
-                    toggleApplicationModal={this.toggleApplicationModal}
-                    selectApplicantsProfile={data.selectApplicantsProfile}
-                    updateData={updateData}
-                    update={update}
-                /> */}
+
+                <div className="modal fade" id="modal-loading">
+                    <div className="modal-dialog modal-lg">
+                        <div className="modal-content">
+                            <div className="modal-body">
+                                <div className="progress-group">
+                                    <span className="progress-text">Ranking Applicants</span>
+                                    <span className="progress-number"><b>{this.state.rankingStatus}</b>/{this.state.rankingLength}</span>
+
+                                    <div className="progress sm">
+                                        <div className="progress-bar progress-bar-aqua" style={{ 'width': (this.state.rankingStatus / (this.state.rankingLength)) * 100 + '%' }}></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         );
     }
