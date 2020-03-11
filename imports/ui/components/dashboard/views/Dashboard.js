@@ -17,6 +17,7 @@ export default class HelloWorld extends Component {
 
     this.state = {
       data: props,
+      dataPrevious: props,
       showAge: "",
       showApplication: "",
       showReligion: "",
@@ -26,51 +27,51 @@ export default class HelloWorld extends Component {
       newEmployee: 0,
       totalEmployee: 0,
       applicantsProfiles: [],
+      colorAvailGraph: [],
       colorsAvailApplication: [],
       colorsAvailGender: [],
       colorsAvailReligion: [],
-      colorsAvailCongressionalDistrict: []
+      colorsAvailCongressionalDistrict: [],
+      update: 0,
+      randomNumberGenerate: [],
     };
-    //this.selectApplicantsProfile()
   }
-  selectApplicantsProfile = () => {
-    HTTP.post("/select-profiles", {
-      headers: {
-        "Content-Type": "application/json",
-        "Accept": "application/json"
-      },
 
-    }, (err, result) => {
-      if (!err) {
+  generateRandomNumber = () => {
+    return (Math.random() * (1 - 0.0) + 0.0).toFixed(3)
+    /* INITIATE FIND A GOOD NUMBER THAT MATCHES THE COLOR ITSELF */
+  }
 
-      }
-    })
-
-
-  };
 
   componentDidMount() {
     $('body').addClass('sidebar-mini');
+
     let chartData = this.state.data.state.applicantsProfiles
     this.showApplication(chartData)
+    this.showMainDashboardReport(chartData)
     this.showGender(chartData)
     this.showReligion(chartData)
     this.showCongressionalDistrict(chartData)
+    console.log("mounmt")
 
   }
-  componentWillUnmount() {
 
-  }
+  componentWillReceiveProps(nextProps, prevProps) {
+    console.log(prevProps)
+    console.log(nextProps)
 
-  componentWillReceiveProps(nextProps) {
     this.setState({
       data: nextProps,
+      dataPrevious: prevProps,
       applicantsProfiles: nextProps,
     });
+
     this.showApplication(nextProps.state.applicantsProfiles)
+    this.showMainDashboardReport(nextProps.state.applicantsProfiles)
     this.showGender(nextProps.state.applicantsProfiles)
     this.showReligion(nextProps.state.applicantsProfiles)
     this.showCongressionalDistrict(nextProps.state.applicantsProfiles)
+
   }
 
 
@@ -98,23 +99,13 @@ export default class HelloWorld extends Component {
     Chart.defaults.global.tooltips.titleFontSize = 12
     Chart.defaults.global.tooltips.titleFontColor = '#fff'
 
-    $(window).bind("resize", function () { myChart.resize() });
+
     myChart.destroy()
 
   }
 
 
-  // extractTotal = object => {
-  //   for (let [key, value] of Object.entries(object)) {
-  //     currentlyEmployed.push(value.male);
-  //     notEmployed.push(value.female);
-  //   }
-
-  //   return [currentlyEmployed, notEmployed];
-  // };
-
   showApplication = (data) => {
-    // let colormap = interpolate(['black', 'gray', 'white'])([100]);
     let currentlyEmployed = 0
     let notEmployed = 0
     data.forEach(element => {
@@ -124,21 +115,27 @@ export default class HelloWorld extends Component {
       newEmployee: currentlyEmployed,
       exisingEmployee: notEmployed
     })
+    let randomColorResultApplication = []
+    randomColorResultApplication.length = 0
+    let floatStaticApplication = 0.00
+
+    floatStaticApplication += 0.10
+    var decider = d3.interpolateRdBu(floatStaticApplication)
+    randomColorResultApplication.push(decider)
+
+    floatStaticApplication += 0.80
+    var decider = d3.interpolateRdBu(floatStaticApplication)
+    randomColorResultApplication.push(decider)
+
 
     var ctx = document.getElementById('showApplication').getContext('2d');
     let dataChart = {
-      labels: ['Newly Registered Applicants', 'Exising Employees'],
+      labels: ['Exising Employees', 'Newly Registered Applicants'],
       datasets: [{
         label: '# of Employee',
         data: [currentlyEmployed, notEmployed],
-        backgroundColor: [
-          '#58508d',
-          '#2f4b7c',
-        ],
-        borderColor: [
-          '#58508d',
-          '#2f4b7c',
-        ],
+        backgroundColor: randomColorResultApplication,
+        borderColor: randomColorResultApplication,
         borderWidth: 2,
         borderColor: '#fff'
       }]
@@ -154,22 +151,135 @@ export default class HelloWorld extends Component {
       responsive: true,
     }
     let type = 'pie'
-    if ((Array.isArray(data) && data.length)) {
-      this.createChart(ctx, dataChart, type, options)
+
+
+    if (this.state.data !== this.state.dataPrevious) {
+
     }
     else {
-      this.destroyChart(ctx, dataChart, type, options)
+      if ((Array.isArray(data) && data.length)) {
+        this.destroyChart(ctx, dataChart, type, options)
+        this.createChart(ctx, dataChart, type, options)
+      }
+      else {
+      }
+
     }
+
+  }
+  showMainDashboardReport = (data) => {
+    let male = 0
+    let female = 0
+    data.forEach(element => {
+      element.sex == "Male" ? male += 1 : female += 1
+    });
+
+    /* For getting 1st 15 days of the Month */
+    var getDateResult = new Date();
+    
+    let daysDataDashboard = []
+    daysDataDashboard.length=0
+    //let addDays = 1
+    for (let i = 1; i <= 5; i++) {
+      let parseResult = new Date(getDateResult.setDate(getDateResult.getDay() + i))
+      parseResult = parseResult.toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+      })
+      daysDataDashboard.push(parseResult)
+    }
+
+
+  /* For Coloring Selecting at least 3 */
+  let randomColorResult = []
+  let floatStaticReligion = 0.00
+  for (let i = 0; i < 3; i++) {
+    floatStaticReligion += 0.253
+    var decider = d3.interpolateRainbow(floatStaticReligion)
+    randomColorResult.push(decider)
+  }
+   
+    var ctx = document.getElementById('showMainDashBoardReport').getContext('2d');
+    let dataChart = {
+
+      labels: daysDataDashboard,
+      datasets: [
+        {
+          label: 'Existing',
+          data: [10, 8,20,10,20,10],
+          backgroundColor: randomColorResult[0]
+       }, {
+          label: 'NewEmployee',
+          data: [10, 30,40,50,20,10],
+          backgroundColor: randomColorResult[1]
+       }, {
+          label: 'Left',
+          data: [40, 5,20,70,20,10],
+          backgroundColor: randomColorResult[2]
+       }
+      ]
+
+     
+    }
+    let options = {
+      // rotation: 1 * Math.PI,
+      // circumference: 1 * Math.PI,
+
+      scales: {
+        xAxes: [{
+          stacked: true
+        }],
+        yAxes: [{
+          stacked: true,
+        
+          ticks:{
+            beginAtZero:true,
+            suggestedMax: 400
+          }
+        }]
+      },
+      legend: {
+        display: true,
+        labels: {
+          defaultFontSize: 14,
+          fontColor: 'black'
+          //fontColor: 'rgb(255, 99, 132)'
+        }
+      },
+      title: {
+        display: true,
+        text: 'Test Graph'
+      },
+      responsive: true,
+
+    }
+    let type = 'bar'
+
+    if (this.state.data !== this.state.dataPrevious) {
+
+    }
+    else {
+      if ((Array.isArray(data) && data.length)) {
+        this.destroyChart(ctx, dataChart, type, options)
+        this.createChart(ctx, dataChart, type, options)
+      }
+      else {
+      }
+
+    }
+
 
 
   }
+
 
 
   showGender = (data) => {
     let male = 0
     let female = 0
     data.forEach(element => {
-      element.sex == "male" ? male += 1 : female += 1
+      element.sex == "Male" ? male += 1 : female += 1
     });
     var ctx = document.getElementById('showGender').getContext('2d');
     let dataChart = {
@@ -201,12 +311,21 @@ export default class HelloWorld extends Component {
 
     }
     let type = 'doughnut'
-    if ((Array.isArray(data) && data.length)) {
-      this.createChart(ctx, dataChart, type, options)
+
+    if (this.state.data !== this.state.dataPrevious) {
+
     }
     else {
-      this.destroyChart(ctx, dataChart, type, options)
+      if ((Array.isArray(data) && data.length)) {
+        this.destroyChart(ctx, dataChart, type, options)
+        this.createChart(ctx, dataChart, type, options)
+      }
+      else {
+      }
+
     }
+
+
 
   }
 
@@ -217,31 +336,45 @@ export default class HelloWorld extends Component {
       element.religion_code !== null && element.religion_code !== "" ? religion.push(element.religion_code) : ''
     });
     let fileterReligion = [...new Set(religion)]
-    let answer = (fileterReligion.join('" ,"'));
+
+
+    /*FINDING TOTAL DATA OF EACH RELIGION */
+    let countsReligionUnique = []
+    data.forEach(function (element) {
+      element.religion_code !== null && element.religion_code !== "" ?
+        countsReligionUnique[element.religion_code] = (countsReligionUnique[element.religion_code] || 0) + 1 : ''
+
+    })
+
+    // var filtered = countsReligionUnique.filter(function (item) {
+    //   return !(parseInt(item) == item);
+    // });
+
+    console.log(countsReligionUnique.join(","))
 
     var ctx = document.getElementById('showReligion').getContext('2d');
 
     /* Total length: filter  color: deciding../ */
 
-
-
     let randomColorResult = []
+    let floatStaticReligion = 0.00
     for (let i = 0; i < fileterReligion.length; i++) {
-      let randomColor = (Math.random() * (1 - 0.0) + 0.0)
-
-      var decider = d3.interpolateRainbow(randomColor)
-      
+      floatStaticReligion += 0.10
+      var decider = d3.interpolateRainbow(floatStaticReligion)
       randomColorResult.push(decider)
-
     }
 
+    let finalCountUniqueReligion = []
+    for (let [key, value] of Object.entries(countsReligionUnique)) {
+      finalCountUniqueReligion.push(value)
+    }
 
     let dataChart = {
       labels: fileterReligion,
       fill: true,
       datasets: [{
         label: 'Religions',
-        data: [70, 50, 40, 50, 40],
+        data: finalCountUniqueReligion,
         backgroundColor: randomColorResult,
         borderColor: randomColorResult,
         borderWidth: 2,
@@ -263,12 +396,22 @@ export default class HelloWorld extends Component {
 
 
     let type = 'polarArea'
-    if ((Array.isArray(fileterReligion) && fileterReligion.length)) {
-      this.createChart(ctx, dataChart, type, options)
+
+
+    if (this.state.data !== this.state.dataPrevious) {
+
     }
     else {
-      this.destroyChart(ctx, dataChart, type, options)
+      if ((Array.isArray(fileterReligion) && fileterReligion.length)) {
+        console.log("niagi diri")
+        this.destroyChart(ctx, dataChart, type, options)
+        this.createChart(ctx, dataChart, type, options)
+      }
+      else {
+      }
+
     }
+
 
   }
 
@@ -328,12 +471,21 @@ export default class HelloWorld extends Component {
 
     }
     let type = 'bar'
-    if ((Array.isArray(data) && data.length)) {
-      this.createChart(ctx, dataChart, type, options)
+    console.log(data)
+    if (this.state.data !== this.state.dataPrevious) {
+
     }
     else {
-      this.destroyChart(ctx, dataChart, type, options)
+      if ((Array.isArray(data) && data.length)) {
+        console.log("niagi diri")
+        this.destroyChart(ctx, dataChart, type, options)
+        this.createChart(ctx, dataChart, type, options)
+      }
+      else {
+      }
+
     }
+
 
 
   }
@@ -381,7 +533,7 @@ export default class HelloWorld extends Component {
                 </div>
               </div>
 
-              <div className="col-lg-3 col-xs-6">
+              <div className="col-sm-12 col-lg-3 col-xs-6">
 
                 <div className="small-box bg-blue">
                   <div className="inner">
@@ -395,7 +547,7 @@ export default class HelloWorld extends Component {
                 </div>
               </div>
 
-              <div className="col-lg-3 col-xs-6">
+              <div className="col-sm-12 col-lg-3 col-xs-6">
 
                 <div className="small-box bg-aqua">
                   <div className="inner">
@@ -410,6 +562,140 @@ export default class HelloWorld extends Component {
               </div>
             </div>
 
+
+
+
+            <section className="main dashboard">
+
+              <div className="row">
+
+                <div className="col-sm-12 col-md-12 col-lg-12">
+                  <div className="box">
+                    <div className="box-header with-border">
+                      <h3 className="box-title">As of Today Report</h3>
+
+                      {/* <div className="box-tools pull-right">
+                        <button type="button" className="btn btn-box-tool" data-widget="collapse"><i className="fa fa-minus"></i>
+                        </button>
+                        <div className="btn-group">
+                          <button type="button" className="btn btn-box-tool dropdown-toggle" data-toggle="dropdown">
+                            <i className="fa fa-wrench"></i></button>
+                          <ul className="dropdown-menu" role="menu">
+                            <li><a href="#">Action</a></li>
+                            <li><a href="#">Another action</a></li>
+                            <li><a href="#">Something else here</a></li>
+                            <li className="divider"></li>
+                            <li><a href="#">Separated link</a></li>
+                          </ul>
+                        </div>
+                        <button type="button" className="btn btn-box-tool" data-widget="remove"><i className="fa fa-times"></i></button>
+                      </div> */}
+                    </div>
+
+
+
+                    <div className="box-body">
+                      <div className="row">
+                        <div className="col-lg-8">
+                          <canvas id="showMainDashBoardReport" className="chartjs" style={{ display: "block", width: "100 ", height: "100" }}></canvas>
+
+                        </div>
+
+                        <div className="col-lg-4">
+                          <div className="progress-group">
+                            <span className="progress-text">Total Ranking Left</span>
+                            <span className="progress-number"><b>{100 - (newEmployee + exisingEmployee)}</b>/100</span>
+
+                            <div className="progress sm">
+                              <div className="progress-bar progress-bar-orange" style={{ width: "90%" }}></div>
+                            </div>
+                          </div>
+                          <div className="progress-group">
+                            <span className="progress-text">Total Augmentation Left</span>
+                            <span className="progress-number"><b>{300 - (newEmployee + exisingEmployee)}</b>/300</span>
+
+                            <div className="progress sm">
+                              <div className="progress-bar progress-bar-aqua" style={{ width: "80%" }}></div>
+                            </div>
+                          </div>
+
+                          <div className="progress-group">
+                            <span className="progress-text">Emoployee's Left</span>
+                            <span className="progress-number"><b>{400 - (newEmployee + exisingEmployee)}</b>/400</span>
+
+                            <div className="progress sm">
+                              <div className="progress-bar progress-bar-red" style={{ width: "60%" }}></div>
+                            </div>
+                          </div>
+                        </div>
+
+                      </div>
+
+
+
+                    </div>
+
+
+
+
+                    <div className="box-footer">
+                      <div className="row">
+                        <div className="col-sm-3 col-xs-6">
+                          <div className="description-block border-right">
+                            <h5 className="description-header">{newEmployee + exisingEmployee}</h5>
+                            <span className="description-text">As of Total </span>
+                          </div>
+                        </div>
+                        <div className="col-sm-3 col-xs-6">
+                          <div className="description-block border-right">
+                            {/* <span className="description-percentage text-green"><i className="fa fa-caret-up"></i> 20%</span> */}
+                            <h5 className="description-header">{newEmployee + exisingEmployee}</h5>
+                            <span className="description-text">Left for Ranking </span>
+                          </div>
+                        </div>
+                        <div className="col-sm-3 col-xs-6">
+                          <div className="description-block border-right">
+                            {/* <span className="description-percentage text-green"><i className="fa fa-caret-up"></i> 20%</span> */}
+                            <h5 className="description-header">{300 - (newEmployee + exisingEmployee)}</h5>
+                            <span className="description-text">Left for Augmentation</span>
+                          </div>
+                        </div>
+                        <div className="col-sm-3 col-xs-6">
+                          <div className="description-block">
+                            {/* <span className="description-percentage text-red"><i className="fa fa-caret-down"></i> 18%</span> */}
+                            <h5 className="description-header">{400 - (newEmployee + exisingEmployee)}</h5>
+                            <span className="description-text">Total Exmployee Left</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                  </div>
+
+
+                </div>
+
+              </div>
+
+
+
+
+
+            </section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
             <section className="Graph">
               <div className="row">
                 <div className="col-sm-12 col-lg-12 col-md-12" >
@@ -417,30 +703,23 @@ export default class HelloWorld extends Component {
                     <div className="col-md-12">
                       <h3>
                         <p className="text-center">
-                          <strong>Application: Date From - Date To</strong>
+                          <strong>Employee's Information Report</strong>
                         </p>
                       </h3>
                     </div>
-                    <div className="row">
+                  </div>
+                  <div className="row">
 
-                      <div className="col-sm-12 col-md-6 col-lg-6 " >
+                    <div className="col-sm-12 col-md-6 col-lg-6 " >
 
-                        <div className="box box-primary">
-                          <div className="box-header with-border"  >
-                            <h4><label>Application</label></h4>
-                          </div>
-                          <div className="box-body no-padding">
-                            <canvas id="showApplication" className="chartjs" style={{ display: "block", width: "100", height: "100" }}></canvas>
-                          </div>
-                          <div className="box-footer">
-                            <label>Total:<span style={{ color: "green" }}> {exisingEmployee + newEmployee + " " + converter.toWords(exisingEmployee + newEmployee)}</span></label>
-                          </div>
+                      <div className="box box-primary">
+                        <div className="box-header with-border"  >
+                          <h4><label>Application</label></h4>
                         </div>
                         <div className="box-body no-padding">
-                          <canvas id="showApplication" className="chartjs" style={{ display: "block", width: "100", height: "100" }}></canvas>
+                          <canvas id="showApplication" className="chartjs" style={{ display: "block", width: "100 ", height: "100" }}></canvas>
                         </div>
                         <div className="box-footer">
-
                           <label>Total:<span style={{ color: "green" }}> {exisingEmployee + newEmployee + " " + converter.toWords(exisingEmployee + newEmployee)}</span></label>
                         </div>
                       </div>
@@ -480,7 +759,7 @@ export default class HelloWorld extends Component {
                     <div className="col-sm-12 col-md-6 col-lg-6" >
                       <div className="box box-primary">
                         <div className="box-header with-border">
-                          <h4><label> Congressional District</label></h4>
+                          <h4><label> Congressional District</label> <button className="btn btn-primary">Show More</button></h4>
                         </div>
 
                         <div className="box-body no-padding">
@@ -610,6 +889,21 @@ export default class HelloWorld extends Component {
 
         <AppFooter />
         <div className="control-sidebar-bg"></div>
+
+        {/* MODAL FOR POLITICAL DISTRICT */}
+
+
+
+
+
+
+
+
+
+
+
+
+
       </div >
     );
 
