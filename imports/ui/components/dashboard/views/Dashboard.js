@@ -193,10 +193,10 @@ export default class HelloWorld extends Component {
 
   /* For Coloring Selecting at least 3 */
   let randomColorResult = []
-  let floatStaticReligion = 0.00
+  let floatStaticDashboard = 1.00
   for (let i = 0; i < 3; i++) {
-    floatStaticReligion += 0.253
-    var decider = d3.interpolateRainbow(floatStaticReligion)
+    floatStaticDashboard -= 0.25
+    var decider = d3.interpolateRainbow(floatStaticDashboard)
     randomColorResult.push(decider)
   }
    
@@ -206,16 +206,16 @@ export default class HelloWorld extends Component {
       labels: daysDataDashboard,
       datasets: [
         {
-          label: 'Existing',
-          data: [10, 8,20,10,20,10],
+          label: 'Newly Applicant',
+          data: [10, 8, 20, 10, 200],
           backgroundColor: randomColorResult[0]
        }, {
-          label: 'NewEmployee',
-          data: [10, 30,40,50,20,10],
+          label: 'Existing',
+          data: [10, 30, 40, 50, 200],
           backgroundColor: randomColorResult[1]
        }, {
           label: 'Left',
-          data: [40, 5,20,70,20,10],
+          data: [380, 362, 340,340,0],
           backgroundColor: randomColorResult[2]
        }
       ]
@@ -572,7 +572,7 @@ export default class HelloWorld extends Component {
                 <div className="col-sm-12 col-md-12 col-lg-12">
                   <div className="box">
                     <div className="box-header with-border">
-                      <h3 className="box-title">As of Today Report</h3>
+                      <h3 className="box-title">As of Today's EASARA Report</h3>
 
                       {/* <div className="box-tools pull-right">
                         <button type="button" className="btn btn-box-tool" data-widget="collapse"><i className="fa fa-minus"></i>
@@ -628,15 +628,8 @@ export default class HelloWorld extends Component {
                             </div>
                           </div>
                         </div>
-
                       </div>
-
-
-
                     </div>
-
-
-
 
                     <div className="box-footer">
                       <div className="row">
@@ -669,32 +662,10 @@ export default class HelloWorld extends Component {
                         </div>
                       </div>
                     </div>
-
                   </div>
-
-
                 </div>
-
               </div>
-
-
-
-
-
             </section>
-
-
-
-
-
-
-
-
-
-
-
-
-
 
             <section className="Graph">
               <div className="row">
@@ -709,9 +680,7 @@ export default class HelloWorld extends Component {
                     </div>
                   </div>
                   <div className="row">
-
                     <div className="col-sm-12 col-md-6 col-lg-6 " >
-
                       <div className="box box-primary">
                         <div className="box-header with-border"  >
                           <h4><label>Application</label></h4>
@@ -761,7 +730,6 @@ export default class HelloWorld extends Component {
                         <div className="box-header with-border">
                           <h4><label> Congressional District</label> <button className="btn btn-primary">Show More</button></h4>
                         </div>
-
                         <div className="box-body no-padding">
                           <canvas id="showCongressionalDistrict" className="chartjs" style={{ display: "block", width: "100", height: "100" }}></canvas>
                         </div>
@@ -776,17 +744,14 @@ export default class HelloWorld extends Component {
             </section>
 
             <section className="content-header"  >
-
               <div className="row" >
                 <div className="col-sm-12 col-md-6 col-lg-6" style={{ margin: "0 0 5em 0" }}>
                   <h3> <p className="text-center">
                     <strong>Places Filled </strong>
                   </p></h3>
-
                   <div className="progress-group">
                     <h4><span className="progress-text">MA-A (90%)</span>
                       <span className="progress-number"><b>190</b>/200</span></h4>
-
                     <div className="progress sm">
                       <div className="progress-bar progress-bar-aqua" style={{ width: "90%" }}></div>
                     </div>
@@ -794,16 +759,13 @@ export default class HelloWorld extends Component {
                   <div className="progress-group">
                     <h4><span className="progress-text">Matina</span>
                       <span className="progress-number"><b>310</b>/400</span></h4>
-
                     <div className="progress sm">
                       <div className="progress-bar progress-bar-red" style={{ width: "80%" }}></div>
                     </div>
                   </div>
-
                   <div className="progress-group">
                     <h4> <span className="progress-text">Lanang</span>
                       <span className="progress-number"><b>480</b>/800</span></h4>
-
                     <div className="progress sm">
                       <div className="progress-bar progress-bar-green" style={{ width: "60%" }}></div>
                     </div>
@@ -811,32 +773,26 @@ export default class HelloWorld extends Component {
                   <div className="progress-group">
                     <h4> <span className="progress-text">Laverna</span>
                       <span className="progress-number"><b>250</b>/500</span></h4>
-
                     <div className="progress sm">
                       <div className="progress-bar progress-bar-yellow" style={{ width: "50%" }}></div>
                     </div>
                   </div>
-
                   <div className="progress-group">
                     <h4> <span className="progress-text">San Pedro</span>
                       <span className="progress-number"><b>190</b>/200</span></h4>
-
                     <div className="progress sm">
                       <div className="progress-bar progress-bar-blue" style={{ width: "90%" }}></div>
                     </div>
                   </div>
-
                 </div>
 
                 <div className="col-sm-12 col-md-6 col-lg-6" >
-                  <h3>  <p className="text-center">
+                  <h3><p className="text-center">
                     <strong>Places Filled 2</strong>
                   </p></h3>
-
                   <div className="progress-group">
                     <h4><span className="progress-text">City Hall</span>
                       <span className="progress-number"><b>190</b>/200</span></h4>
-
                     <div className="progress sm">
                       <div className="progress-bar progress-bar-orange" style={{ width: "90%" }}></div>
                     </div>
@@ -844,16 +800,13 @@ export default class HelloWorld extends Component {
                   <div className="progress-group">
                     <h4> <span className="progress-text">Sanggunian Panglungsod</span>
                       <span className="progress-number"><b>310</b>/400</span></h4>
-
                     <div className="progress sm">
                       <div className="progress-bar progress-bar-aqua" style={{ width: "80%" }}></div>
                     </div>
                   </div>
-
                   <div className="progress-group">
                     <h4> <span className="progress-text">Buhangin</span>
                       <span className="progress-number"><b>480</b>/800</span></h4>
-
                     <div className="progress sm">
                       <div className="progress-bar progress-bar-red" style={{ width: "60%" }}></div>
                     </div>
@@ -861,30 +814,21 @@ export default class HelloWorld extends Component {
                   <div className="progress-group">
                     <h4><span className="progress-text">Boulevard</span>
                       <span className="progress-number"><b>250</b>/500</span></h4>
-
                     <div className="progress sm">
                       <div className="progress-bar progress-bar-yellow" style={{ width: "50%" }}></div>
                     </div>
                   </div>
-
                   <div className="progress-group">
                     <h4><span className="progress-text">Roxas</span>
                       <span className="progress-number"><b>190</b>/200</span></h4>
-
                     <div className="progress sm">
                       <div className="progress-bar progress-bar-pink" style={{ width: "90%" }}></div>
                     </div>
                   </div>
-
-
                 </div>
               </div>
             </section>
-
-
-
           </section>
-
         </div>
 
         <AppFooter />
