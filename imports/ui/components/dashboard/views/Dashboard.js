@@ -1,14 +1,21 @@
 import React, { Component } from 'react';
+import ReactTable from 'react-table';
 import 'react-confirm-alert/src/react-confirm-alert.css';
 import '../../css/app.css';
 import SideBar from '../sidebar/SideBar.js';
 import AppHeader from '../../app/AppHeader.js';
 import AppFooter from '../../app/app_footer.js';
 
+
+import PreviousIcon from '../../react-table-custom-component/PreviousComponent';
+import NextIcon from '../../react-table-custom-component/NextComponent';
+
 var converter = require('number-to-words');
 var Chart = require('chart.js');
 
 var d3 = require('d3-scale-chromatic')
+var moment = require('moment');
+
 //Component
 
 export default class HelloWorld extends Component {
@@ -34,6 +41,10 @@ export default class HelloWorld extends Component {
       colorsAvailCongressionalDistrict: [],
       update: 0,
       randomNumberGenerate: [],
+      progressBarRanking: 0.00,
+      progressBarAugmentation: 0.00,
+      progressBarRanking: 0.00,
+
     };
   }
 
@@ -52,14 +63,11 @@ export default class HelloWorld extends Component {
     this.showGender(chartData)
     this.showReligion(chartData)
     this.showCongressionalDistrict(chartData)
-    console.log("mounmt")
+    this.showPoliticalDistrict(chartData)
 
   }
 
   componentWillReceiveProps(nextProps, prevProps) {
-    console.log(prevProps)
-    console.log(nextProps)
-
     this.setState({
       data: nextProps,
       dataPrevious: prevProps,
@@ -71,6 +79,7 @@ export default class HelloWorld extends Component {
     this.showGender(nextProps.state.applicantsProfiles)
     this.showReligion(nextProps.state.applicantsProfiles)
     this.showCongressionalDistrict(nextProps.state.applicantsProfiles)
+    this.showPoliticalDistrict(nextProps.state.applicantsProfiles)
 
   }
 
@@ -168,38 +177,28 @@ export default class HelloWorld extends Component {
 
   }
   showMainDashboardReport = (data) => {
-    let male = 0
-    let female = 0
-    data.forEach(element => {
-      element.sex == "Male" ? male += 1 : female += 1
-    });
 
-    /* For getting 1st 15 days of the Month */
-    var getDateResult = new Date();
-    
     let daysDataDashboard = []
-    daysDataDashboard.length=0
-    //let addDays = 1
-    for (let i = 1; i <= 5; i++) {
-      let parseResult = new Date(getDateResult.setDate(getDateResult.getDay() + i))
-      parseResult = parseResult.toLocaleDateString('en-US', {
-        month: 'short',
-        day: 'numeric',
-        year: 'numeric',
-      })
+    daysDataDashboard.length = 0
+
+    /* DEFAULT 5 DAYS  NO VALIDATION YET*/
+    for (let i = 4; i >= 0; i--) {
+      let parseResult = moment().subtract(i, 'days')
+      parseResult = parseResult.format("MMMM DD,YYYY")
+      // parseResult = parseResult
       daysDataDashboard.push(parseResult)
     }
 
 
-  /* For Coloring Selecting at least 3 */
-  let randomColorResult = []
-  let floatStaticDashboard = 1.00
-  for (let i = 0; i < 3; i++) {
-    floatStaticDashboard -= 0.25
-    var decider = d3.interpolateRainbow(floatStaticDashboard)
-    randomColorResult.push(decider)
-  }
-   
+    /* For Coloring Selecting at least 3 */
+    let randomColorResult = []
+    let floatStaticDashboard = 1.00
+    for (let i = 0; i < 3; i++) {
+      floatStaticDashboard -= 0.25
+      var decider = d3.interpolateRainbow(floatStaticDashboard)
+      randomColorResult.push(decider)
+    }
+
     var ctx = document.getElementById('showMainDashBoardReport').getContext('2d');
     let dataChart = {
 
@@ -207,20 +206,20 @@ export default class HelloWorld extends Component {
       datasets: [
         {
           label: 'Newly Applicant',
-          data: [10, 8, 20, 10, 200],
+          data: [10, 50, 50, 200, 200],
           backgroundColor: randomColorResult[0]
-       }, {
+        }, {
           label: 'Existing',
-          data: [10, 30, 40, 50, 200],
+          data: [10, 50, 100, 100, 200],
           backgroundColor: randomColorResult[1]
-       }, {
+        }, {
           label: 'Left',
-          data: [380, 362, 340,340,0],
+          data: [380, 300, 250, 100, 0],
           backgroundColor: randomColorResult[2]
-       }
+        }
       ]
 
-     
+
     }
     let options = {
       // rotation: 1 * Math.PI,
@@ -232,9 +231,9 @@ export default class HelloWorld extends Component {
         }],
         yAxes: [{
           stacked: true,
-        
-          ticks:{
-            beginAtZero:true,
+
+          ticks: {
+            beginAtZero: true,
             suggestedMax: 400
           }
         }]
@@ -268,12 +267,7 @@ export default class HelloWorld extends Component {
       }
 
     }
-
-
-
   }
-
-
 
   showGender = (data) => {
     let male = 0
@@ -350,8 +344,6 @@ export default class HelloWorld extends Component {
     //   return !(parseInt(item) == item);
     // });
 
-    console.log(countsReligionUnique.join(","))
-
     var ctx = document.getElementById('showReligion').getContext('2d');
 
     /* Total length: filter  color: deciding../ */
@@ -403,7 +395,6 @@ export default class HelloWorld extends Component {
     }
     else {
       if ((Array.isArray(fileterReligion) && fileterReligion.length)) {
-        console.log("niagi diri")
         this.destroyChart(ctx, dataChart, type, options)
         this.createChart(ctx, dataChart, type, options)
       }
@@ -438,13 +429,11 @@ export default class HelloWorld extends Component {
           '#003f5c',
           '#d45087',
           '#003f5c',
-          '#d45087',
         ],
         borderColor: [
           '#003f5c',
           '#d45087',
           '#003f5c',
-          '#d45087',
         ],
         borderWidth: 2,
         borderColor: '#fff'
@@ -471,13 +460,112 @@ export default class HelloWorld extends Component {
 
     }
     let type = 'bar'
-    console.log(data)
     if (this.state.data !== this.state.dataPrevious) {
 
     }
     else {
       if ((Array.isArray(data) && data.length)) {
-        console.log("niagi diri")
+        this.destroyChart(ctx, dataChart, type, options)
+        this.createChart(ctx, dataChart, type, options)
+      }
+      else {
+      }
+    }
+
+
+
+  }
+  showModalViewPoliticalDistrict = () => {
+    $('#modal-show-politicalDistrict').modal({
+      backdrop: 'static',
+      keyboard: false,
+      show: true
+    })
+
+  }
+  showPoliticalDistrict = (data) => {
+
+
+    let daysDataDashboard = []
+    daysDataDashboard.length = 0
+
+    /* DEFAULT 5 DAYS  NO VALIDATION YET*/
+    for (let i = 4; i >= 0; i--) {
+      let parseResult = moment().subtract(i, 'days')
+      parseResult = parseResult.format("MMMM DD,YYYY")
+      // parseResult = parseResult
+      daysDataDashboard.push(parseResult)
+    }
+
+
+    /* For Coloring Selecting at least 3 */
+    let randomColorResult = []
+    let floatStaticDashboard = 1.00
+    for (let i = 0; i < 3; i++) {
+      floatStaticDashboard -= 0.333
+      var decider = d3.interpolateRainbow(floatStaticDashboard)
+      randomColorResult.push(decider)
+    }
+
+    var ctx = document.getElementById('showPoliticalDistrict').getContext('2d');
+    let dataChart = {
+
+      labels: ["District 1", "District 2", "District 3"],
+      datasets: [
+        {
+          label: 'District 1',
+          data: [10, 50, 50],
+          backgroundColor: randomColorResult[0]
+        }, {
+          label: 'District 2',
+          data: [10, 50, 100],
+          backgroundColor: randomColorResult[1]
+        }, {
+          label: 'District 3',
+          data: [30, 20, 40],
+          backgroundColor: randomColorResult[2]
+        }
+      ]
+
+
+    }
+    let options = {
+      // rotation: 1 * Math.PI,
+      // circumference: 1 * Math.PI,
+
+      legend: {
+        display: true,
+        labels: {
+          defaultFontSize: 14,
+          fontColor: 'black'
+          //fontColor: 'rgb(255, 99, 132)'
+        }
+      },
+
+      scales: {
+      
+        yAxes: [{
+         
+
+          ticks: {
+            beginAtZero: true,
+          }
+        }]
+      },
+      title: {
+        display: true,
+        text: 'Political District'
+      },
+      responsive: true,
+
+    }
+    let type = 'bar'
+
+    if (this.state.data !== this.state.dataPrevious) {
+
+    }
+    else {
+      if ((Array.isArray(data) && data.length)) {
         this.destroyChart(ctx, dataChart, type, options)
         this.createChart(ctx, dataChart, type, options)
       }
@@ -485,6 +573,10 @@ export default class HelloWorld extends Component {
       }
 
     }
+
+
+
+
 
 
 
@@ -496,6 +588,17 @@ export default class HelloWorld extends Component {
     const contentMinHeight = {
       minHeight: `${window.innerHeight - 101}px`,
     };
+
+
+    console.log(((100 - (newEmployee + exisingEmployee)) / 100) * 100)
+    /*For React Table */
+    const easaraMiniTable = [
+      {
+        Header: 'History (Date Application Order)',
+        Cell: c => c.row._original.first_name + " " + c.row._original.last_name,
+        // minWidth: 50,
+      }]
+
 
     return (
       <div className="wrapper">
@@ -597,7 +700,7 @@ export default class HelloWorld extends Component {
                     <div className="box-body">
                       <div className="row">
                         <div className="col-lg-8">
-                          <canvas id="showMainDashBoardReport" className="chartjs" style={{ display: "block", width: "100 ", height: "100" }}></canvas>
+                          <canvas id="showMainDashBoardReport" className="chartjs" height="150" style={{ display: "block", width: "100 ", height: "100" }}></canvas>
 
                         </div>
 
@@ -607,7 +710,7 @@ export default class HelloWorld extends Component {
                             <span className="progress-number"><b>{100 - (newEmployee + exisingEmployee)}</b>/100</span>
 
                             <div className="progress sm">
-                              <div className="progress-bar progress-bar-orange" style={{ width: "90%" }}></div>
+                              <div className="progress-bar progress-bar-orange" style={{ width: ((100 - (newEmployee + exisingEmployee)) / 100) * 100 + "%" }}></div>
                             </div>
                           </div>
                           <div className="progress-group">
@@ -615,7 +718,7 @@ export default class HelloWorld extends Component {
                             <span className="progress-number"><b>{300 - (newEmployee + exisingEmployee)}</b>/300</span>
 
                             <div className="progress sm">
-                              <div className="progress-bar progress-bar-aqua" style={{ width: "80%" }}></div>
+                              <div className="progress-bar progress-bar-aqua" style={{ width: ((300 - (newEmployee + exisingEmployee)) / 300) * 100 + "%" }}></div>
                             </div>
                           </div>
 
@@ -624,8 +727,22 @@ export default class HelloWorld extends Component {
                             <span className="progress-number"><b>{400 - (newEmployee + exisingEmployee)}</b>/400</span>
 
                             <div className="progress sm">
-                              <div className="progress-bar progress-bar-red" style={{ width: "60%" }}></div>
+                              <div className="progress-bar progress-bar-red" style={{ width: ((400 - (newEmployee + exisingEmployee)) / 400) * 100 + "%" }}></div>
                             </div>
+                          </div>
+                          <div className="dashboardtable" id="dashboardIdtable">
+                            <ReactTable
+                              className="-striped -highlight"
+                              data={this.props.state.applicantsProfiles}
+                              columns={easaraMiniTable}
+                              defaultPageSize={5}
+                              PreviousComponent={PreviousIcon}
+                              NextComponent={NextIcon}
+                              showPageSizeOptions={false}
+                              style={{
+                                height: 260,
+                              }}
+                            />
                           </div>
                         </div>
                       </div>
@@ -635,28 +752,28 @@ export default class HelloWorld extends Component {
                       <div className="row">
                         <div className="col-sm-3 col-xs-6">
                           <div className="description-block border-right">
-                            <h5 className="description-header">{newEmployee + exisingEmployee}</h5>
+                            <h5 className="description-header text-green">{newEmployee + exisingEmployee}</h5>
                             <span className="description-text">As of Total </span>
                           </div>
                         </div>
                         <div className="col-sm-3 col-xs-6">
                           <div className="description-block border-right">
                             {/* <span className="description-percentage text-green"><i className="fa fa-caret-up"></i> 20%</span> */}
-                            <h5 className="description-header">{newEmployee + exisingEmployee}</h5>
+                            <h5 className="description-header text-orange">{newEmployee + exisingEmployee}</h5>
                             <span className="description-text">Left for Ranking </span>
                           </div>
                         </div>
                         <div className="col-sm-3 col-xs-6">
                           <div className="description-block border-right">
                             {/* <span className="description-percentage text-green"><i className="fa fa-caret-up"></i> 20%</span> */}
-                            <h5 className="description-header">{300 - (newEmployee + exisingEmployee)}</h5>
+                            <h5 className="description-header text-red">{300 - (newEmployee + exisingEmployee)}</h5>
                             <span className="description-text">Left for Augmentation</span>
                           </div>
                         </div>
                         <div className="col-sm-3 col-xs-6">
                           <div className="description-block">
                             {/* <span className="description-percentage text-red"><i className="fa fa-caret-down"></i> 18%</span> */}
-                            <h5 className="description-header">{400 - (newEmployee + exisingEmployee)}</h5>
+                            <h5 className="description-header text-red">{400 - (newEmployee + exisingEmployee)}</h5>
                             <span className="description-text">Total Exmployee Left</span>
                           </div>
                         </div>
@@ -728,7 +845,7 @@ export default class HelloWorld extends Component {
                     <div className="col-sm-12 col-md-6 col-lg-6" >
                       <div className="box box-primary">
                         <div className="box-header with-border">
-                          <h4><label> Congressional District</label> <button className="btn btn-primary">Show More</button></h4>
+                          <h4><label> Congressional District</label> <button className="btn btn-primary" onClick={this.showModalViewPoliticalDistrict}>Show More</button></h4>
                         </div>
                         <div className="box-body no-padding">
                           <canvas id="showCongressionalDistrict" className="chartjs" style={{ display: "block", width: "100", height: "100" }}></canvas>
@@ -832,21 +949,35 @@ export default class HelloWorld extends Component {
         </div>
 
         <AppFooter />
-        <div className="control-sidebar-bg"></div>
+
 
         {/* MODAL FOR POLITICAL DISTRICT */}
 
 
+        <section className="modalShowingAllDetails">
+
+          <div className="modal fade" id="modal-show-politicalDistrict" role="dialog">
+            <div className="modal-dialog modal-lg">
+              <div className="modal-content">
+                <div className="modal-header cus-modal-header">
+                  <button type="button" className="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div className="modal-body">
+                  <canvas id="showPoliticalDistrict" className="chartjs" height="150" style={{ display: "block", width: "100 ", height: "100" }}></canvas>
+
+
+                </div>
+                <div className="modal-footer">
+                  <button className="btn btn-default" data-dismiss="modal">CLOSE</button>
+                </div>
+              </div>
+            </div>
+          </div>
 
 
 
 
-
-
-
-
-
-
+        </section>
 
       </div >
     );
