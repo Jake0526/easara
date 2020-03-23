@@ -7,9 +7,9 @@ import {
   ControlLabel,
   FormControl,
   FormGroup,
-  HelpBlock,
   InputGroup,
   Modal,
+  NavItem,
 } from 'react-bootstrap';
 import { GridForm, Fieldset, Row, Field } from '../../../startup/utils/react-gridforms/lib';
 import DatePicker from 'react-datepicker';
@@ -92,6 +92,7 @@ export default class ApplicationModal extends Component {
       existingPersonnel: false,
       applicantProfileId: '',
       beginDate: '',
+      existing: 0,
 
       //UPDATE
       update: false,
@@ -157,6 +158,12 @@ export default class ApplicationModal extends Component {
             ? nextProps.updateData.last_begin_date
             : ''
           : '',
+      existing:
+        nextProps.updateData != null
+          ? nextProps.updateData.existing
+            ? nextProps.updateData.existing
+            : 0
+          : 0,
     });
   }
 
@@ -360,6 +367,7 @@ export default class ApplicationModal extends Component {
           emergencyNumber,
           employeeNumber,
           beginDate,
+          existing,
         } = this.state;
         let data = {
           firstName,
@@ -389,6 +397,7 @@ export default class ApplicationModal extends Component {
           emergencyNumber,
           employeeNumber,
           beginDate,
+          existing,
         };
         Meteor.call('insert-new-applicant', data, (error, result) => {
           if (!error) {
@@ -465,7 +474,7 @@ export default class ApplicationModal extends Component {
           emergencyNumber,
           employeeNumber,
           beginDate,
-          applicantProfileId
+          applicantProfileId,
         } = this.state;
         let data = {
           firstName,
@@ -656,6 +665,7 @@ export default class ApplicationModal extends Component {
           philHealth,
           sss,
           beginDate,
+          employed,
         } = result.value;
         const {
           lastName,
@@ -693,6 +703,7 @@ export default class ApplicationModal extends Component {
           emergencyNumber: number ? number : '',
           existingPersonnel: true,
           beginDate: beginDate ? beginDate : '',
+          existing: employed ? employed : '',
         });
         const Toast = Swal.mixin({
           toast: true,
@@ -802,16 +813,9 @@ export default class ApplicationModal extends Component {
                       autoComplete="off"
                       type="text"
                       value={firstName}
-                      placeholder="Enter text"
+                      placeholder="Required"
                       onChange={e => this.handleChange(e.target.value, 'firstName')}
                     />
-                    {this.getValidationState('firstName') !== 'success' ? (
-                      <HelpBlock>Required.</HelpBlock>
-                    ) : (
-                      <HelpBlock>
-                        <i className="fa fa-check"></i>
-                      </HelpBlock>
-                    )}
                   </FormGroup>
                 </Field>
                 <Field span={1}>
@@ -825,16 +829,9 @@ export default class ApplicationModal extends Component {
                       autoComplete="off"
                       type="text"
                       value={lastName}
-                      placeholder="Enter text"
+                      placeholder="Required"
                       onChange={e => this.handleChange(e.target.value, 'lastName')}
                     />
-                    {this.getValidationState('lastName') !== 'success' ? (
-                      <HelpBlock>Required.</HelpBlock>
-                    ) : (
-                      <HelpBlock>
-                        <i className="fa fa-check"></i>
-                      </HelpBlock>
-                    )}
                   </FormGroup>
                 </Field>
                 <Field span={1}>
@@ -848,16 +845,9 @@ export default class ApplicationModal extends Component {
                       autoComplete="off"
                       type="text"
                       value={middleName}
-                      placeholder="Enter text"
+                      placeholder="Required"
                       onChange={e => this.handleChange(e.target.value, 'middleName')}
                     />
-                    {this.getValidationState('middleName') !== 'success' ? (
-                      <HelpBlock>Required.</HelpBlock>
-                    ) : (
-                      <HelpBlock>
-                        <i className="fa fa-check"></i>
-                      </HelpBlock>
-                    )}
                   </FormGroup>
                 </Field>
                 <Field span={1}>
@@ -868,7 +858,6 @@ export default class ApplicationModal extends Component {
                       autoComplete="off"
                       type="text"
                       value={maidenName}
-                      placeholder="Enter text"
                       onChange={e => this.handleChange(e.target.value, 'maidenName')}
                     />
                   </FormGroup>
@@ -883,10 +872,8 @@ export default class ApplicationModal extends Component {
                       autoComplete="off"
                       type="text"
                       value={nameExtension}
-                      placeholder="Enter text"
                       onChange={e => this.handleChange(e.target.value, 'nameExtension')}
                     />
-                    <HelpBlock style={{ color: 'white' }}>Required.</HelpBlock>
                   </FormGroup>
                 </Field>
                 <Field span={1}>
@@ -900,16 +887,9 @@ export default class ApplicationModal extends Component {
                       autoComplete="off"
                       type="text"
                       value={address}
-                      placeholder="Enter text"
+                      placeholder="Required"
                       onChange={e => this.handleChange(e.target.value, 'address')}
                     />
-                    {this.getValidationState('address') !== 'success' ? (
-                      <HelpBlock>Required.</HelpBlock>
-                    ) : (
-                      <HelpBlock>
-                        <i className="fa fa-check"></i>
-                      </HelpBlock>
-                    )}
                   </FormGroup>
                 </Field>
                 <Field span={1}>
@@ -920,10 +900,8 @@ export default class ApplicationModal extends Component {
                       autoComplete="off"
                       type="text"
                       value={phoneNumber}
-                      placeholder="Enter text"
                       onChange={e => this.handleChange(e.target.value, 'phoneNumber')}
                     />
-                    <HelpBlock style={{ color: 'white' }}>Required.</HelpBlock>
                   </FormGroup>
                 </Field>
                 <Field span={1}>
@@ -934,10 +912,8 @@ export default class ApplicationModal extends Component {
                       autoComplete="off"
                       type="text"
                       value={cellNumber}
-                      placeholder="Enter text"
                       onChange={e => this.handleChange(e.target.value, 'cellNumber')}
                     />
-                    <HelpBlock style={{ color: 'white' }}>Required.</HelpBlock>
                   </FormGroup>
                 </Field>
               </Row>
@@ -965,7 +941,6 @@ export default class ApplicationModal extends Component {
                       <option value="2">2nd</option>
                       <option value="3">3rd</option>
                     </FormControl>
-                    <HelpBlock style={{ color: 'white' }}>Hidden</HelpBlock>
                   </FormGroup>
                 </Field>
                 <Field span={1}>
@@ -993,11 +968,6 @@ export default class ApplicationModal extends Component {
                         ? thirdDistrict
                         : null}
                     </FormControl>
-                    {this.getValidationState('politicalDistrict') !== null ? (
-                      <HelpBlock>Select congressional district first.</HelpBlock>
-                    ) : (
-                      <HelpBlock style={{ color: 'white' }}>Hidden</HelpBlock>
-                    )}
                   </FormGroup>
                 </Field>
 
@@ -1009,10 +979,8 @@ export default class ApplicationModal extends Component {
                       autoComplete="off"
                       type="text"
                       value={citizenship}
-                      placeholder="Enter text"
                       onChange={e => this.handleChange(e.target.value, 'citizenship')}
                     />
-                    <HelpBlock style={{ color: 'white' }}>Hidden</HelpBlock>
                   </FormGroup>
                 </Field>
                 <Field span={1}>
@@ -1041,7 +1009,6 @@ export default class ApplicationModal extends Component {
                       </div>
                       <InputGroup.Addon className="bg-blue">🎂</InputGroup.Addon>
                     </InputGroup>
-                    <HelpBlock style={{ color: 'white' }}>Hidden</HelpBlock>
                   </FormGroup>
                 </Field>
               </Row>
@@ -1054,7 +1021,6 @@ export default class ApplicationModal extends Component {
                       autoComplete="off"
                       type="text"
                       value={birthPlace}
-                      placeholder="Enter text"
                       onChange={e => this.handleChange(e.target.value, 'birthPlace')}
                     />
                   </FormGroup>
@@ -1067,7 +1033,6 @@ export default class ApplicationModal extends Component {
                       autoComplete="off"
                       type="text"
                       value={bloodType}
-                      placeholder="Enter text"
                       onChange={e => this.handleChange(e.target.value, 'bloodType')}
                     />
                   </FormGroup>
@@ -1080,7 +1045,7 @@ export default class ApplicationModal extends Component {
                       autoComplete="off"
                       type="number"
                       value={height}
-                      placeholder="Enter height (cm.)"
+                      placeholder="cm."
                       onChange={e => this.handleChange(e.target.value, 'height')}
                     />
                   </FormGroup>
@@ -1111,7 +1076,6 @@ export default class ApplicationModal extends Component {
                       autoComplete="off"
                       type="text"
                       value={civilStatus}
-                      placeholder="Enter text"
                       onChange={e => this.handleChange(e.target.value, 'civilStatus')}
                     />
                   </FormGroup>
@@ -1124,7 +1088,6 @@ export default class ApplicationModal extends Component {
                       autoComplete="off"
                       type="text"
                       value={tin}
-                      placeholder="Enter text"
                       onChange={e => this.handleChange(e.target.value, 'tin')}
                     />
                   </FormGroup>
@@ -1137,7 +1100,6 @@ export default class ApplicationModal extends Component {
                       autoComplete="off"
                       type="text"
                       value={philHealth}
-                      placeholder="Enter text"
                       onChange={e => this.handleChange(e.target.value, 'philHealth')}
                     />
                   </FormGroup>
@@ -1150,14 +1112,12 @@ export default class ApplicationModal extends Component {
                       autoComplete="off"
                       type="text"
                       value={sss}
-                      placeholder="Enter text"
                       onChange={e => this.handleChange(e.target.value, 'sss')}
                     />
                   </FormGroup>
                 </Field>
               </Row>
             </Fieldset>
-            <br />
             <br />
             <Fieldset legend="In Case of Emergency" style={{ fontSize: '16px' }}>
               <Row span={4}>
@@ -1169,7 +1129,6 @@ export default class ApplicationModal extends Component {
                       autoComplete="off"
                       type="text"
                       value={emergencyName}
-                      placeholder="Enter text"
                       onChange={e => this.handleChange(e.target.value, 'emergencyName')}
                     />
                   </FormGroup>
@@ -1182,7 +1141,6 @@ export default class ApplicationModal extends Component {
                       autoComplete="off"
                       type="text"
                       value={emergencyRelation}
-                      placeholder="Enter text"
                       onChange={e => this.handleChange(e.target.value, 'emergencyRelation')}
                     />
                   </FormGroup>
@@ -1195,7 +1153,6 @@ export default class ApplicationModal extends Component {
                       autoComplete="off"
                       type="text"
                       value={emergencyAddress}
-                      placeholder="Enter text"
                       onChange={e => this.handleChange(e.target.value, 'emergencyAddress')}
                     />
                   </FormGroup>
@@ -1208,7 +1165,6 @@ export default class ApplicationModal extends Component {
                       autoComplete="off"
                       type="text"
                       value={emergencyNumber}
-                      placeholder="Enter text"
                       onChange={e => this.handleChange(e.target.value, 'emergencyNumber')}
                     />
                   </FormGroup>

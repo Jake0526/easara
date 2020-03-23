@@ -71,6 +71,23 @@
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F,
     U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
+
+body,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.h1,
+.h2,
+.h3,
+.h4,
+.h5,
+.h6 {
+  font-family: 'Open Sans';
+}
+
 * {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -107,6 +124,19 @@
   -ms-flex: 1 !important;
   flex: 1 !important;
 }
+
+#dashboardIdtable .-pagination{
+  display: inline-flex;
+
+ 
+
+}
+.dashboardtable .pagination-bottom{
+  text-align: center !important;
+}
+
+  
+
 
 /* AUTO SUGGESTION PACKAGE */
 .react-autosuggest__container {
@@ -302,4 +332,13 @@
 
 .ReactTable .rt-thead {
   overflow-y: scroll;
+}
+.form-group {
+  margin-bottom: 0px;
+}
+body:not(.modal-open) {
+  padding-right: 0px !important;
+}
+body:not(.modal-close) {
+  padding-right: 0px !important;
 }

@@ -1,7 +1,7 @@
 // Admin LTE variables and Mixins
-@import (reference) "variables.less";
-@import (reference) "mixins.less";
-@import (reference) "../bootstrap/mixins.import.less";
+@import (reference) 'variables.less';
+@import (reference) 'mixins.less';
+@import (reference) '../bootstrap/mixins.import.less';
 /*
  * Component: Form
  * ---------------
@@ -59,15 +59,15 @@
 
   &.has-error {
     label {
-      color: @red;
+      color: @red !important;
     }
     .form-control,
     .input-group-addon {
-      border-color: @red;
-      box-shadow: none;
+      border-color: @red !important;
+      box-shadow: none !important;
     }
     .help-block {
-      color: @red;
+      color: @red !important;
     }
   }
 }
@@ -84,7 +84,8 @@
 /* button groups */
 .btn-group-vertical {
   .btn {
-    &.btn-flat:first-of-type, &.btn-flat:last-of-type {
+    &.btn-flat:first-of-type,
+    &.btn-flat:last-of-type {
       .border-radius(0);
     }
   }
