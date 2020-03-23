@@ -41,6 +41,7 @@ export default class HelloWorld extends Component {
       colorsAvailCongressionalDistrict: [],
       update: 0,
       randomNumberGenerate: [],
+      totalRankingFilled: 0,
       progressBarRanking: 0.00,
       progressBarAugmentation: 0.00,
       progressBarRanking: 0.00,
@@ -120,6 +121,12 @@ export default class HelloWorld extends Component {
     data.forEach(element => {
       element.employee_number ? currentlyEmployed += 1 : notEmployed += 1
     });
+    let dateApplication = []
+    data.forEach(element => {
+      element.created_at ? dateApplication.push(element.created_at)  : ""
+    });
+    //console.log(dateApplication)
+    console.log(data)
     this.setState({
       newEmployee: currentlyEmployed,
       exisingEmployee: notEmployed
@@ -161,9 +168,7 @@ export default class HelloWorld extends Component {
     }
     let type = 'pie'
 
-
     if (this.state.data !== this.state.dataPrevious) {
-
     }
     else {
       if ((Array.isArray(data) && data.length)) {
@@ -172,14 +177,13 @@ export default class HelloWorld extends Component {
       }
       else {
       }
-
     }
-
   }
   showMainDashboardReport = (data) => {
 
     let daysDataDashboard = []
     daysDataDashboard.length = 0
+    
 
     /* DEFAULT 5 DAYS  NO VALIDATION YET*/
     for (let i = 4; i >= 0; i--) {
@@ -419,30 +423,34 @@ export default class HelloWorld extends Component {
 
     });
 
+    /* For Coloring Selecting at least 3 */
+    let randomColorResult = []
+    let floatStaticDashboard = 1.00
+    for (let i = 0; i < 3; i++) {
+      floatStaticDashboard -= 0.338
+      var decider = d3.interpolateRainbow(floatStaticDashboard)
+      randomColorResult.push(decider)
+    }
+
     var ctx = document.getElementById('showCongressionalDistrict').getContext('2d');
     let dataChart = {
       labels: ['District 1', 'District 2', 'District 3'],
       datasets: [{
         label: 'No. of District filtered',
         data: [congressional1, congressional2, congressional3],
-        backgroundColor: [
-          '#003f5c',
-          '#d45087',
-          '#003f5c',
-        ],
-        borderColor: [
-          '#003f5c',
-          '#d45087',
-          '#003f5c',
-        ],
+        backgroundColor: randomColorResult,
+        borderColor: randomColorResult,
         borderWidth: 2,
         borderColor: '#fff'
       }]
     }
 
     let options = {
+     
       legend: {
+        display: false,
         labels: {
+        
           // This more specific font property overrides the global property
           defaultFontSize: 14,
           fontColor: 'black'
@@ -485,56 +493,140 @@ export default class HelloWorld extends Component {
   }
   showPoliticalDistrict = (data) => {
 
+    let politicalDistrict1Container = []
+    let politicalDistrict2Container = []
+    let politicalDistrict3Container = []
 
-    let daysDataDashboard = []
-    daysDataDashboard.length = 0
+    let politicalDistrict1Value = []
+    let politicalDistrict2Value = []
+    let politicalDistrict3Value = []
 
-    /* DEFAULT 5 DAYS  NO VALIDATION YET*/
-    for (let i = 4; i >= 0; i--) {
-      let parseResult = moment().subtract(i, 'days')
-      parseResult = parseResult.format("MMMM DD,YYYY")
-      // parseResult = parseResult
-      daysDataDashboard.push(parseResult)
+    let politicalDistrict1Label = []
+    let politicalDistrict2Label = []
+    let politicalDistrict3Label = []
+
+    let finalCountLength = politicalDistrict1Value.length + politicalDistrict2Value.length + politicalDistrict3Value.length
+
+    let countsReligionUnique = []
+    data.forEach(function (element) {
+      element.religion_code !== null && element.religion_code !== "" ?
+        countsReligionUnique[element.religion_code] = (countsReligionUnique[element.religion_code] || 0) + 1 : ''
+
+    })
+    let countPolicalDistrict1Unique = []
+
+    let countPolicalDistrict2Unique = []
+
+    let countPolicalDistrict3Unique = []
+    data.forEach(element => {
+      element.congressional_district == "1" ?  countPolicalDistrict1Unique[element.political_district] = (countPolicalDistrict1Unique[element.political_district] || 0) + 1 :
+        element.congressional_district == "2" ? countPolicalDistrict2Unique[element.political_district] = (countPolicalDistrict2Unique[element.political_district] || 0) + 1 :
+          element.congressional_district == "3" ?countPolicalDistrict3Unique[element.political_district] = (countPolicalDistrict3Unique[element.political_district] || 0) + 1 : ""
+
+    });
+
+  
+    data.forEach(element => {
+      element.congressional_district == "1" ? politicalDistrict1Container.push(element.political_district) :
+        element.congressional_district == "2" ? politicalDistrict2Container.push(element.political_district) :
+          element.congressional_district == "3" ? politicalDistrict3Container.push(element.political_district) : ""
+
+    });
+    let filterPoliticalDistrict1 = [...new Set(politicalDistrict1Container)]
+
+    let filterPoliticalDistrict2 = [...new Set(politicalDistrict2Container)]
+
+    let filterPoliticalDistrict3 = [...new Set(politicalDistrict3Container)]
+
+
+    // console.log(politicalDistrict1Container)
+    // console.log(politicalDistrict2Container)
+    // console.log(politicalDistrict3Container)
+ 
+
+
+    let finalCountUniquePoliticalDistric1 = []
+
+    let finalCountUniquePoliticalDistric2 = []
+
+    let finalCountUniquePoliticalDistric3 = []
+    for (let [key, value] of Object.entries(countPolicalDistrict1Unique)) {
+      finalCountUniquePoliticalDistric1.push([value,0,0])
+    }
+    for (let [key, value] of Object.entries(countPolicalDistrict2Unique)) {
+      finalCountUniquePoliticalDistric2.push([0,value,0])
+    }
+    for (let [key, value] of Object.entries(countPolicalDistrict3Unique)) {
+      finalCountUniquePoliticalDistric3.push([0,0,value])
     }
 
+    let combinedArray1 = finalCountUniquePoliticalDistric1.concat(finalCountUniquePoliticalDistric2)
+    let combinedArray2 = combinedArray1.concat(finalCountUniquePoliticalDistric3)
 
-    /* For Coloring Selecting at least 3 */
+    let combinedArrayLabel1 = filterPoliticalDistrict1.concat(filterPoliticalDistrict2)
+    let combinedArrayLabel2 = combinedArrayLabel1.concat(filterPoliticalDistrict3)
+
+    // console.log(combinedArray1)
+    // console.log(combinedArray2)
+    // console.log(finalCountUniquePoliticalDistric1)
+    // console.log(finalCountUniquePoliticalDistric2)
+    // console.log(finalCountUniquePoliticalDistric3)
+    //console.log(combinedArray1)
+    // console.log(combinedArray2)
+    // console.log(combinedArrayLabel2)
     let randomColorResult = []
-    let floatStaticDashboard = 1.00
-    for (let i = 0; i < 3; i++) {
-      floatStaticDashboard -= 0.333
+    let floatStaticDashboard = 0.000
+    let counterAdd = 0.038
+    for (let i = 0; i < 100; i++) {
+      floatStaticDashboard += (0.040 + counterAdd)
       var decider = d3.interpolateRainbow(floatStaticDashboard)
       randomColorResult.push(decider)
     }
 
+    let finalData = []
+    if(combinedArray2.length != 0 ){
+      for(let i = 0 ; i < combinedArrayLabel2.length ; i++){
+      
+        var newObj = {
+          label: combinedArrayLabel2[i],
+          data: combinedArray2[i],
+          backgroundColor: randomColorResult[i],
+        }
+        finalData.push(newObj)
+      }
+    }
+   
+
+
+
+    // /* DEFAULT 5 DAYS  NO VALIDATION YET*/   WAY LABOT
+    // for (let i = 4; i >= 0; i--) {
+    //   let parseResult = moment().subtract(i, 'days')
+    //   parseResult = parseResult.format("MMMM DD,YYYY")
+    //   // parseResult = parseResult
+    //   daysDataDashboard.push(parseResult)
+    // }
+
+
+    /* For Coloring Selecting at least 3 */
+  
+  
+    // ANG MALI KAY WALA NA IMPLEMENT ANG POLITICAL DISTRICT
     var ctx = document.getElementById('showPoliticalDistrict').getContext('2d');
     let dataChart = {
 
-      labels: ["District 1", "District 2", "District 3"],
-      datasets: [
-        {
-          label: 'District 1',
-          data: [10, 50, 50],
-          backgroundColor: randomColorResult[0]
-        }, {
-          label: 'District 2',
-          data: [10, 50, 100],
-          backgroundColor: randomColorResult[1]
-        }, {
-          label: 'District 3',
-          data: [30, 20, 40],
-          backgroundColor: randomColorResult[2]
-        }
-      ]
-
-
+      labels:[ "District 1","District 2","District 3"],
+      datasets: finalData,
+      borderWidth: 2,
+      borderColor: '#fff'
     }
+
     let options = {
       // rotation: 1 * Math.PI,
       // circumference: 1 * Math.PI,
 
       legend: {
-        display: true,
+        display: false,
         labels: {
           defaultFontSize: 14,
           fontColor: 'black'
@@ -543,10 +635,12 @@ export default class HelloWorld extends Component {
       },
 
       scales: {
-      
+        // xAxes: [{
+        //   stacked: true
+        // }],
         yAxes: [{
          
-
+          //stacked: true,
           ticks: {
             beginAtZero: true,
           }
@@ -562,7 +656,6 @@ export default class HelloWorld extends Component {
     let type = 'bar'
 
     if (this.state.data !== this.state.dataPrevious) {
-
     }
     else {
       if ((Array.isArray(data) && data.length)) {
@@ -571,26 +664,23 @@ export default class HelloWorld extends Component {
       }
       else {
       }
-
     }
-
-
-
-
-
-
-
   }
 
 
   render() {
     const { exisingEmployee, newEmployee } = this.state
+
+    const {totalRankingFilled} = this.state
+
     const contentMinHeight = {
       minHeight: `${window.innerHeight - 101}px`,
     };
 
+    const applicantsRanking = this.state.data.state.applicantsRanking
+    //console.log(copy)
 
-    console.log(((100 - (newEmployee + exisingEmployee)) / 100) * 100)
+
     /*For React Table */
     const easaraMiniTable = [
       {
@@ -707,10 +797,10 @@ export default class HelloWorld extends Component {
                         <div className="col-lg-4">
                           <div className="progress-group">
                             <span className="progress-text">Total Ranking Left</span>
-                            <span className="progress-number"><b>{100 - (newEmployee + exisingEmployee)}</b>/100</span>
+                            <span className="progress-number"><b>{100 - (applicantsRanking.length)}</b>/100</span>
 
                             <div className="progress sm">
-                              <div className="progress-bar progress-bar-orange" style={{ width: ((100 - (newEmployee + exisingEmployee)) / 100) * 100 + "%" }}></div>
+                              <div className="progress-bar progress-bar-blue" style={{ width: ((100 - (applicantsRanking.length)) / 100) * 100 + "%" }}></div>
                             </div>
                           </div>
                           <div className="progress-group">
@@ -718,7 +808,7 @@ export default class HelloWorld extends Component {
                             <span className="progress-number"><b>{300 - (newEmployee + exisingEmployee)}</b>/300</span>
 
                             <div className="progress sm">
-                              <div className="progress-bar progress-bar-aqua" style={{ width: ((300 - (newEmployee + exisingEmployee)) / 300) * 100 + "%" }}></div>
+                              <div className="progress-bar progress-bar-yellow" style={{ width: ((300 - (newEmployee + exisingEmployee)) / 300) * 100 + "%" }}></div>
                             </div>
                           </div>
 
@@ -759,7 +849,7 @@ export default class HelloWorld extends Component {
                         <div className="col-sm-3 col-xs-6">
                           <div className="description-block border-right">
                             {/* <span className="description-percentage text-green"><i className="fa fa-caret-up"></i> 20%</span> */}
-                            <h5 className="description-header text-orange">{newEmployee + exisingEmployee}</h5>
+                            <h5 className="description-header text-orange">{applicantsRanking.length}</h5>
                             <span className="description-text">Left for Ranking </span>
                           </div>
                         </div>

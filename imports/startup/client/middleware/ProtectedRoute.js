@@ -144,6 +144,15 @@ export default class ProtectedRoute extends Component {
                 isLoad: true,
                 permissions: isLoginResult.permissions,
               });
+
+              console.log({
+                isLogin: isLoginResult.isLogin,
+                introspect: isLoginResult.introspect,
+                userinfo: isLoginResult.userinfo,
+                employeeInformation: employeeInformation,
+                isLoad: true,
+                permissions: isLoginResult.permissions
+              });
             }
           );
         } else {
