@@ -200,23 +200,21 @@ export default class HelloWorld extends Component {
         break
       }
     }
-    console.log(uniqueDays)
-    console.log(unique)
     let resultUnique = (first5days.reverse())
 
     let countUniqueData = []
     let countExistingData = []
     let countNewData = []
+    
+
+    //For PreExisting DATA
     for (let i = 0; i < resultUnique.length; i++) {
       data.forEach(element => {
         if (moment(element.created_at).format("MMMM DD,YYYY") == resultUnique[i]) {
           countNewData.push([moment(element.created_at).format("MMMM DD,YYYY"),element.existing])
         }
-
       });
     }
-   
-    console.log(countNewData)
 
     //TESTING VALUES STACKED BAR GRAPH
     let test = []
@@ -235,7 +233,6 @@ export default class HelloWorld extends Component {
       }
     
     })
-    console.log(uniqueArrays)
     //let theCount = [Object.keys(obj),Object.values(obj)];
    
     let finalbase = []
@@ -244,8 +241,7 @@ export default class HelloWorld extends Component {
     for (let [key, value] of Object.entries(obj)) {
       finalbase.push([key.slice(0,-2),key.slice(-1),value])
     }
-    console.log(finalbase)
-    console.log(resultUnique)
+
     for(let i = 0; i < resultUnique.length;i++){
       let repeat =0
       for(let j = 0; j < finalbase.length;j++){
@@ -270,15 +266,28 @@ export default class HelloWorld extends Component {
           
         }
     }
-    let resultLeft = []
+  
     //The employee left finalvalue0 or finalvalue1 length
+   
+    //Increasing Total of finalValue 0 and 1
+    let preExistingData = uniqueDays.length - countNewData.length
+    let incrementalValue1 = []
+    let incrementalValue0 = []
+    let total0= preExistingData
+    let total1 =preExistingData
+   
     for(let i = 0;i<finalvalue0.length;i++){
-      resultLeft.push(400-(finalvalue0[i]+finalvalue1[i]))
+      total0 += finalvalue0[i]
+      total1 += finalvalue1[i]
+      incrementalValue0.push(total0)
+      incrementalValue1.push(total1)
     }
-    console.log(finalvalue0)
-    console.log(finalvalue1)
-    console.log(resultLeft)
-
+    let resultLeft = []
+    let empTotal = 400
+    for(let i = 0;i<incrementalValue0.length;i++){
+      //empTotal-=
+      resultLeft.push( 400-(incrementalValue0[i]+incrementalValue1[i]))
+    }
 
     /* DEFAULT 5 DAYS  NO VALIDATION YET*/
     for (let i = 4; i >= 0; i--) {
@@ -287,7 +296,6 @@ export default class HelloWorld extends Component {
       // parseResult = parseResult
       daysDataDashboard.push(parseResult)
     }
-    console.log(daysDataDashboard)
 
     /* For Coloring Selecting at least 3 */
     let randomColorResult = []
@@ -305,11 +313,11 @@ export default class HelloWorld extends Component {
       datasets: [
         {
           label: 'Newly Applicant',
-          data: finalvalue0,
+          data: incrementalValue0,
           backgroundColor: randomColorResult[0]
         }, {
           label: 'Existing',
-          data: finalvalue1,
+          data: incrementalValue1,
           backgroundColor: randomColorResult[1]
         }, {
           label: 'Left',
