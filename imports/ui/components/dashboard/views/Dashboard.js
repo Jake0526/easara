@@ -194,8 +194,12 @@ export default class HelloWorld extends Component {
     //Get first 5 (last) days
     let first5days = []
     for (let i = unique.length - 1, j = 1; ; i--, j++) {
-
-      first5days.push(unique[i])
+      if(unique[i]==undefined){
+      }
+      else{
+        first5days.push(unique[i])
+      }
+      
       if (j == 5) {
         break
       }
@@ -1115,8 +1119,6 @@ export default class HelloWorld extends Component {
                 </div>
                 <div className="modal-body">
                   <canvas id="showPoliticalDistrict" className="chartjs" height="150" style={{ display: "block", width: "100 ", height: "100" }}></canvas>
-
-
                 </div>
                 <div className="modal-footer">
                   <button className="btn btn-default" data-dismiss="modal">CLOSE</button>
@@ -1124,10 +1126,6 @@ export default class HelloWorld extends Component {
               </div>
             </div>
           </div>
-
-
-
-
         </section>
 
       </div >
