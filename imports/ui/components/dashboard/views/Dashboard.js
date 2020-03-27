@@ -123,10 +123,9 @@ export default class HelloWorld extends Component {
     });
     let dateApplication = []
     data.forEach(element => {
-      element.created_at ? dateApplication.push(element.created_at)  : ""
+      element.created_at ? dateApplication.push(element.created_at) : ""
     });
     //console.log(dateApplication)
-    console.log(data)
     this.setState({
       newEmployee: currentlyEmployed,
       exisingEmployee: notEmployed
@@ -181,9 +180,105 @@ export default class HelloWorld extends Component {
   }
   showMainDashboardReport = (data) => {
 
+
     let daysDataDashboard = []
     daysDataDashboard.length = 0
+
+
+    let uniqueDays = []
+    data.forEach(element => {
+      uniqueDays.push(moment(element.created_at).format("MMMM DD,YYYY"))
+    })
+    let unique = [...new Set(uniqueDays)]
+
+    //Get first 5 (last) days
+    let first5days = []
+    for (let i = unique.length - 1, j = 1; ; i--, j++) {
+
+      first5days.push(unique[i])
+      if (j == 5) {
+        break
+      }
+    }
+    console.log(uniqueDays)
+    console.log(unique)
+    let resultUnique = (first5days.reverse())
+
+    let countUniqueData = []
+    let countExistingData = []
+    let countNewData = []
+    for (let i = 0; i < resultUnique.length; i++) {
+      data.forEach(element => {
+        if (moment(element.created_at).format("MMMM DD,YYYY") == resultUnique[i]) {
+          countNewData.push([moment(element.created_at).format("MMMM DD,YYYY"),element.existing])
+        }
+
+      });
+    }
+   
+    console.log(countNewData)
+
+    //TESTING VALUES STACKED BAR GRAPH
+    let test = []
+    let obj = []
+    let uniqueArrays = []
+
+
+    countNewData.forEach(val => {
+      if (test.indexOf(val.toString()) == -1) {
+        test.push(val.toString());
+        obj[val.toString()] = 1;
+        uniqueArrays.push(val);
+      } else {
+        obj[val.toString()] += 1;
+
+      }
     
+    })
+    console.log(uniqueArrays)
+    //let theCount = [Object.keys(obj),Object.values(obj)];
+   
+    let finalbase = []
+    let finalvalue0 = []
+    let finalvalue1 = []
+    for (let [key, value] of Object.entries(obj)) {
+      finalbase.push([key.slice(0,-2),key.slice(-1),value])
+    }
+    console.log(finalbase)
+    console.log(resultUnique)
+    for(let i = 0; i < resultUnique.length;i++){
+      let repeat =0
+      for(let j = 0; j < finalbase.length;j++){
+        if(resultUnique[i] ==  finalbase[j][0] ){
+          repeat+=1
+          if(finalbase[j][1]=="0"){
+            finalvalue0.push(finalbase[j][2])
+            
+          }
+          else if(finalbase[j][1]=="1"){
+            finalvalue1.push(finalbase[j][2])
+          
+          }
+        }
+      }
+        if (repeat ==1){
+          if(finalvalue0.length < finalvalue1.length){
+            finalvalue0.push(0)
+          }
+          else if(finalvalue1.length < finalvalue0.length)
+          finalvalue1.push(0)
+          
+        }
+    }
+    let resultLeft = []
+    //The employee left finalvalue0 or finalvalue1 length
+    for(let i = 0;i<finalvalue0.length;i++){
+      resultLeft.push(400-(finalvalue0[i]+finalvalue1[i]))
+    }
+    console.log(finalvalue0)
+    console.log(finalvalue1)
+    console.log(resultLeft)
+
 
     /* DEFAULT 5 DAYS  NO VALIDATION YET*/
     for (let i = 4; i >= 0; i--) {
@@ -192,7 +287,7 @@ export default class HelloWorld extends Component {
       // parseResult = parseResult
       daysDataDashboard.push(parseResult)
     }
-
+    console.log(daysDataDashboard)
 
     /* For Coloring Selecting at least 3 */
     let randomColorResult = []
@@ -206,24 +301,22 @@ export default class HelloWorld extends Component {
     var ctx = document.getElementById('showMainDashBoardReport').getContext('2d');
     let dataChart = {
 
-      labels: daysDataDashboard,
+      labels: resultUnique,
       datasets: [
         {
           label: 'Newly Applicant',
-          data: [10, 50, 50, 200, 200],
+          data: finalvalue0,
           backgroundColor: randomColorResult[0]
         }, {
           label: 'Existing',
-          data: [10, 50, 100, 100, 200],
+          data: finalvalue1,
           backgroundColor: randomColorResult[1]
         }, {
           label: 'Left',
-          data: [380, 300, 250, 100, 0],
+          data: resultLeft,
           backgroundColor: randomColorResult[2]
         }
       ]
-
-
     }
     let options = {
       // rotation: 1 * Math.PI,
@@ -260,7 +353,6 @@ export default class HelloWorld extends Component {
     let type = 'bar'
 
     if (this.state.data !== this.state.dataPrevious) {
-
     }
     else {
       if ((Array.isArray(data) && data.length)) {
@@ -269,7 +361,6 @@ export default class HelloWorld extends Component {
       }
       else {
       }
-
     }
   }
 
@@ -311,7 +402,6 @@ export default class HelloWorld extends Component {
     let type = 'doughnut'
 
     if (this.state.data !== this.state.dataPrevious) {
-
     }
     else {
       if ((Array.isArray(data) && data.length)) {
@@ -320,11 +410,7 @@ export default class HelloWorld extends Component {
       }
       else {
       }
-
     }
-
-
-
   }
 
 
@@ -390,12 +476,9 @@ export default class HelloWorld extends Component {
 
     }
 
-
     let type = 'polarArea'
 
-
     if (this.state.data !== this.state.dataPrevious) {
-
     }
     else {
       if ((Array.isArray(fileterReligion) && fileterReligion.length)) {
@@ -404,10 +487,7 @@ export default class HelloWorld extends Component {
       }
       else {
       }
-
     }
-
-
   }
 
   showCongressionalDistrict = (data) => {
@@ -446,11 +526,11 @@ export default class HelloWorld extends Component {
     }
 
     let options = {
-     
+
       legend: {
         display: false,
         labels: {
-        
+
           // This more specific font property overrides the global property
           defaultFontSize: 14,
           fontColor: 'black'
@@ -519,13 +599,13 @@ export default class HelloWorld extends Component {
 
     let countPolicalDistrict3Unique = []
     data.forEach(element => {
-      element.congressional_district == "1" ?  countPolicalDistrict1Unique[element.political_district] = (countPolicalDistrict1Unique[element.political_district] || 0) + 1 :
+      element.congressional_district == "1" ? countPolicalDistrict1Unique[element.political_district] = (countPolicalDistrict1Unique[element.political_district] || 0) + 1 :
         element.congressional_district == "2" ? countPolicalDistrict2Unique[element.political_district] = (countPolicalDistrict2Unique[element.political_district] || 0) + 1 :
-          element.congressional_district == "3" ?countPolicalDistrict3Unique[element.political_district] = (countPolicalDistrict3Unique[element.political_district] || 0) + 1 : ""
+          element.congressional_district == "3" ? countPolicalDistrict3Unique[element.political_district] = (countPolicalDistrict3Unique[element.political_district] || 0) + 1 : ""
 
     });
 
-  
+
     data.forEach(element => {
       element.congressional_district == "1" ? politicalDistrict1Container.push(element.political_district) :
         element.congressional_district == "2" ? politicalDistrict2Container.push(element.political_district) :
@@ -538,26 +618,19 @@ export default class HelloWorld extends Component {
 
     let filterPoliticalDistrict3 = [...new Set(politicalDistrict3Container)]
 
-
-    // console.log(politicalDistrict1Container)
-    // console.log(politicalDistrict2Container)
-    // console.log(politicalDistrict3Container)
- 
-
-
     let finalCountUniquePoliticalDistric1 = []
 
     let finalCountUniquePoliticalDistric2 = []
 
     let finalCountUniquePoliticalDistric3 = []
     for (let [key, value] of Object.entries(countPolicalDistrict1Unique)) {
-      finalCountUniquePoliticalDistric1.push([value,0,0])
+      finalCountUniquePoliticalDistric1.push([value, 0, 0])
     }
     for (let [key, value] of Object.entries(countPolicalDistrict2Unique)) {
-      finalCountUniquePoliticalDistric2.push([0,value,0])
+      finalCountUniquePoliticalDistric2.push([0, value, 0])
     }
     for (let [key, value] of Object.entries(countPolicalDistrict3Unique)) {
-      finalCountUniquePoliticalDistric3.push([0,0,value])
+      finalCountUniquePoliticalDistric3.push([0, 0, value])
     }
 
     let combinedArray1 = finalCountUniquePoliticalDistric1.concat(finalCountUniquePoliticalDistric2)
@@ -566,14 +639,6 @@ export default class HelloWorld extends Component {
     let combinedArrayLabel1 = filterPoliticalDistrict1.concat(filterPoliticalDistrict2)
     let combinedArrayLabel2 = combinedArrayLabel1.concat(filterPoliticalDistrict3)
 
-    // console.log(combinedArray1)
-    // console.log(combinedArray2)
-    // console.log(finalCountUniquePoliticalDistric1)
-    // console.log(finalCountUniquePoliticalDistric2)
-    // console.log(finalCountUniquePoliticalDistric3)
-    //console.log(combinedArray1)
-    // console.log(combinedArray2)
-    // console.log(combinedArrayLabel2)
     let randomColorResult = []
     let floatStaticDashboard = 0.000
     let counterAdd = 0.038
@@ -584,9 +649,9 @@ export default class HelloWorld extends Component {
     }
 
     let finalData = []
-    if(combinedArray2.length != 0 ){
-      for(let i = 0 ; i < combinedArrayLabel2.length ; i++){
-      
+    if (combinedArray2.length != 0) {
+      for (let i = 0; i < combinedArrayLabel2.length; i++) {
+
         var newObj = {
           label: combinedArrayLabel2[i],
           data: combinedArray2[i],
@@ -595,27 +660,15 @@ export default class HelloWorld extends Component {
         finalData.push(newObj)
       }
     }
-   
-
-
-
-    // /* DEFAULT 5 DAYS  NO VALIDATION YET*/   WAY LABOT
-    // for (let i = 4; i >= 0; i--) {
-    //   let parseResult = moment().subtract(i, 'days')
-    //   parseResult = parseResult.format("MMMM DD,YYYY")
-    //   // parseResult = parseResult
-    //   daysDataDashboard.push(parseResult)
-    // }
-
 
     /* For Coloring Selecting at least 3 */
-  
-  
+
+
     // ANG MALI KAY WALA NA IMPLEMENT ANG POLITICAL DISTRICT
     var ctx = document.getElementById('showPoliticalDistrict').getContext('2d');
     let dataChart = {
 
-      labels:[ "District 1","District 2","District 3"],
+      labels: ["District 1", "District 2", "District 3"],
       datasets: finalData,
       borderWidth: 2,
       borderColor: '#fff'
@@ -639,7 +692,7 @@ export default class HelloWorld extends Component {
         //   stacked: true
         // }],
         yAxes: [{
-         
+
           //stacked: true,
           ticks: {
             beginAtZero: true,
@@ -671,7 +724,7 @@ export default class HelloWorld extends Component {
   render() {
     const { exisingEmployee, newEmployee } = this.state
 
-    const {totalRankingFilled} = this.state
+    const { totalRankingFilled } = this.state
 
     const contentMinHeight = {
       minHeight: `${window.innerHeight - 101}px`,
@@ -702,7 +755,7 @@ export default class HelloWorld extends Component {
           </section>
           <section className="content body">
             <div className="row">
-              <div className="col-lg-3 col-xs-6">
+              <div className="col-sm-12 col-lg-4 col-xs-6">
 
                 <div className="small-box bg-green">
                   <div className="inner">
@@ -714,7 +767,7 @@ export default class HelloWorld extends Component {
                   </div>
                 </div>
               </div>
-              <div className="col-lg-3 col-xs-6">
+              <div className="col-sm-12 col-lg-4 col-xs-6">
                 <div className="small-box bg-aqua">
                   <div className="inner">
                     <h3>{this.state.exisingEmployee}</h3>
@@ -726,7 +779,7 @@ export default class HelloWorld extends Component {
                 </div>
               </div>
 
-              <div className="col-sm-12 col-lg-3 col-xs-6">
+              <div className="col-sm-12 col-lg-4 col-xs-6">
 
                 <div className="small-box bg-blue">
                   <div className="inner">
@@ -740,7 +793,7 @@ export default class HelloWorld extends Component {
                 </div>
               </div>
 
-              <div className="col-sm-12 col-lg-3 col-xs-6">
+              {/* <div className="col-sm-12 col-lg-3 col-xs-6">
 
                 <div className="small-box bg-aqua">
                   <div className="inner">
@@ -752,7 +805,7 @@ export default class HelloWorld extends Component {
                     <i className="fa fa-globe"></i>
                   </div>
                 </div>
-              </div>
+              </div> */}
             </div>
 
 
@@ -950,7 +1003,7 @@ export default class HelloWorld extends Component {
               </div>
             </section>
 
-            <section className="content-header"  >
+            {/* <section className="content-header"  >
               <div className="row" >
                 <div className="col-sm-12 col-md-6 col-lg-6" style={{ margin: "0 0 5em 0" }}>
                   <h3> <p className="text-center">
@@ -1034,7 +1087,7 @@ export default class HelloWorld extends Component {
                   </div>
                 </div>
               </div>
-            </section>
+            </section> */}
           </section>
         </div>
 

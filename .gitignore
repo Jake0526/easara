@@ -2,3 +2,4 @@ node_modules/
 packages/
 ./settings.json
 version.desktop
+imports/database/localConnection.js

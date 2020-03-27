@@ -1,6 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 import mysql from 'mysql';
 import mysqlssh from 'mysql-ssh';
+
 // export const hrisnp = mysql.createConnection({
 //   host: Meteor.settings.private.passport.db_host,
 //   user: 'root',
@@ -10,28 +11,22 @@ import mysqlssh from 'mysql-ssh';
 // });
 
 export const easara = (sql, callback) => {
-  const promise1 = new Promise(function(resolve, reject) {
-  resolve(mysql
-    .createConnection(
-      // {
-      //   host: '192.168.1.15',
-      //   port: '1212',
-      //   username: 'hr_devtm',
-      //   password: 'd3vgrup@HR.m0',
-      // },
+  mysqlssh
+    .connect(
       {
-        host: "127.0.0.1",
-        port: "3306",
-        user: "root",
-        password: "password",
-        database: "easara",
-        multipleStatements: true
+        host: '192.168.1.15',
+        port: '1212',
+        username: 'hr_devtm',
+        password: 'd3vgrup@HR.m0',
+      },
+      {
+        host: '172.28.0.2',
+        user: 'root',
+        password: 'secret',
+        database: 'easara',
       }
     )
-    
-  )});
-    promise1.then(client => {
-     
+    .then(client => {
       client.query(sql, (err, results, fields) => {
         callback(err, results);
         // mysqlssh.close();
@@ -42,5 +37,4 @@ export const easara = (sql, callback) => {
     });
 };
 
-
-
+// hrisnp.connect();
