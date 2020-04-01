@@ -39,7 +39,7 @@ Meteor.method(
       INNER JOIN
         applicants_profile on applicants_profile.id = applicants_ranking.applicant_profile_id
     `;
-    
+
     var fut = new Future();
 
     easara(sql, function(err, result) {
@@ -73,7 +73,7 @@ Meteor.method(
         emergency_name, emergency_relation, emergency_address, emergency_contact_number, employee_number, existing ${
           applicantData.beginDate === '' ? '' : ', last_begin_date'
         })
-      VALUES ('${addslashes(applicantData.religionCode)}' ,'${addslashes(
+      VALUES ('${addslashes(applicantData.religion)}' ,'${addslashes(
       applicantData.firstName
     )}', '${addslashes(applicantData.lastName)}', '${addslashes(applicantData.middleName)}',
       '${addslashes(applicantData.maidenName)}', '${addslashes(
@@ -135,7 +135,7 @@ Meteor.method(
 
     var sql = `
     UPDATE applicants_profile
-    SET religion_code = '${addslashes(applicantData.religionCode)}', first_name = '${addslashes(
+    SET religion_code = '${addslashes(applicantData.religion)}', first_name = '${addslashes(
       applicantData.firstName
     )}', last_name = '${addslashes(applicantData.lastName)}', middle_name = '${addslashes(
       applicantData.middleName
