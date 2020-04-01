@@ -2,10 +2,12 @@ import React from 'react';
 
 const AppFooter = () => (
   <footer className="main-footer">
-    <div className="container">
-      <b>Version 0.0.1</b>
-    </div>
-  </footer>
+  <div className="pull-right hidden-xs">
+      <b>Version</b> 0.0.1
+      </div>
+  <strong>Employment Auto-Scheduler for Applicants for Revolving and Augmentations (EASARA) © 2020 </strong> All rights
+  reserved.
+</footer>
 );
 
 export default AppFooter;

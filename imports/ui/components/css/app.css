@@ -125,6 +125,19 @@ h6,
   flex: 1 !important;
 }
 
+#dashboardIdtable .-pagination{
+  display: inline-flex;
+
+ 
+
+}
+.dashboardtable .pagination-bottom{
+  text-align: center !important;
+}
+
+  
+
+
 /* AUTO SUGGESTION PACKAGE */
 .react-autosuggest__container {
   position: relative;

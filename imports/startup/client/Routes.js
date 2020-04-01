@@ -7,6 +7,7 @@ import Ranking from '../../ui/components/dashboard/views/Ranking.js';
 
 // Middleware
 import ProtectedRoute from './middleware/ProtectedRoute.js';
+import FakeRoute from './middleware/ProtectedRoute.js';
 
 export default class Routes extends Component {
   render() {
