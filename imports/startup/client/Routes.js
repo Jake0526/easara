@@ -14,9 +14,9 @@ export default class Routes extends Component {
     return (
       <Router>
         <Switch>
-          <ProtectedRoute path="/application" name="application" component={Application} />
-          <ProtectedRoute path="/ranking" name="application" component={Ranking} />
-          <ProtectedRoute path="/" name="dashboard" component={Dashboard} />
+          <FakeRoute path="/application" name="application" component={Application} />
+          <FakeRoute path="/ranking" name="application" component={Ranking} />
+          <FakeRoute path="/" name="dashboard" component={Dashboard} />
         </Switch>
       </Router>
     );

@@ -1,5 +1,5 @@
 import { Meteor } from 'meteor/meteor';
-import { easara } from '../../database/connections.js';
+import { easara } from '../../database/localConnection.js';
 import Future from 'fibers/future';
 import { check } from 'meteor/check';
 var moment = require('moment');
