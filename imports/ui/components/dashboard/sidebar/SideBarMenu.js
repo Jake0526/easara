@@ -31,6 +31,14 @@ export default class SideBarMenu extends Component {
             <i className="fa fa-users" /> <span> Ranking </span>
           </Link>
         </li>
+
+        <li className="header"></li>
+
+        <li>
+          <a href="https://portal.hrmis.davaocity.gov.ph/">
+            <i className="fa fa-sign-out" /> <span> Back to portal  </span>
+          </a>
+        </li>
       </ul>
     );
   }
