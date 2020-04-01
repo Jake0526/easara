@@ -21,10 +21,13 @@ export default class AppHeader extends Component {
   }
 
   userDisplayName() {
-    var fullname =
-      this.employeeInfomation.employee.firstName + ' ' + this.employeeInfomation.employee.lastName;
-
-    return fullname;
+    if (this.employeeInfomation.employee.nickName) {
+      return this.employeeInfomation.employee.nickName;
+    } else {
+      return (
+        this.employeeInfomation.employee.firstName + ' ' + this.employeeInfomation.employee.lastName
+      );
+    }
   }
 
   render() {

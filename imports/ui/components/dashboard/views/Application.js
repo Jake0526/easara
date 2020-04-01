@@ -58,8 +58,8 @@ export default class Application extends Component {
       minHeight: `${window.innerHeight - 101}px`,
     };
     const { showApplicationModal, updateData, update } = this.state;
-    const { applicantsProfiles } = this.state.data.state;
- 
+    const { applicantsProfiles, religionOptions } = this.state.data.state;
+
     let reactTablePageSize = Math.floor(window.innerHeight - 220) * 0.0232;
 
     let applicantsColumn = [
@@ -232,6 +232,7 @@ export default class Application extends Component {
           show={showApplicationModal}
           toggleApplicationModal={this.toggleApplicationModal}
           selectApplicantsProfile={data.selectApplicantsProfile}
+          religionOptions={religionOptions}
           updateData={updateData}
           update={update}
         />
