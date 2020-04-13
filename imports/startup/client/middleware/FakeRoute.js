@@ -1,5 +1,5 @@
-import React, { Component } from 'react';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import React, { Component } from "react";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 
 export default class FakeRoute extends Component {
   constructor(props) {
@@ -15,16 +15,17 @@ export default class FakeRoute extends Component {
       isLoad: false,
       permissions: [],
       permissions: [],
+      settings: [],
     };
   }
 
   componentDidMount() {
     HTTP.post(
-      'http://localhost:3200/v2/graphql',
+      'http://111.125.114.29:13000/v2/graphql',
       {
         headers: {
-          'Content-Type': 'application/json',
-          Accept: 'application/json',
+          "Content-Type": "application/json",
+          Accept: "application/json",
         },
         data: {
           query:
@@ -132,44 +133,72 @@ export default class FakeRoute extends Component {
         });
       }
     );
-
+    console.log("queries will run")
     //Queries
     this.selectApplicantsProfile();
-    this.getRanking();
+   // this.getRanking();
+    //this.getSettings();
+    console.log("done")
   }
 
   selectApplicantsProfile = () => {
-    Meteor.call('select-profiles', (error, result) => {
+    Meteor.call("select-profiles", (error, result) => {
       if (!error) {
         console.log(result);
+        console.log("result")
         this.setState({
           applicantsProfiles: result,
         });
+      }
+      else{
+        console.log(error)
       }
     });
   };
 
   getRanking = () => {
-    Meteor.call('select-ranking', (error, result) => {
+    Meteor.call("select-ranking", (error, result) => {
       if (!error) {
         this.setState({
           applicantsRanking: result,
         });
       }
     });
-  }
+  };
+
+  getSettings = () => {
+    Meteor.call("select-settings", (error, result) => {
+      if (!error) {
+        this.setState({
+          settings: result,
+        });
+      }
+    });
+  };
 
   render() {
     const { component: Component, ...props } = this.props;
     if (this.state.isLoad) {
       if (this.state.isLogin) {
-        return <Route {...this} render={props => <Component {...this} />} />;
+        return <Route {...this} render={(props) => <Component {...this} />} />;
       } else if (this.state.isLogin) {
-        return <Route {...this} render={props => <Redirect to="/login"></Redirect>} />;
+        return (
+          <Route
+            {...this}
+            render={(props) => <Redirect to="/login"></Redirect>}
+          />
+        );
       }
     } else {
       return (
-        <div style={{ display: 'block', margin: '0 auto', width: '50%', textAlign: 'center' }}>
+        <div
+          style={{
+            display: "block",
+            margin: "0 auto",
+            width: "50%",
+            textAlign: "center",
+          }}
+        >
           <div className="lds-ellipsis">
             <div></div>
             <div></div>

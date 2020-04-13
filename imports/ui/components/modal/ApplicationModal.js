@@ -9,7 +9,6 @@ import {
   FormGroup,
   InputGroup,
   Modal,
-  NavItem,
 } from 'react-bootstrap';
 import { GridForm, Fieldset, Row, Field } from '../../../startup/utils/react-gridforms/lib';
 import DatePicker from 'react-datepicker';
@@ -17,7 +16,6 @@ import 'react-datepicker/dist/react-datepicker.css';
 export default class ApplicationModal extends Component {
   constructor(props) {
     super(props);
-    console.log(props);
     this.state = {
       data: props,
       lastName: '',
@@ -25,6 +23,7 @@ export default class ApplicationModal extends Component {
       middleName: '',
       maidenName: '',
       nameExtension: '',
+      religion: '',
       address: '',
       phoneNumber: '',
       cellNumber: '',
@@ -87,6 +86,9 @@ export default class ApplicationModal extends Component {
         </option>,
       ],
 
+      //RELIGION OPTIONS
+      religionOptions: props.religionOptions,
+
       //EXISTING PERSONNEL
       employeeNumber: '000000',
       existingPersonnel: false,
@@ -102,7 +104,6 @@ export default class ApplicationModal extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    console.log(nextProps.updateData);
     this.setState({
       data: nextProps,
       lastName: nextProps.updateData != null ? nextProps.updateData.last_name : '',
@@ -111,6 +112,7 @@ export default class ApplicationModal extends Component {
       maidenName: nextProps.updateData != null ? nextProps.updateData.maiden_name : '',
       nameExtension: nextProps.updateData != null ? nextProps.updateData.name_ext : '',
       address: nextProps.updateData != null ? nextProps.updateData.address : '',
+      religion: nextProps.updateData != null ? nextProps.updateData.religion_code : '',
       phoneNumber: nextProps.updateData != null ? nextProps.updateData.phone_number : '',
       cellNumber: nextProps.updateData != null ? nextProps.updateData.cell_number : '',
       politicalDistrict:
@@ -164,6 +166,7 @@ export default class ApplicationModal extends Component {
             ? nextProps.updateData.existing
             : 0
           : 0,
+      religionOptions: nextProps.religionOptions ? nextProps.religionOptions : [],
     });
   }
 
@@ -191,6 +194,10 @@ export default class ApplicationModal extends Component {
     } else if (id === 'address') {
       this.setState({
         address: value,
+      });
+    } else if (id === 'religion') {
+      this.setState({
+        religion: value,
       });
     } else if (id === 'phoneNumber') {
       this.setState({
@@ -346,6 +353,7 @@ export default class ApplicationModal extends Component {
           maidenName,
           nameExtension,
           address,
+          religion,
           phoneNumber,
           cellNumber,
           politicalDistrict,
@@ -376,6 +384,7 @@ export default class ApplicationModal extends Component {
           maidenName,
           nameExtension,
           address,
+          religion,
           phoneNumber,
           cellNumber,
           politicalDistrict,
@@ -453,6 +462,7 @@ export default class ApplicationModal extends Component {
           maidenName,
           nameExtension,
           address,
+          religion,
           phoneNumber,
           cellNumber,
           politicalDistrict,
@@ -483,6 +493,7 @@ export default class ApplicationModal extends Component {
           maidenName,
           nameExtension,
           address,
+          religion,
           phoneNumber,
           cellNumber,
           politicalDistrict,
@@ -562,7 +573,7 @@ export default class ApplicationModal extends Component {
         let getSomePromise = myVar => {
           let fetchExistingPersonnelApiData = new Promise((resolve, reject) => {
             HTTP.post(
-              '/graphqlv2',
+              'http://localhost:3000/v2/graphql',
               {
                 headers: {
                   'Content-Type': 'application/json',
@@ -614,7 +625,6 @@ export default class ApplicationModal extends Component {
                 },
               },
               (err, res) => {
-                console.log(res);
                 if (!err) {
                   let employeeInformation = JSON.parse(res.content);
                   let result_j_data = employeeInformation.data.allEmployee[0];
@@ -649,6 +659,7 @@ export default class ApplicationModal extends Component {
       if (result.value) {
         const {
           address,
+          religionCode,
           employeeNumber,
           phoneNumber,
           cellNumber,
@@ -683,6 +694,7 @@ export default class ApplicationModal extends Component {
           maidenName: maidenName ? maidenName : '',
           nameExtension: extensionName ? extensionName : '',
           address: address ? address : '',
+          religion: religionCode ? religionCode : '',
           phoneNumber: phoneNumber ? phoneNumber : '',
           cellNumber: cellNumber ? cellNumber : '',
           politicalDistrict: politicalDistrict ? politicalDistrict : '',
@@ -749,6 +761,8 @@ export default class ApplicationModal extends Component {
       middleName,
       maidenName,
       nameExtension,
+      religion,
+      religionOptions,
       address,
       phoneNumber,
       cellNumber,
@@ -788,14 +802,16 @@ export default class ApplicationModal extends Component {
       <Modal dialogClassName="custom-modal" role="document" show={show}>
         <Modal.Header>
           <Modal.Title id="contained-modal-title-lg">
-            Application Form
-            <Button
-              bsStyle="primary"
-              className="pull-right"
-              onClick={() => this.fetchExistingPersonnelData()}
-            >
-              <i className="fa fa-search" aria-hidden="true"></i> Existing Personnel
-            </Button>
+            {update ? 'Update Information' : 'Application Form'}
+            {update ? null : (
+              <Button
+                bsStyle="primary"
+                className="pull-right"
+                onClick={() => this.fetchExistingPersonnelData()}
+              >
+                <i className="fa fa-search" aria-hidden="true"></i> Existing Personnel
+              </Button>
+            )}
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
@@ -878,18 +894,18 @@ export default class ApplicationModal extends Component {
                 </Field>
                 <Field span={1}>
                   {/* ADDRESS */}
-                  <FormGroup
-                    controlId="address"
-                    validationState={this.getValidationState('address')}
-                  >
-                    <ControlLabel>6. Address</ControlLabel>
+                  <FormGroup controlId="religion">
+                    <ControlLabel>6. Religion</ControlLabel>
                     <FormControl
                       autoComplete="off"
                       type="text"
-                      value={address}
-                      placeholder="Required"
-                      onChange={e => this.handleChange(e.target.value, 'address')}
-                    />
+                      componentClass="select"
+                      value={religion}
+                      onChange={e => this.handleChange(e.target.value, 'religion')}
+                    >
+                      <option value={''}>Please Select</option>
+                      {religionOptions}
+                    </FormControl>
                   </FormGroup>
                 </Field>
                 <Field span={1}>
@@ -1113,6 +1129,24 @@ export default class ApplicationModal extends Component {
                       type="text"
                       value={sss}
                       onChange={e => this.handleChange(e.target.value, 'sss')}
+                    />
+                  </FormGroup>
+                </Field>
+              </Row>
+              <Row span={1}>
+                <Field span={1}>
+                  {/* ADDRESS */}
+                  <FormGroup
+                    controlId="address"
+                    validationState={this.getValidationState('address')}
+                  >
+                    <ControlLabel>21. Address</ControlLabel>
+                    <FormControl
+                      autoComplete="off"
+                      type="text"
+                      value={address}
+                      placeholder="Required"
+                      onChange={e => this.handleChange(e.target.value, 'address')}
                     />
                   </FormGroup>
                 </Field>

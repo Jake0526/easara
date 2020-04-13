@@ -1,7 +1,7 @@
 /* eslint-disable import/no-unresolved */
-import { Meteor } from 'meteor/meteor';
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import { Meteor } from "meteor/meteor";
+import React, { Component } from "react";
+import PropTypes from "prop-types";
 
 export default class AppHeaderUserMenu extends Component {
   constructor(props) {
@@ -23,8 +23,9 @@ export default class AppHeaderUserMenu extends Component {
       <li className="dropdown user user-menu">
         <a href="#" className="dropdown-toggle" data-toggle="dropdown">
           <img
-            src={`/image-server/${this.employeeInfomation.currentAppointment.employmentType +
-              '/' +
+            src={`/image-server/${this.employeeInfomation.currentAppointment
+              .employmentType +
+              "/" +
               this.employeeInfomation.picture}`}
             className="user-image"
             alt="User Image"
@@ -35,21 +36,24 @@ export default class AppHeaderUserMenu extends Component {
         <ul className="dropdown-menu">
           <li className="user-header">
             <img
-              src={`/image-server/${this.employeeInfomation.currentAppointment.employmentType +
-                '/' +
+              src={`/image-server/${this.employeeInfomation.currentAppointment
+                .employmentType +
+                "/" +
                 this.employeeInfomation.picture}`}
               className="img-circle"
               alt="User Image"
             />
             <p>{fullName}</p>
+            <p>
+              <small>
+                {this.employeeInfomation.currentAppointment.officeName}
+              </small>
+            </p>
           </li>
 
           <li className="user-body">
             <div className="row">
               <div className="col-xs-12 text-center">
-                <small>
-                  {this.employeeInfomation.currentAppointment.officeName} <br />
-                </small>
                 {this.employeeInfomation.currentAppointment.position}
               </div>
             </div>

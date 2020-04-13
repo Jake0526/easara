@@ -15,6 +15,7 @@ export default class ProtectedRoute extends Component {
       isLoad: false,
       permissions: [],
       permissions: [],
+      religionOptions: [],
     };
   }
 
@@ -166,6 +167,7 @@ export default class ProtectedRoute extends Component {
     );
 
     //Queries
+    this.fetchReligions();
     this.selectApplicantsProfile();
     this.getRanking();
   }
@@ -179,8 +181,41 @@ export default class ProtectedRoute extends Component {
         });
       }
     });
+  };
 
-    console.log(this.state.applicantsProfiles)
+  fetchReligions = () => {
+    HTTP.post(
+      '/graphqlv2',
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+        data: {
+          query: `{
+              religionList {
+              religionCode
+             religionName
+              }
+         }`,
+        },
+      },
+      (err, res) => {
+        let religions = JSON.parse(res.content);
+        console.log(religions.data.religionList);
+        let religionOptions = [];
+        religions.data.religionList.forEach(element => {
+          religionOptions.push(
+            <option key={element.religionCode} value={element.religionCode}>
+              {element.religionName}
+            </option>
+          );
+        });
+        this.setState({
+          religionOptions,
+        });
+      }
+    );
   };
 
   getRanking = () => {
@@ -191,7 +226,7 @@ export default class ProtectedRoute extends Component {
         });
       }
     });
-  }
+  };
 
   render() {
     const { component: Component, ...props } = this.props;

@@ -63,7 +63,6 @@ export default class HelloWorld extends Component {
     this.showMainDashboardReport(chartData)
     this.showCongressionalDistrict(chartData)
     this.showPoliticalDistrict(chartData)
-    this.showAugmentationRankingReport(chartData)
     //console.log("componentdidMount")
   }
 
@@ -80,7 +79,7 @@ export default class HelloWorld extends Component {
     this.showAgeParticipation(nextProps.state.applicantsProfiles)
     this.showCongressionalDistrict(nextProps.state.applicantsProfiles)
     this.showPoliticalDistrict(nextProps.state.applicantsProfiles)
-    this.showAugmentationRankingReport(nextProps.state.applicantsProfiles)
+
   }
 
 
@@ -94,8 +93,8 @@ export default class HelloWorld extends Component {
     Chart.defaults.global.tooltips.titleFontSize = 12
     Chart.defaults.global.tooltips.titleFontColor = '#fff'
 
-    // $(window).bind("resize", function () { myChart.resize() });
-    // myChart.update()
+    $(window).bind("resize", function () { myChart.resize() });
+    myChart.update()
 
   }
   destroyChart = (ctx, dataChart, typeChart, optionsChart) => {
@@ -104,6 +103,11 @@ export default class HelloWorld extends Component {
       data: dataChart,
       options: optionsChart
     });
+    Chart.defaults.global.defaultFontSize = 16
+    Chart.defaults.global.tooltips.titleFontSize = 12
+    Chart.defaults.global.tooltips.titleFontColor = '#fff'
+
+
     myChart.destroy()
 
   }
@@ -209,8 +213,15 @@ export default class HelloWorld extends Component {
     for (let i = 0; i < resultUnique.length; i++) {
       data.forEach(element => {
         if (moment(element.created_at).format("MMMM DD,YYYY") == resultUnique[i]) {
-          countNewData.push([moment(element.created_at).format("MMMM DD,YYYY"), element.existing])
+          if(element.employee_number == null || element.employee_number=="" ){
+            countNewData.push([moment(element.created_at).format("MMMM DD,YYYY"), 0])
+          }
+          else{
+            countNewData.push([moment(element.created_at).format("MMMM DD,YYYY"), 1])
+          }
+          
         }
+     
       });
     }
 
@@ -218,7 +229,6 @@ export default class HelloWorld extends Component {
     let test = []
     let obj = []
     let uniqueArrays = []
-
 
     countNewData.forEach(val => {
       if (test.indexOf(val.toString()) == -1) {
@@ -806,83 +816,6 @@ export default class HelloWorld extends Component {
       }
     }
   }
-  showAugmentationRankingReport = (data)=>{
-
-    var ctx = document.getElementById('showAugmentationRankingReport').getContext('2d');
-
-    let religion = []
-      data.forEach(element => {
-        element.religion_code !== null && element.religion_code !== "" ? religion.push(element.religion_code) : ''
-      });
-      let fileterReligion = [...new Set(religion)]
-  
-  
-      /*FINDING TOTAL DATA OF EACH RELIGION */
-      let countsReligionUnique = []
-      data.forEach(function (element) {
-        element.religion_code !== null && element.religion_code !== "" ?
-          countsReligionUnique[element.religion_code] = (countsReligionUnique[element.religion_code] || 0) + 1 : ''
-  
-      })
-  
-      // var filtered = countsReligionUnique.filter(function (item) {
-      //   return !(parseInt(item) == item);
-      // });
-  
-  
-      /* Total length: filter  color: deciding../ */
-  
-      let randomColorResult = []
-      let floatStaticReligion = 0.00
-      for (let i = 0; i < fileterReligion.length; i++) {
-        floatStaticReligion += 0.10
-        var decider = d3.interpolateRainbow(floatStaticReligion)
-        randomColorResult.push(decider)
-      }
-  
-      let finalCountUniqueReligion = []
-      for (let [key, value] of Object.entries(countsReligionUnique)) {
-        finalCountUniqueReligion.push(value)
-      }
-  
-      let dataChart = {
-        labels: fileterReligion,
-        fill: true,
-        datasets: [{
-          label: 'Religions',
-          data: finalCountUniqueReligion,
-          backgroundColor: randomColorResult,
-          borderColor: randomColorResult,
-          borderWidth: 2,
-          borderColor: '#fff'
-        }]
-      }
-  
-      let options = {
-        legend: {
-          labels: {
-            // This more specific font property overrides the global property
-            defaultFontSize: 14,
-            fontColor: 'black'
-          }
-        },
-        responsive: true,
-  
-      }
-  
-      let type = 'polarArea'
-  
-      if (this.state.data !== this.state.dataPrevious) {
-      }
-      else {
-        if ((Array.isArray(fileterReligion) && fileterReligion.length)) {
-          this.destroyChart(ctx, dataChart, type, options)
-          this.createChart(ctx, dataChart, type, options)
-        }
-        else {
-        }
-      }
-  }
 
 
   render() {
@@ -1141,11 +1074,11 @@ export default class HelloWorld extends Component {
                     <div className="box-body">
                       <div className="row">
                         <div className="col-lg-8">
-                          <canvas id="showAugmentationRankingReport" className="chartjs" height="150" style={{ display: "block", width: "100 ", height: "100" }}></canvas>
+                          <canvas id="showMainDashBoardReport" className="chartjs" height="150" style={{ display: "block", width: "100 ", height: "100" }}></canvas>
 
                         </div>
 
-                        {/* <div className="col-lg-4">
+                        <div className="col-lg-4">
                           <div className="progress-group">
                             <span className="progress-text">Total Ranking Left</span>
                             <span className="progress-number"><b>{(applicantsRanking.length)}</b>/100</span>
@@ -1171,7 +1104,7 @@ export default class HelloWorld extends Component {
                               <div className="progress-bar progress-bar-red" style={{ width: (((newEmployee + exisingEmployee)) / 400) * 100 + "%" }}></div>
                             </div>
                           </div>
-                        </div> */}
+                        </div>
                       </div>
                     </div>
                       <div className="box-footer">
