@@ -16,8 +16,8 @@
         "tokenURL": "https://staging.hydra.hrmis.davaocity.gov.ph/oauth2/token",
         "clientID": "portal-staging",
         "clientSecret": "portal_secrect_staging",
-        "callbackURL": "https://staging.base.hrmis.davaocity.gov.ph/callback",
-        "host": "https://staging.base.hrmis.davaocity.gov.ph",
+        "callbackURL": "http://localhost:3000/callback",
+        "host": "http://localhost:3000/",
         "scope": "portal",
         "clientName": "Portal Staging"
     }

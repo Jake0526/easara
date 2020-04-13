@@ -27,7 +27,6 @@ export default class HelloWorld extends Component {
       dataPrevious: props,
       showAge: "",
       showApplication: "",
-      showReligion: "",
       showGender: "",
       showPoliticalDistrict: "",
       exisingEmployee: 0,
@@ -60,12 +59,12 @@ export default class HelloWorld extends Component {
 
     let chartData = this.state.data.state.applicantsProfiles
     this.showApplication(chartData)
+    this.showAgeParticipation(chartData)
     this.showMainDashboardReport(chartData)
-    this.showGender(chartData)
-    this.showReligion(chartData)
     this.showCongressionalDistrict(chartData)
     this.showPoliticalDistrict(chartData)
-
+    this.showAugmentationRankingReport(chartData)
+    //console.log("componentdidMount")
   }
 
   componentWillReceiveProps(nextProps, prevProps) {
@@ -75,13 +74,13 @@ export default class HelloWorld extends Component {
       applicantsProfiles: nextProps,
     });
 
+
     this.showApplication(nextProps.state.applicantsProfiles)
     this.showMainDashboardReport(nextProps.state.applicantsProfiles)
-    this.showGender(nextProps.state.applicantsProfiles)
-    this.showReligion(nextProps.state.applicantsProfiles)
+    this.showAgeParticipation(nextProps.state.applicantsProfiles)
     this.showCongressionalDistrict(nextProps.state.applicantsProfiles)
     this.showPoliticalDistrict(nextProps.state.applicantsProfiles)
-
+    this.showAugmentationRankingReport(nextProps.state.applicantsProfiles)
   }
 
 
@@ -95,8 +94,8 @@ export default class HelloWorld extends Component {
     Chart.defaults.global.tooltips.titleFontSize = 12
     Chart.defaults.global.tooltips.titleFontColor = '#fff'
 
-    $(window).bind("resize", function () { myChart.resize() });
-    myChart.update()
+    // $(window).bind("resize", function () { myChart.resize() });
+    // myChart.update()
 
   }
   destroyChart = (ctx, dataChart, typeChart, optionsChart) => {
@@ -105,11 +104,6 @@ export default class HelloWorld extends Component {
       data: dataChart,
       options: optionsChart
     });
-    Chart.defaults.global.defaultFontSize = 16
-    Chart.defaults.global.tooltips.titleFontSize = 12
-    Chart.defaults.global.tooltips.titleFontColor = '#fff'
-
-
     myChart.destroy()
 
   }
@@ -127,8 +121,8 @@ export default class HelloWorld extends Component {
     });
     //console.log(dateApplication)
     this.setState({
-      newEmployee: currentlyEmployed,
-      exisingEmployee: notEmployed
+      newEmployee: notEmployed,
+      exisingEmployee: currentlyEmployed
     })
     let randomColorResultApplication = []
     randomColorResultApplication.length = 0
@@ -194,12 +188,12 @@ export default class HelloWorld extends Component {
     //Get first 5 (last) days
     let first5days = []
     for (let i = unique.length - 1, j = 1; ; i--, j++) {
-      if(unique[i]==undefined){
+      if (unique[i] == undefined) {
       }
-      else{
+      else {
         first5days.push(unique[i])
       }
-      
+
       if (j == 5) {
         break
       }
@@ -209,13 +203,13 @@ export default class HelloWorld extends Component {
     let countUniqueData = []
     let countExistingData = []
     let countNewData = []
-    
+
 
     //For PreExisting DATA
     for (let i = 0; i < resultUnique.length; i++) {
       data.forEach(element => {
         if (moment(element.created_at).format("MMMM DD,YYYY") == resultUnique[i]) {
-          countNewData.push([moment(element.created_at).format("MMMM DD,YYYY"),element.existing])
+          countNewData.push([moment(element.created_at).format("MMMM DD,YYYY"), element.existing])
         }
       });
     }
@@ -235,52 +229,52 @@ export default class HelloWorld extends Component {
         obj[val.toString()] += 1;
 
       }
-    
+
     })
     //let theCount = [Object.keys(obj),Object.values(obj)];
-   
+
     let finalbase = []
     let finalvalue0 = []
     let finalvalue1 = []
     for (let [key, value] of Object.entries(obj)) {
-      finalbase.push([key.slice(0,-2),key.slice(-1),value])
+      finalbase.push([key.slice(0, -2), key.slice(-1), value])
     }
 
-    for(let i = 0; i < resultUnique.length;i++){
-      let repeat =0
-      for(let j = 0; j < finalbase.length;j++){
-        if(resultUnique[i] ==  finalbase[j][0] ){
-          repeat+=1
-          if(finalbase[j][1]=="0"){
+    for (let i = 0; i < resultUnique.length; i++) {
+      let repeat = 0
+      for (let j = 0; j < finalbase.length; j++) {
+        if (resultUnique[i] == finalbase[j][0]) {
+          repeat += 1
+          if (finalbase[j][1] == "0") {
             finalvalue0.push(finalbase[j][2])
-            
+
           }
-          else if(finalbase[j][1]=="1"){
+          else if (finalbase[j][1] == "1") {
             finalvalue1.push(finalbase[j][2])
-          
+
           }
         }
       }
-        if (repeat ==1){
-          if(finalvalue0.length < finalvalue1.length){
-            finalvalue0.push(0)
-          }
-          else if(finalvalue1.length < finalvalue0.length)
-          finalvalue1.push(0)
-          
+      if (repeat == 1) {
+        if (finalvalue0.length < finalvalue1.length) {
+          finalvalue0.push(0)
         }
+        else if (finalvalue1.length < finalvalue0.length)
+          finalvalue1.push(0)
+
+      }
     }
-  
+
     //The employee left finalvalue0 or finalvalue1 length
-   
+
     //Increasing Total of finalValue 0 and 1
     let preExistingData = uniqueDays.length - countNewData.length
     let incrementalValue1 = []
     let incrementalValue0 = []
-    let total0= preExistingData
-    let total1 =preExistingData
-   
-    for(let i = 0;i<finalvalue0.length;i++){
+    let total0 = preExistingData
+    let total1 = preExistingData
+
+    for (let i = 0; i < finalvalue0.length; i++) {
       total0 += finalvalue0[i]
       total1 += finalvalue1[i]
       incrementalValue0.push(total0)
@@ -288,9 +282,9 @@ export default class HelloWorld extends Component {
     }
     let resultLeft = []
     let empTotal = 400
-    for(let i = 0;i<incrementalValue0.length;i++){
+    for (let i = 0; i < incrementalValue0.length; i++) {
       //empTotal-=
-      resultLeft.push( 400-(incrementalValue0[i]+incrementalValue1[i]))
+      resultLeft.push(400 - (incrementalValue0[i] + incrementalValue1[i]))
     }
 
     /* DEFAULT 5 DAYS  NO VALIDATION YET*/
@@ -332,7 +326,13 @@ export default class HelloWorld extends Component {
     }
     let options = {
       // rotation: 1 * Math.PI,
-      // circumference: 1 * Math.PI,
+      // circumference: 1 * Math.PI,tooltips: {
+      tooltips: {
+        mode: 'index',
+      },
+      hover: {
+        mode: 'index'
+      },
 
       scales: {
         xAxes: [{
@@ -357,7 +357,7 @@ export default class HelloWorld extends Component {
       },
       title: {
         display: true,
-        text: 'Test Graph'
+        text: 'Test Incremental day Graph'
       },
       responsive: true,
 
@@ -376,42 +376,114 @@ export default class HelloWorld extends Component {
     }
   }
 
-  showGender = (data) => {
+  showAgeParticipation = (data) => {
+    console.log("niagi diri")
+    let baseYear = new Date()
+    baseYear = (baseYear.getFullYear())
     let male = 0
     let female = 0
     data.forEach(element => {
       element.sex == "Male" ? male += 1 : female += 1
     });
-    var ctx = document.getElementById('showGender').getContext('2d');
+    let birthdates = []
+    let category1 = 0
+    let category2 = 0
+    let category3 = 0
+    let category4 = 0
+    let category5 = 0
+    let category6 = 0
+    data.forEach(element => {
+      let age_employee = baseYear - parseInt(moment(element.birth_date).format('YYYY'))
+
+      if (age_employee >= 18 && age_employee <= 20) {
+        category1 += 1
+      }
+      else if (age_employee >= 21 && age_employee <= 30) {
+        category2 += 1
+      }
+      else if (age_employee >= 31 && age_employee <= 40) {
+        category3 += 1
+      }
+      else if (age_employee >= 41 && age_employee <= 50) {
+        category4 += 1
+      }
+
+      else if (age_employee >= 51 && age_employee <= 60) {
+        category5 += 1
+      }
+
+      else if (age_employee >= 61) {
+        category6 += 1
+      }
+
+    });
+    let randomColorResult = []
+    let floatStaticAge = 0.00
+    for (let i = 0; i < 6; i++) {
+      floatStaticAge += 0.144
+      var decider = d3.interpolateRainbow(floatStaticAge)
+      randomColorResult.push(decider)
+    }
+
+    let defaultlabels = ['18-20 years old', '21-30 years old', '31-40 years old', '41-50 years old', '51-60 years old', '61 years old & above']
+    let defaultdata = [category1, category2, category3, category4, category5, category6]
+
+    // let finalDataAge = []
+
+    // for (let i = 0; i < 6; i++) {
+
+    //   var newObj = {
+    //     label: defaultlabels[i],
+    //     data: defaultdata[i],
+    //     backgroundColor: randomColorResult[i],
+    //   }
+    //     finalDataAge.push(newObj)
+    // }
+    // console.log(finalDataAge)
+    // console.log(defaultdata)
+
+    var ctx = document.getElementById('showAgeParticipation').getContext('2d');
     let dataChart = {
-      labels: ['Male', 'Female'],
+      labels: defaultlabels,
+      fill: true,
       datasets: [{
-        label: '# of Male and Female',
-        data: [male, female],
-        backgroundColor: [
-          '#003f5c',
-          '#d45087',
-        ],
-        borderColor: [
-          '#003f5c',
-          '#d45087',
-        ],
-        borderWidth: 2,
+        label: 'Found',
+        data: defaultdata,
+        backgroundColor: randomColorResult,
+        borderColor: randomColorResult,
+        borderWidth: 1,
         borderColor: '#fff'
       }]
     }
     let options = {
       legend: {
+        display: false,
         labels: {
           // This more specific font property overrides the global property
+
           defaultFontSize: 14,
           fontColor: 'black'
         }
       },
+      scales: {
+        xAxes: [{
+          ticks: {
+            beginAtZero: true,
+            precision: 0,
+            suggestedMax: 10,
+            // userCallback: function(label, index, labels){
+            //   if(Math.floor(label) === label){
+            //     return label
+            //   }
+            // }
+          }
+        }]
+      },
       responsive: true,
 
+
     }
-    let type = 'doughnut'
+    let type = 'horizontalBar'
 
     if (this.state.data !== this.state.dataPrevious) {
     }
@@ -426,81 +498,81 @@ export default class HelloWorld extends Component {
   }
 
 
-  showReligion = (data) => {
-    let religion = []
-    data.forEach(element => {
-      element.religion_code !== null && element.religion_code !== "" ? religion.push(element.religion_code) : ''
-    });
-    let fileterReligion = [...new Set(religion)]
+  // showReligion = (data) => {
+  //   let religion = []
+  //   data.forEach(element => {
+  //     element.religion_code !== null && element.religion_code !== "" ? religion.push(element.religion_code) : ''
+  //   });
+  //   let fileterReligion = [...new Set(religion)]
 
 
-    /*FINDING TOTAL DATA OF EACH RELIGION */
-    let countsReligionUnique = []
-    data.forEach(function (element) {
-      element.religion_code !== null && element.religion_code !== "" ?
-        countsReligionUnique[element.religion_code] = (countsReligionUnique[element.religion_code] || 0) + 1 : ''
+  //   /*FINDING TOTAL DATA OF EACH RELIGION */
+  //   let countsReligionUnique = []
+  //   data.forEach(function (element) {
+  //     element.religion_code !== null && element.religion_code !== "" ?
+  //       countsReligionUnique[element.religion_code] = (countsReligionUnique[element.religion_code] || 0) + 1 : ''
 
-    })
+  //   })
 
-    // var filtered = countsReligionUnique.filter(function (item) {
-    //   return !(parseInt(item) == item);
-    // });
+  //   // var filtered = countsReligionUnique.filter(function (item) {
+  //   //   return !(parseInt(item) == item);
+  //   // });
 
-    var ctx = document.getElementById('showReligion').getContext('2d');
+  //   var ctx = document.getElementById('showReligion').getContext('2d');
 
-    /* Total length: filter  color: deciding../ */
+  //   /* Total length: filter  color: deciding../ */
 
-    let randomColorResult = []
-    let floatStaticReligion = 0.00
-    for (let i = 0; i < fileterReligion.length; i++) {
-      floatStaticReligion += 0.10
-      var decider = d3.interpolateRainbow(floatStaticReligion)
-      randomColorResult.push(decider)
-    }
+  //   let randomColorResult = []
+  //   let floatStaticReligion = 0.00
+  //   for (let i = 0; i < fileterReligion.length; i++) {
+  //     floatStaticReligion += 0.10
+  //     var decider = d3.interpolateRainbow(floatStaticReligion)
+  //     randomColorResult.push(decider)
+  //   }
 
-    let finalCountUniqueReligion = []
-    for (let [key, value] of Object.entries(countsReligionUnique)) {
-      finalCountUniqueReligion.push(value)
-    }
+  //   let finalCountUniqueReligion = []
+  //   for (let [key, value] of Object.entries(countsReligionUnique)) {
+  //     finalCountUniqueReligion.push(value)
+  //   }
 
-    let dataChart = {
-      labels: fileterReligion,
-      fill: true,
-      datasets: [{
-        label: 'Religions',
-        data: finalCountUniqueReligion,
-        backgroundColor: randomColorResult,
-        borderColor: randomColorResult,
-        borderWidth: 2,
-        borderColor: '#fff'
-      }]
-    }
+  //   let dataChart = {
+  //     labels: fileterReligion,
+  //     fill: true,
+  //     datasets: [{
+  //       label: 'Religions',
+  //       data: finalCountUniqueReligion,
+  //       backgroundColor: randomColorResult,
+  //       borderColor: randomColorResult,
+  //       borderWidth: 2,
+  //       borderColor: '#fff'
+  //     }]
+  //   }
 
-    let options = {
-      legend: {
-        labels: {
-          // This more specific font property overrides the global property
-          defaultFontSize: 14,
-          fontColor: 'black'
-        }
-      },
-      responsive: true,
+  //   let options = {
+  //     legend: {
+  //       labels: {
+  //         // This more specific font property overrides the global property
+  //         defaultFontSize: 14,
+  //         fontColor: 'black'
+  //       }
+  //     },
+  //     responsive: true,
 
-    }
+  //   }
 
-    let type = 'polarArea'
+  //   let type = 'polarArea'
 
-    if (this.state.data !== this.state.dataPrevious) {
-    }
-    else {
-      if ((Array.isArray(fileterReligion) && fileterReligion.length)) {
-        this.destroyChart(ctx, dataChart, type, options)
-        this.createChart(ctx, dataChart, type, options)
-      }
-      else {
-      }
-    }
-  }
+  //   if (this.state.data !== this.state.dataPrevious) {
+  //   }
+  //   else {
+  //     if ((Array.isArray(fileterReligion) && fileterReligion.length)) {
+  //       this.destroyChart(ctx, dataChart, type, options)
+  //       this.createChart(ctx, dataChart, type, options)
+  //     }
+  //     else {
+  //     }
+  //   }
+  // }
 
   showCongressionalDistrict = (data) => {
 
@@ -552,7 +624,13 @@ export default class HelloWorld extends Component {
       scales: {
         yAxes: [{
           ticks: {
-            beginAtZero: true
+            beginAtZero: true,
+            precision: 0,
+            // userCallback: function(label, index, labels){
+            //   if(Math.floor(label) === label){
+            //     return label
+            //   }
+            // }
           }
         }]
       },
@@ -592,10 +670,6 @@ export default class HelloWorld extends Component {
     let politicalDistrict1Value = []
     let politicalDistrict2Value = []
     let politicalDistrict3Value = []
-
-    let politicalDistrict1Label = []
-    let politicalDistrict2Label = []
-    let politicalDistrict3Label = []
 
     let finalCountLength = politicalDistrict1Value.length + politicalDistrict2Value.length + politicalDistrict3Value.length
 
@@ -708,6 +782,7 @@ export default class HelloWorld extends Component {
           //stacked: true,
           ticks: {
             beginAtZero: true,
+            precision: 0,
           }
         }]
       },
@@ -731,6 +806,83 @@ export default class HelloWorld extends Component {
       }
     }
   }
+  showAugmentationRankingReport = (data)=>{
+
+    var ctx = document.getElementById('showAugmentationRankingReport').getContext('2d');
+
+    let religion = []
+      data.forEach(element => {
+        element.religion_code !== null && element.religion_code !== "" ? religion.push(element.religion_code) : ''
+      });
+      let fileterReligion = [...new Set(religion)]
+  
+  
+      /*FINDING TOTAL DATA OF EACH RELIGION */
+      let countsReligionUnique = []
+      data.forEach(function (element) {
+        element.religion_code !== null && element.religion_code !== "" ?
+          countsReligionUnique[element.religion_code] = (countsReligionUnique[element.religion_code] || 0) + 1 : ''
+  
+      })
+  
+      // var filtered = countsReligionUnique.filter(function (item) {
+      //   return !(parseInt(item) == item);
+      // });
+  
+  
+      /* Total length: filter  color: deciding../ */
+  
+      let randomColorResult = []
+      let floatStaticReligion = 0.00
+      for (let i = 0; i < fileterReligion.length; i++) {
+        floatStaticReligion += 0.10
+        var decider = d3.interpolateRainbow(floatStaticReligion)
+        randomColorResult.push(decider)
+      }
+  
+      let finalCountUniqueReligion = []
+      for (let [key, value] of Object.entries(countsReligionUnique)) {
+        finalCountUniqueReligion.push(value)
+      }
+  
+      let dataChart = {
+        labels: fileterReligion,
+        fill: true,
+        datasets: [{
+          label: 'Religions',
+          data: finalCountUniqueReligion,
+          backgroundColor: randomColorResult,
+          borderColor: randomColorResult,
+          borderWidth: 2,
+          borderColor: '#fff'
+        }]
+      }
+  
+      let options = {
+        legend: {
+          labels: {
+            // This more specific font property overrides the global property
+            defaultFontSize: 14,
+            fontColor: 'black'
+          }
+        },
+        responsive: true,
+  
+      }
+  
+      let type = 'polarArea'
+  
+      if (this.state.data !== this.state.dataPrevious) {
+      }
+      else {
+        if ((Array.isArray(fileterReligion) && fileterReligion.length)) {
+          this.destroyChart(ctx, dataChart, type, options)
+          this.createChart(ctx, dataChart, type, options)
+        }
+        else {
+        }
+      }
+  }
 
 
   render() {
@@ -743,14 +895,33 @@ export default class HelloWorld extends Component {
     };
 
     const applicantsRanking = this.state.data.state.applicantsRanking
-    //console.log(copy)
 
 
     /*For React Table */
     const easaraMiniTable = [
+
       {
         Header: 'History (Date Application Order)',
-        Cell: c => c.row._original.first_name + " " + c.row._original.last_name,
+        className: 'center',
+        columns: [{
+
+          Header: 'Name',
+          minWidth: 25,
+          className: 'center',
+          headerClassName: 'wordwrap',
+          style: { whiteSpace: 'unset' },
+          Cell: c => c.row._original.first_name + " " + c.row._original.last_name,
+        }, {
+
+          Header: 'Date Applied',
+          minWidth: 25,
+          className: 'center',
+          headerClassName: 'wordwrap',
+          style: { whiteSpace: 'unset' },
+          Cell: c => moment(c.row._original.created_at).format("MMMM DD, YYYY hh:mm a"),
+        },
+        ],
+
         // minWidth: 50,
       }]
 
@@ -862,10 +1033,10 @@ export default class HelloWorld extends Component {
                         <div className="col-lg-4">
                           <div className="progress-group">
                             <span className="progress-text">Total Ranking Left</span>
-                            <span className="progress-number"><b>{100 - (applicantsRanking.length)}</b>/100</span>
+                            <span className="progress-number"><b>{(applicantsRanking.length)}</b>/100</span>
 
                             <div className="progress sm">
-                              <div className="progress-bar progress-bar-blue" style={{ width: ((100 - (applicantsRanking.length)) / 100) * 100 + "%" }}></div>
+                              <div className="progress-bar progress-bar-blue" style={{ width: (((applicantsRanking.length)) / 100) * 100 + "%" }}></div>
                             </div>
                           </div>
                           <div className="progress-group">
@@ -873,7 +1044,7 @@ export default class HelloWorld extends Component {
                             <span className="progress-number"><b>{300 - (newEmployee + exisingEmployee)}</b>/300</span>
 
                             <div className="progress sm">
-                              <div className="progress-bar progress-bar-yellow" style={{ width: ((300 - (newEmployee + exisingEmployee)) / 300) * 100 + "%" }}></div>
+                              <div className="progress-bar progress-bar-yellow" style={{ width: (((newEmployee + exisingEmployee)) / 300) * 100 + "%" }}></div>
                             </div>
                           </div>
 
@@ -882,7 +1053,7 @@ export default class HelloWorld extends Component {
                             <span className="progress-number"><b>{400 - (newEmployee + exisingEmployee)}</b>/400</span>
 
                             <div className="progress sm">
-                              <div className="progress-bar progress-bar-red" style={{ width: ((400 - (newEmployee + exisingEmployee)) / 400) * 100 + "%" }}></div>
+                              <div className="progress-bar progress-bar-red" style={{ width: (((newEmployee + exisingEmployee)) / 400) * 100 + "%" }}></div>
                             </div>
                           </div>
                           <div className="dashboardtable" id="dashboardIdtable">
@@ -914,7 +1085,7 @@ export default class HelloWorld extends Component {
                         <div className="col-sm-3 col-xs-6">
                           <div className="description-block border-right">
                             {/* <span className="description-percentage text-green"><i className="fa fa-caret-up"></i> 20%</span> */}
-                            <h5 className="description-header text-orange">{applicantsRanking.length}</h5>
+                            <h5 className="description-header text-orange">{100 - (applicantsRanking.length)}</h5>
                             <span className="description-text">Left for Ranking </span>
                           </div>
                         </div>
@@ -934,6 +1105,91 @@ export default class HelloWorld extends Component {
                         </div>
                       </div>
                     </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section className="AugmentationRankingReport" >
+              <div className="row">
+
+                <div className="col-sm-12 col-md-12 col-lg-12">
+                  <div className="box" style={{height: '80vh'}}>
+                    <div className="box-header with-border" >
+                      <h3 className="box-title">Augmentation & Ranking Report</h3>
+
+                      {/* <div className="box-tools pull-right">
+        <button type="button" className="btn btn-box-tool" data-widget="collapse"><i className="fa fa-minus"></i>
+        </button>
+        <div className="btn-group">
+          <button type="button" className="btn btn-box-tool dropdown-toggle" data-toggle="dropdown">
+            <i className="fa fa-wrench"></i></button>
+          <ul className="dropdown-menu" role="menu">
+            <li><a href="#">Action</a></li>
+            <li><a href="#">Another action</a></li>
+            <li><a href="#">Something else here</a></li>
+            <li className="divider"></li>
+            <li><a href="#">Separated link</a></li>
+          </ul>
+        </div>
+        <button type="button" className="btn btn-box-tool" data-widget="remove"><i className="fa fa-times"></i></button>
+      </div> */}
+                    </div>
+
+
+
+                    <div className="box-body">
+                      <div className="row">
+                        <div className="col-lg-8">
+                          <canvas id="showAugmentationRankingReport" className="chartjs" height="150" style={{ display: "block", width: "100 ", height: "100" }}></canvas>
+
+                        </div>
+
+                        {/* <div className="col-lg-4">
+                          <div className="progress-group">
+                            <span className="progress-text">Total Ranking Left</span>
+                            <span className="progress-number"><b>{(applicantsRanking.length)}</b>/100</span>
+
+                            <div className="progress sm">
+                              <div className="progress-bar progress-bar-blue" style={{ width: (((applicantsRanking.length)) / 100) * 100 + "%" }}></div>
+                            </div>
+                          </div>
+                          <div className="progress-group">
+                            <span className="progress-text">Total Augmentation Left</span>
+                            <span className="progress-number"><b>{300 - (newEmployee + exisingEmployee)}</b>/300</span>
+
+                            <div className="progress sm">
+                              <div className="progress-bar progress-bar-yellow" style={{ width: (((newEmployee + exisingEmployee)) / 300) * 100 + "%" }}></div>
+                            </div>
+                          </div>
+
+                          <div className="progress-group">
+                            <span className="progress-text">Emoployee's Left</span>
+                            <span className="progress-number"><b>{400 - (newEmployee + exisingEmployee)}</b>/400</span>
+
+                            <div className="progress sm">
+                              <div className="progress-bar progress-bar-red" style={{ width: (((newEmployee + exisingEmployee)) / 400) * 100 + "%" }}></div>
+                            </div>
+                          </div>
+                        </div> */}
+                      </div>
+                    </div>
+                      <div className="box-footer">
+                      <div className="dashboardtable" id="dashboardIdtable">
+                            <ReactTable
+                              className="-striped -highlight"
+                              data={this.props.state.applicantsProfiles}
+                              columns={easaraMiniTable}
+                              defaultPageSize={5}
+                              PreviousComponent={PreviousIcon}
+                              NextComponent={NextIcon}
+                              showPageSizeOptions={false}
+                              style={{
+                                height: 260,
+                              }}
+                            />
+                          </div>
+                      </div>
                   </div>
                 </div>
               </div>
@@ -969,10 +1225,10 @@ export default class HelloWorld extends Component {
                     <div className="col-sm-12 col-md-6 col-lg-6">
                       <div className="box box-primary">
                         <div className="box-header with-border">
-                          <h4><label> Gender</label></h4>
+                          <h4><label> Age Participation</label></h4>
                         </div>
                         <div className="box-body no-padding">
-                          <canvas id="showGender" className="chartjs" style={{ display: "block", width: "100", height: "100" }}></canvas>
+                          <canvas id="showAgeParticipation" className="chartjs" style={{ display: "block", width: "100", height: "100" }}></canvas>
                         </div>
                         <div className="box-footer">
 
@@ -983,7 +1239,7 @@ export default class HelloWorld extends Component {
                   </div>
 
                   <div className="row" >
-                    <div className="col-sm-12 col-md-6 col-lg-6" >
+                    {/* <div className="col-sm-12 col-md-6 col-lg-6" >
                       <div className="box box-primary">
                         <div className="box-header with-border">
                           <h4><label> Religion</label></h4>
@@ -995,7 +1251,7 @@ export default class HelloWorld extends Component {
                           <label>Total:<span style={{ color: "green" }}> {exisingEmployee + newEmployee + " " + converter.toWords(exisingEmployee + newEmployee)}</span></label>
                         </div>
                       </div>
-                    </div>
+                    </div> */}
 
                     <div className="col-sm-12 col-md-6 col-lg-6" >
                       <div className="box box-primary">

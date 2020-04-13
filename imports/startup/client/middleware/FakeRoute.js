@@ -20,7 +20,7 @@ export default class FakeRoute extends Component {
 
   componentDidMount() {
     HTTP.post(
-      '/graphqlv2',
+      'http://localhost:3200/v2/graphql',
       {
         headers: {
           'Content-Type': 'application/json',
@@ -29,7 +29,7 @@ export default class FakeRoute extends Component {
         data: {
           query:
             `{
-              completeProfileForActivePlantillaNonPlantillaByEmpno(employeeNumber: "368158") {
+              completeProfileForActivePlantillaNonPlantillaByEmpno(employeeNumber: "501444") {
                           employeeNumber
                           employee {
                               lastName
@@ -147,8 +147,6 @@ export default class FakeRoute extends Component {
         });
       }
     });
-
-    console.log(this.state.applicantsProfiles)
   };
 
   getRanking = () => {
