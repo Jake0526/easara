@@ -7,7 +7,7 @@
     "test-app": "TEST_WATCH=1 meteor test --full-app --driver-package meteortesting:mocha",
     "visualize": "meteor --production --extra-packages bundle-visualizer",
     "desktop": "meteor-desktop",
-    "start-local": "meteor --settings ./settings.json --port 3000"
+    "start-local": "meteor --settings ./settings.json --port 3100"
   },
   "dependencies": {
     "@babel/runtime": "^7.1.5",

@@ -573,7 +573,7 @@ export default class ApplicationModal extends Component {
         let getSomePromise = myVar => {
           let fetchExistingPersonnelApiData = new Promise((resolve, reject) => {
             HTTP.post(
-              '/graphqlv2',
+              'http://localhost:3000/v2/graphql',
               {
                 headers: {
                   'Content-Type': 'application/json',
