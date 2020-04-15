@@ -7,7 +7,6 @@ import AppFooter from "../../app/app_footer.js";
 import PreviousIcon from "../../react-table-custom-component/PreviousComponent";
 import NextIcon from "../../react-table-custom-component/NextComponent";
 import Swal from "sweetalert2";
-import RankingSettingsModal from "../../modal/RankingSettingsModal";
 //COMPONENTS
 import "react-confirm-alert/src/react-confirm-alert.css";
 import "../../css/app.css";
@@ -23,7 +22,6 @@ export default class Ranking extends Component {
       rankedApplicants: [],
       rankingStatus: 0,
       rankingLength: 0,
-      showSettingsModal: false,
     };
   }
 
@@ -64,6 +62,12 @@ export default class Ranking extends Component {
           icon: "success",
           title: "New ranks updated",
           showConfirmButton: false,
+          showClass: {
+            popup: 'animated fadeInDown faster'
+          },
+          hideClass: {
+            popup: 'animated fadeOutUp faster'
+          },
           timer: 2500,
         });
 
@@ -79,6 +83,12 @@ export default class Ranking extends Component {
         icon: "error",
         title: "No applicants recorded",
         showConfirmButton: false,
+        showClass: {
+          popup: 'animated fadeInDown faster'
+        },
+        hideClass: {
+          popup: 'animated fadeOutUp faster'
+        },
         timer: 2500,
       });
     } else {
@@ -123,36 +133,18 @@ export default class Ranking extends Component {
     }
   };
 
-  toggleSettingsModal = () => {
-    this.setState((prevState) => ({
-      showSettingsModal: !prevState.showSettingsModal,
-    }));
-  };
-
   render() {
     const contentMinHeight = {
       minHeight: `${window.innerHeight - 101}px`,
     };
-    const { data, showSettingsModal } = this.state;
     let reactTablePageSize = Math.floor(window.innerHeight - 330) * 0.0232;
     let applicantsColumn = [
       {
         Header: (
           <div>
-            <h4>
-              <i className="fa fa-list" aria-hidden="true"></i> Ranking
-              <Button
-                bsStyle="success"
-                className="pull-right"
-                onClick={() => this.toggleSettingsModal()}
-                style={{ padding: "5px", position: "relative", top: "-6px" }}
-              >
-                <i className="fa fa-cog" aria-hidden="true"></i> Settings
-              </Button>
-            </h4>
+            <h4>Ranking</h4>
           </div>
         ),
-        className: "center",
         width: 1000,
         columns: [
           {
@@ -210,7 +202,7 @@ export default class Ranking extends Component {
           <div className="plantilla-content" id="content-area">
             <section className="content-header">
               <h1 style={{ color: "rgb(63,57,51)", fontSize: "20px" }}>
-                <i className="fa fa-cog"></i> Generate Ranking of Applicants
+                <i className="fa fa-list"></i> Generate Ranking of Applicants
               </h1>
             </section>
 
@@ -280,12 +272,6 @@ export default class Ranking extends Component {
             </div>
           </div>
         </div>
-        <RankingSettingsModal
-          show={showSettingsModal}
-          toggleSettingsModal={this.toggleSettingsModal}
-          settings={data.state.settings}
-          getSettings={data.getSettings}
-        />
       </div>
     );
   }

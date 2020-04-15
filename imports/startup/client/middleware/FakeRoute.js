@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
-
+import "animate.css/animate.css";
 export default class FakeRoute extends Component {
   constructor(props) {
     super(props);
