@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
-import "animate.css/animate.css";
+
 export default class FakeRoute extends Component {
   constructor(props) {
     super(props);
@@ -10,6 +10,7 @@ export default class FakeRoute extends Component {
       employeeInformation: {},
       applicantsProfiles: [],
       applicantsRanking: [],
+      application:[],
       introspect: {},
       isLogin: null,
       isLoad: false,
@@ -136,6 +137,7 @@ export default class FakeRoute extends Component {
     console.log("queries will run")
     //Queries
     this.selectApplicantsProfile();
+    this.selectApplication();
    // this.getRanking();
     //this.getSettings();
     console.log("done")
@@ -148,6 +150,20 @@ export default class FakeRoute extends Component {
         console.log("result")
         this.setState({
           applicantsProfiles: result,
+        });
+      }
+      else{
+        console.log(error)
+      }
+    });
+  };
+  selectApplication = () => {
+    Meteor.call("select-application", (error, result) => {
+      if (!error) {
+        console.log(result);
+        console.log("result")
+        this.setState({
+          application: result,
         });
       }
       else{

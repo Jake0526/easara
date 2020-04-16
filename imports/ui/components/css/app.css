@@ -342,3 +342,12 @@ body:not(.modal-open) {
 body:not(.modal-close) {
   padding-right: 0px !important;
 }
+
+#contents div {
+  border: 1px black dotted;
+  display: none; 
+}
+
+#contents div:target {
+  display: block; 
+}

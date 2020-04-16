@@ -32,6 +32,23 @@ Meteor.method(
 );
 
 Meteor.method(
+  "select-application",
+  function () {
+    var sql = `SELECT * FROM applications`;
+    var fut = new Future();
+    easara(sql, function (err, result) {
+      if (err) throw err;
+      fut.return(result);
+    });
+    return fut.wait();
+  },
+  {
+    url: "select-profiles",
+    httpMethod: "post",
+  }
+);
+
+Meteor.method(
   "select-settings",
   function () {
     var sql = `SELECT * FROM settings`;

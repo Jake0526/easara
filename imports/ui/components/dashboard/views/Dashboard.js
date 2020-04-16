@@ -5,7 +5,7 @@ import '../../css/app.css';
 import SideBar from '../sidebar/SideBar.js';
 import AppHeader from '../../app/AppHeader.js';
 import AppFooter from '../../app/app_footer.js';
-
+import DatePicker from "react-datepicker";
 
 import PreviousIcon from '../../react-table-custom-component/PreviousComponent';
 import NextIcon from '../../react-table-custom-component/NextComponent';
@@ -44,6 +44,10 @@ export default class HelloWorld extends Component {
       progressBarRanking: 0.00,
       progressBarAugmentation: 0.00,
       progressBarRanking: 0.00,
+      stackedOptions: [],
+      reactTableGroupings: [],
+      fromDate: new Date(),
+      toDate: new Date(),
 
     };
   }
@@ -61,8 +65,12 @@ export default class HelloWorld extends Component {
     this.showApplication(chartData)
     this.showAgeParticipation(chartData)
     this.showMainDashboardReport(chartData)
+    this.showAugmentationRankingReport(this.state.data.state.application)
+    // this.showAugmentationReport(this.state.data.state.application)
+    // this.showRankingReport(this.state.data.state.application)
     this.showCongressionalDistrict(chartData)
     this.showPoliticalDistrict(chartData)
+
     //console.log("componentdidMount")
   }
 
@@ -76,6 +84,9 @@ export default class HelloWorld extends Component {
 
     this.showApplication(nextProps.state.applicantsProfiles)
     this.showMainDashboardReport(nextProps.state.applicantsProfiles)
+    this.showAugmentationRankingReport(nextProps.state.application)
+    // this.showAugmentationReport(nextProps.state.application)
+    // this.showRankingReport(nextProps.state.application)
     this.showAgeParticipation(nextProps.state.applicantsProfiles)
     this.showCongressionalDistrict(nextProps.state.applicantsProfiles)
     this.showPoliticalDistrict(nextProps.state.applicantsProfiles)
@@ -213,15 +224,15 @@ export default class HelloWorld extends Component {
     for (let i = 0; i < resultUnique.length; i++) {
       data.forEach(element => {
         if (moment(element.created_at).format("MMMM DD,YYYY") == resultUnique[i]) {
-          if(element.employee_number == null || element.employee_number=="" ){
+          if (element.employee_number == null || element.employee_number == "") {
             countNewData.push([moment(element.created_at).format("MMMM DD,YYYY"), 0])
           }
-          else{
+          else {
             countNewData.push([moment(element.created_at).format("MMMM DD,YYYY"), 1])
           }
-          
+
         }
-     
+
       });
     }
 
@@ -291,11 +302,11 @@ export default class HelloWorld extends Component {
       incrementalValue1.push(total1)
     }
     let resultLeft = []
-    let empTotal = 400
-    for (let i = 0; i < incrementalValue0.length; i++) {
-      //empTotal-=
-      resultLeft.push(400 - (incrementalValue0[i] + incrementalValue1[i]))
-    }
+    // let empTotal = 400
+    // for (let i = 0; i < incrementalValue0.length; i++) {
+    //   //empTotal-=
+    //   resultLeft.push(400 - (incrementalValue0[i] + incrementalValue1[i]))
+    // }
 
     /* DEFAULT 5 DAYS  NO VALIDATION YET*/
     for (let i = 4; i >= 0; i--) {
@@ -327,10 +338,6 @@ export default class HelloWorld extends Component {
           label: 'Existing',
           data: incrementalValue1,
           backgroundColor: randomColorResult[1]
-        }, {
-          label: 'Left',
-          data: resultLeft,
-          backgroundColor: randomColorResult[2]
         }
       ]
     }
@@ -353,7 +360,8 @@ export default class HelloWorld extends Component {
 
           ticks: {
             beginAtZero: true,
-            suggestedMax: 400
+            precision: 0,
+            //suggestedMax: 400
           }
         }]
       },
@@ -367,7 +375,7 @@ export default class HelloWorld extends Component {
       },
       title: {
         display: true,
-        text: 'Test Incremental day Graph'
+        text: 'Live (Monthly) Test Incremental day Graph'
       },
       responsive: true,
 
@@ -506,6 +514,355 @@ export default class HelloWorld extends Component {
       }
     }
   }
+
+  showAugmentationRankingReport = (data) => {
+    let application_data = data
+    console.log(data)
+
+    let summaryApplication = []
+    data.forEach(element => {
+      element.groupings !== null && element.groupings !== "" ? summaryApplication.push(element.groupings) : ''
+    });
+    let filteredApplication = [...new Set(summaryApplication)]
+
+    let countFilteredRevolving = []
+    let countFilteredAugmentation = []
+    for (let i = 0; i < filteredApplication.length; i++)
+      data.forEach(element => {
+        if (filteredApplication[i] == element.groupings && element.category == "Revolving") {
+          countFilteredRevolving[element.groupings] = (countFilteredRevolving[element.groupings] || 0) + 1
+        }
+        else if (filteredApplication[i] == element.groupings && element.category == "Augmentation") {
+          countFilteredAugmentation[element.groupings] = (countFilteredRevolving[element.groupings] || 0) + 1
+        }
+      })
+    let finalCountRevolving = []
+    let finallabelRevolving = []
+    for (let [key, value] of Object.entries(countFilteredRevolving)) {
+      finallabelRevolving.push(key)
+      finalCountRevolving.push(value)
+    }
+    let finalCountAugmentation = []
+    let finallabelAugmentation = []
+
+    for (let [key, value] of Object.entries(countFilteredAugmentation)) {
+      finallabelAugmentation.push(key)
+      finalCountAugmentation.push(value)
+    }
+
+    //CHECKING IF REVOLVING AND AUGMENTATION MONTHS HAS A VALUE OF NONE AND MUST BE REFILL
+    let max = 0
+    finallabelRevolving.length > finallabelAugmentation ? max = finallabelRevolving.length : max = finallabelAugmentation.length
+
+
+    for (let i = 0; i < filteredApplication.length; i++) {
+      if (filteredApplication[i] != finallabelRevolving[i]) {
+        finalCountRevolving.splice(i, 0, 0)
+        finallabelRevolving.splice(i, 0, filteredApplication[i])
+      }
+      else if (filteredApplication[i] != finallabelAugmentation[i]) {
+        finalCountAugmentation.splice(i, 0, 0)
+        finallabelAugmentation.splice(i, 0, filteredApplication[i])
+      }
+    }
+
+    //THE FILERED APPLICATION RESULT SHOULD BE ADDED TO DROP DOWN SELECT ATTRIBUTE
+
+    let randomColorResult = []
+    let floatStaticRankingAugmentation = 0.00
+    for (let i = 0; i < 3; i++) {
+      floatStaticRankingAugmentation += 0.235
+      var decider = d3.interpolateRainbow(floatStaticRankingAugmentation)
+      randomColorResult.push(decider)
+    }
+
+    //SUMMARY DATA FOR THE REACTABLE FOR GROUPINGS 
+    let tempReactData = []
+    for (let i = 0; i < filteredApplication.length; i++) {
+
+      let objData2 = {
+        group: finallabelAugmentation[i],
+        name: "Augmentation",
+        data: finalCountAugmentation[i]
+      }
+      tempReactData.push(objData2)
+
+      let objData1 = {
+        group: finallabelRevolving[i],
+        name: "Revolving",
+        data: finalCountRevolving[i],
+
+      }
+      tempReactData.push(objData1)
+    }
+
+
+
+    this.setState({
+      stackedOptions: filteredApplication,
+      reactTableGroupings: tempReactData
+    })
+
+    //CALLING THE AUGMENTATION GRAPH REPORT AND RANKING GRAPH REPORT
+    this.showAugmentationReport(filteredApplication, finallabelAugmentation, finalCountAugmentation, randomColorResult[1])
+    this.showRankingReport(filteredApplication, finallabelRevolving, finalCountRevolving, randomColorResult[0])
+
+
+
+
+
+    var ctx = document.getElementById('showAugmentationRankingReport').getContext('2d');
+    let dataChart = {
+
+      labels: filteredApplication,
+      datasets: [
+        {
+          label: 'Total Augmentation Filtered',
+          fill: false,
+          data: finalCountAugmentation,
+          backgroundColor: randomColorResult[1],
+          borderColor: randomColorResult[1]
+        }, {
+          label: 'Total Revolving Filtered',
+          fill: false,
+          data: finalCountRevolving,
+          backgroundColor: randomColorResult[0],
+          borderColor: randomColorResult[0]
+        },
+      ]
+    }
+    let options = {
+      // rotation: 1 * Math.PI,
+      // circumference: 1 * Math.PI,tooltips: {
+      tooltips: {
+        mode: 'index',
+      },
+      hover: {
+        mode: 'index'
+      },
+
+      scales: {
+
+        yAxes: [{
+
+
+          ticks: {
+            beginAtZero: true,
+            precision: 0,
+            //suggestedMax: 100
+            //suggestedMax: 400
+          }
+        }]
+      },
+      legend: {
+        display: true,
+        position: 'top',
+        onClick: (e) => e.stopPropagation(),
+        labels: {
+          defaultFontSize: 14,
+          fontColor: 'black'
+          //fontColor: 'rgb(255, 99, 132)'
+        }
+      },
+      title: {
+        display: true,
+        text: 'Yearly Statistics Report'
+      },
+      responsive: true,
+
+    }
+    let type = 'line'
+
+    if (this.state.data !== this.state.dataPrevious) {
+      console.log("state data is not equal to data previous")
+      //NEEDS TO BE OBSERVED IF IT CAUSES BUG ...
+      //this.createChart(ctx, dataChart, type, options)
+    }
+    else {
+      if ((Array.isArray(data) && data.length)) {
+        this.destroyChart(ctx, dataChart, type, options)
+        this.createChart(ctx, dataChart, type, options)
+      }
+      else {
+      }
+    }
+
+
+
+
+
+
+
+
+
+
+  }
+
+  showAugmentationReport = (filteredApplication, filteredAugmentationlabel, finalCountAugmentation, color) => {
+    let randomColorResult = []
+    let floatStaticAugmentation = 0.00
+    for (let i = 0; i < 3; i++) {
+      floatStaticAugmentation += 0.289
+      var decider = d3.interpolateRainbow(floatStaticAugmentation)
+      randomColorResult.push(decider)
+    }
+    var ctx = document.getElementById('showAugmentationReport').getContext('2d');
+    let dataChart = {
+
+      labels: filteredAugmentationlabel,
+      datasets: [
+        // {
+        //   label: 'Total Revolving Filtered',
+        //   fill: false,
+        //   data: finalCountRevolving,
+        //   backgroundColor: randomColorResult[0],
+        //   borderColor: randomColorResult[0]
+        // }
+        {
+          label: 'Total Augmentation Filtered',
+          fill: false,
+          data: finalCountAugmentation,
+          backgroundColor: color,
+          borderColor: color
+        }
+      ]
+    }
+    let options = {
+      // rotation: 1 * Math.PI,
+      // circumference: 1 * Math.PI,tooltips: {
+      tooltips: {
+        mode: 'index',
+      },
+      hover: {
+        mode: 'index'
+      },
+      scales: {
+        yAxes: [{
+          ticks: {
+            beginAtZero: true,
+            precision: 0,
+            //suggestedMax: 400
+          }
+        }]
+      },
+      legend: {
+        display: true,
+        onClick: (e) => e.stopPropagation(),
+        labels: {
+          defaultFontSize: 14,
+          fontColor: 'black'
+          //fontColor: 'rgb(255, 99, 132)'
+        }
+      },
+      title: {
+        display: true,
+        text: 'Yearly Statistics Report'
+      },
+      responsive: true,
+
+    }
+    let type = 'line'
+
+    if (this.state.data !== this.state.dataPrevious) {
+      console.log("state data is not equal to data previous")
+      //NEEDS TO BE OBSERVED IF IT CAUSES BUG ...
+      //this.createChart(ctx, dataChart, type, options)
+    }
+    else {
+      if ((Array.isArray(finalCountAugmentation) && finalCountAugmentation.length)) {
+        this.destroyChart(ctx, dataChart, type, options)
+        this.createChart(ctx, dataChart, type, options)
+      }
+      else {
+      }
+    }
+
+
+  }
+
+
+  showRankingReport = (filteredApplication, filteredRevolvinglabel, finalCountRevolving, color) => {
+
+
+
+    var ctx = document.getElementById('showRankingReport').getContext('2d');
+    let dataChart = {
+
+      labels: filteredApplication,
+      datasets: [
+        {
+          label: 'Total Revolving Filtered',
+          fill: false,
+          data: finalCountRevolving,
+          backgroundColor: color,
+          borderColor: color,
+        }
+        // , {
+        //   label: 'Total Augmentation Filtered',
+        //   fill: false,
+        //   data: finalCountAugmentation,
+        //   backgroundColor: randomColorResult[1],
+        //   borderColor: randomColorResult[1]
+        // }
+      ]
+    }
+    let options = {
+      // rotation: 1 * Math.PI,
+      // circumference: 1 * Math.PI,tooltips: {
+      tooltips: {
+        mode: 'index',
+      },
+      hover: {
+        mode: 'index'
+      },
+
+      scales: {
+
+        yAxes: [{
+
+
+          ticks: {
+            beginAtZero: true,
+            precision: 0,
+            //suggestedMax: 400
+          }
+        }]
+      },
+      legend: {
+        display: true,
+        onClick: (e) => e.stopPropagation(),
+        labels: {
+          defaultFontSize: 14,
+          fontColor: 'black'
+          //fontColor: 'rgb(255, 99, 132)'
+        }
+      },
+      title: {
+        display: true,
+        text: 'Yearly Statistics Report'
+      },
+      responsive: true,
+
+    }
+    let type = 'line'
+
+    if (this.state.data !== this.state.dataPrevious) {
+      console.log("state data is not equal to data previous")
+      //NEEDS TO BE OBSERVED IF IT CAUSES BUG ...
+      // this.createChart(ctx, dataChart, type, options)
+    }
+    else {
+      if ((Array.isArray(finalCountRevolving) && finalCountRevolving.length)) {
+        this.destroyChart(ctx, dataChart, type, options)
+        this.createChart(ctx, dataChart, type, options)
+      }
+      else {
+      }
+    }
+
+
+  }
+
 
 
   // showReligion = (data) => {
@@ -817,8 +1174,58 @@ export default class HelloWorld extends Component {
     }
   }
 
+  //OUT OF GRAPH
+
+  buildOptions = () => {
+    let arr = [];
+
+    for (let i = 0; i < this.state.stackedOptions.length; i++) {
+      // DIRI MAG  <option selected="selected"> </option> para default sa latest month makuha
+      i == this.state.stackedOptions.length - 1 ?
+        arr.push(<option key={this.state.stackedOptions[i]} defaultValue={this.state.stackedOptions[i]}  >{this.state.stackedOptions[i]}</option>)
+        :
+        arr.push(<option key={this.state.stackedOptions[i]} value={this.state.stackedOptions[i]}>{this.state.stackedOptions[i]}</option>)
+    }
+
+    return arr;
+  }
+  setStartDate = (date) => {
+    this.setState({
+      fromDate: date
+    })
+
+  }
+
+  setEndDate = (date) => {
+    this.setState({
+      toDate: date
+    })
+  }
 
   render() {
+
+
+    $('#contentGraph li').on('click', 'a', function (e) {
+      //Change content displayed
+      $($("#contentGraph li a.active")[0].hash).hide();
+      $(this.hash).show();
+      //Change active item
+      $("ul a.active").removeClass("active");
+      $(this).addClass("active");
+
+      e.preventDefault();
+    });
+    $("#contentGraph li a").each(function (index) {
+      if (index != 0) {
+        $(this.hash).hide();
+      }
+      else {
+
+        $(this).addClass("active");
+      }
+    });
+
+
     const { exisingEmployee, newEmployee } = this.state
 
     const { totalRankingFilled } = this.state
@@ -828,7 +1235,6 @@ export default class HelloWorld extends Component {
     };
 
     const applicantsRanking = this.state.data.state.applicantsRanking
-
 
     /*For React Table */
     const easaraMiniTable = [
@@ -857,6 +1263,40 @@ export default class HelloWorld extends Component {
 
         // minWidth: 50,
       }]
+    const easaraGroupingTable = [
+
+      {
+        Header: 'Yearly Table Data',
+        className: 'center',
+        columns: [{
+
+          Header: 'Group',
+          minWidth: 25,
+          className: 'center',
+          headerClassName: 'wordwrap',
+          style: { whiteSpace: 'unset' },
+          Cell: c => c.row._original.group,
+        }, {
+
+          Header: 'Type',
+          minWidth: 25,
+          className: 'center',
+          headerClassName: 'wordwrap',
+          style: { whiteSpace: 'unset' },
+          Cell: c => c.row._original.name,
+        }, {
+
+          Header: 'Data',
+          minWidth: 25,
+          className: 'center',
+          headerClassName: 'wordwrap',
+          style: { whiteSpace: 'unset' },
+          Cell: c => c.row._original.data,
+        },
+        ],
+
+        // minWidth: 50,
+      }]
 
 
     return (
@@ -871,57 +1311,50 @@ export default class HelloWorld extends Component {
           </section>
           <section className="content body">
             <div className="row">
-              <div className="col-sm-12 col-lg-4 col-xs-6">
+              <div className="col-sm-12 col-lg-3 col-xs-6">
 
                 <div className="small-box bg-green">
                   <div className="inner">
                     <h3>{this.state.newEmployee}</h3>
                     <p>New Applicants</p>
-                  </div>
-                  <div className="icon">
-                    <i className="fa fa-user-plus"></i>
+
+                    <div className="icon">
+                      <i className="fa fa-user-plus"></i>
+                    </div>
+                    <div className="small-box footer"></div>
                   </div>
                 </div>
               </div>
-              <div className="col-sm-12 col-lg-4 col-xs-6">
+              <div className="col-sm-12 col-lg-3 col-xs-6">
                 <div className="small-box bg-aqua">
                   <div className="inner">
                     <h3>{this.state.exisingEmployee}</h3>
                     <p>Total Existing Employees</p>
-                  </div>
-                  <div className="icon">
-                    <i className="fa fa-users"></i>
+
+                    <div className="icon">
+                      <i className="fa fa-users"></i>
+                    </div>
+                    <div className="small-box footer"></div>
                   </div>
                 </div>
               </div>
 
-              <div className="col-sm-12 col-lg-4 col-xs-6">
+              <div className="col-sm-12 col-lg-3 col-xs-6">
 
                 <div className="small-box bg-blue">
                   <div className="inner">
                     <h3>{this.state.newEmployee + this.state.exisingEmployee}</h3>
 
                     <p> Total Employees</p>
-                  </div>
-                  <div className="icon">
-                    <i className="fa fa-group"></i>
+
+                    <div className="icon">
+                      <i className="fa fa-group"></i>
+                    </div>
+
+                    <div className="small-box footer"></div>
                   </div>
                 </div>
               </div>
-
-              {/* <div className="col-sm-12 col-lg-3 col-xs-6">
-
-                <div className="small-box bg-aqua">
-                  <div className="inner">
-                    <h3>10</h3>
-
-                    <p> Places Available</p>
-                  </div>
-                  <div className="icon">
-                    <i className="fa fa-globe"></i>
-                  </div>
-                </div>
-              </div> */}
             </div>
 
 
@@ -965,30 +1398,45 @@ export default class HelloWorld extends Component {
 
                         <div className="col-lg-4">
                           <div className="progress-group">
-                            <span className="progress-text">Total Ranking Left</span>
-                            <span className="progress-number"><b>{(applicantsRanking.length)}</b>/100</span>
+                            <span className="progress-text">Required Applicants on Ranking</span>
+                            <span className="progress-number">
+                              <b>{(newEmployee + exisingEmployee) >= 100 ?
+                                100 : (newEmployee + exisingEmployee)}</b>/100</span>
 
                             <div className="progress sm">
-                              <div className="progress-bar progress-bar-blue" style={{ width: (((applicantsRanking.length)) / 100) * 100 + "%" }}></div>
+                              <div className="progress-bar progress-bar-blue"
+                                style={{
+                                  width: ((newEmployee + exisingEmployee) <= 100 ?
+                                    ((newEmployee + exisingEmployee) / 100) * 100 + "%" : 0 + "%")
+                                }}></div>
                             </div>
                           </div>
                           <div className="progress-group">
-                            <span className="progress-text">Total Augmentation Left</span>
-                            <span className="progress-number"><b>{300 - (newEmployee + exisingEmployee)}</b>/300</span>
+                            <span className="progress-text">Required Applicants on Augmentation</span>
+                            <span className="progress-number">
+                              <b>{(newEmployee + exisingEmployee) >= 100 ?
+                                (newEmployee + exisingEmployee) : 0}</b>/300</span>
 
                             <div className="progress sm">
-                              <div className="progress-bar progress-bar-yellow" style={{ width: (((newEmployee + exisingEmployee)) / 300) * 100 + "%" }}></div>
+                              <div className="progress-bar progress-bar-yellow"
+                                style={{
+                                  width: ((newEmployee + exisingEmployee) >= 100 ?
+                                    (newEmployee + exisingEmployee) <= 300 ?
+                                      ((newEmployee + exisingEmployee) / 300) * 100 + "%" : 0 + "%" : 0 + "%")
+                                }}></div>
                             </div>
                           </div>
-
+                          {/*
                           <div className="progress-group">
                             <span className="progress-text">Emoployee's Left</span>
-                            <span className="progress-number"><b>{400 - (newEmployee + exisingEmployee)}</b>/400</span>
+                            <span className="progress-number">
+                              <b>{400 - (newEmployee + exisingEmployee)}</b>/400</span>
 
                             <div className="progress sm">
-                              <div className="progress-bar progress-bar-red" style={{ width: (((newEmployee + exisingEmployee)) / 400) * 100 + "%" }}></div>
+                              <div className="progress-bar progress-bar-red"
+                                style={{ width: (((newEmployee + exisingEmployee)) / 400) * 100 + "%" }}></div>
                             </div>
-                          </div>
+                          </div> */}
                           <div className="dashboardtable" id="dashboardIdtable">
                             <ReactTable
                               className="-striped -highlight"
@@ -1009,33 +1457,33 @@ export default class HelloWorld extends Component {
 
                     <div className="box-footer">
                       <div className="row">
-                        <div className="col-sm-3 col-xs-6">
+                        <div className="col-sm-4 col-xs-6">
                           <div className="description-block border-right">
                             <h5 className="description-header text-green">{newEmployee + exisingEmployee}</h5>
                             <span className="description-text">As of Total </span>
                           </div>
                         </div>
-                        <div className="col-sm-3 col-xs-6">
+                        <div className="col-sm-4 col-xs-6">
                           <div className="description-block border-right">
                             {/* <span className="description-percentage text-green"><i className="fa fa-caret-up"></i> 20%</span> */}
                             <h5 className="description-header text-orange">{100 - (applicantsRanking.length)}</h5>
-                            <span className="description-text">Left for Ranking </span>
+                            <span className="description-text">Limit for Ranking </span>
                           </div>
                         </div>
-                        <div className="col-sm-3 col-xs-6">
+                        <div className="col-sm-4 col-xs-6">
                           <div className="description-block border-right">
                             {/* <span className="description-percentage text-green"><i className="fa fa-caret-up"></i> 20%</span> */}
                             <h5 className="description-header text-red">{300 - (newEmployee + exisingEmployee)}</h5>
-                            <span className="description-text">Left for Augmentation</span>
+                            <span className="description-text">Limit for Augmentation</span>
                           </div>
                         </div>
-                        <div className="col-sm-3 col-xs-6">
+                        {/* <div className="col-sm-3 col-xs-6">
                           <div className="description-block">
-                            {/* <span className="description-percentage text-red"><i className="fa fa-caret-down"></i> 18%</span> */}
+                           
                             <h5 className="description-header text-red">{400 - (newEmployee + exisingEmployee)}</h5>
                             <span className="description-text">Total Exmployee Left</span>
                           </div>
-                        </div>
+                        </div> */}
                       </div>
                     </div>
                   </div>
@@ -1047,10 +1495,24 @@ export default class HelloWorld extends Component {
               <div className="row">
 
                 <div className="col-sm-12 col-md-12 col-lg-12">
-                  <div className="box" style={{height: '80vh'}}>
+                  <div className="box" >
                     <div className="box-header with-border" >
-                      <h3 className="box-title">Augmentation & Ranking Report</h3>
 
+                      <div>
+                        {/* <h3 className="box-title"></h3> */}
+
+                        <ul className="nav nav-tabs ui-sortable-handle" id="contentGraph">
+                          <li className="active"><a href="#showAugmentationRanking" data-toggle="tab" aria-expanded="true">Augmentation & Ranking Report</a></li>
+                          <li className=""><a href="#showAugmentation" data-toggle="tab" aria-expanded="false">Augmentation</a></li>
+                          <li className=""><a href="#showRanking" data-toggle="tab" aria-expanded="false">Revolving</a></li>
+                        </ul>
+
+                        <div className="pull-right">
+                          <select className="form-control" style={{ width: "auto" }} value={this.state.stackedOptions[this.state.stackedOptions.length - 1]}>
+                            {this.buildOptions()}
+                          </select>
+                        </div>
+                      </div>
                       {/* <div className="box-tools pull-right">
         <button type="button" className="btn btn-box-tool" data-widget="collapse"><i className="fa fa-minus"></i>
         </button>
@@ -1073,12 +1535,33 @@ export default class HelloWorld extends Component {
 
                     <div className="box-body">
                       <div className="row">
-                        <div className="col-lg-8">
-                          <canvas id="showMainDashBoardReport" className="chartjs" height="150" style={{ display: "block", width: "100 ", height: "100" }}></canvas>
+                        <div className="col-lg-12" id="showAugmentationRanking">
+                          <canvas id="showAugmentationRankingReport" className="chartjs" height="110" style={{ display: "block", width: "100 ", height: "100" }}></canvas>
+                          <div className="dashboardtable" id="dashboardIdtable">
+                            <ReactTable
+                              className="-striped -highlight"
+                              data={this.state.reactTableGroupings}
+                              columns={easaraGroupingTable}
+                              defaultPageSize={5}
+                              PreviousComponent={PreviousIcon}
+                              NextComponent={NextIcon}
+                              showPageSizeOptions={false}
+                              style={{
+                                height: 260,
+                              }}
+                            />
+                          </div>
+                        </div>
+                        <div className="col-lg-12" id="showAugmentation">
+                          {/* borderDash: [5, 5], */}
+                          <canvas id="showAugmentationReport" className="chartjs" height="110" style={{ display: "block", width: "100 ", height: "100" }}></canvas>
 
                         </div>
+                        <div className="col-lg-12" id="showRanking">
+                          <canvas id="showRankingReport" className="chartjs" height="110" style={{ display: "block", width: "100 ", height: "100" }}></canvas>
 
-                        <div className="col-lg-4">
+                        </div>
+                        {/* <div className="col-lg-4">
                           <div className="progress-group">
                             <span className="progress-text">Total Ranking Left</span>
                             <span className="progress-number"><b>{(applicantsRanking.length)}</b>/100</span>
@@ -1104,25 +1587,12 @@ export default class HelloWorld extends Component {
                               <div className="progress-bar progress-bar-red" style={{ width: (((newEmployee + exisingEmployee)) / 400) * 100 + "%" }}></div>
                             </div>
                           </div>
-                        </div>
+                        </div> */}
                       </div>
                     </div>
-                      <div className="box-footer">
-                      <div className="dashboardtable" id="dashboardIdtable">
-                            <ReactTable
-                              className="-striped -highlight"
-                              data={this.props.state.applicantsProfiles}
-                              columns={easaraMiniTable}
-                              defaultPageSize={5}
-                              PreviousComponent={PreviousIcon}
-                              NextComponent={NextIcon}
-                              showPageSizeOptions={false}
-                              style={{
-                                height: 260,
-                              }}
-                            />
-                          </div>
-                      </div>
+                    <div className="box-footer" >
+
+                    </div>
                   </div>
                 </div>
               </div>
@@ -1138,6 +1608,30 @@ export default class HelloWorld extends Component {
                           <strong>Employee's Information Report</strong>
                         </p>
                       </h3>
+
+                      <div className="text-center">
+                        <DatePicker
+                          selected={this.state.fromDate}
+                          onChange={date => setStartDate(date)}
+                          peekNextMonth
+                          showMonthDropdown
+                          showYearDropdown
+                          selectsStart
+                          dropdownMode="select"
+                          popperPlacement="auto"
+                        />
+
+                        <DatePicker
+                          selected={this.state.toDate}
+                          onChange={date => setEndDate(date)}
+                          peekNextMonth
+                          showMonthDropdown
+                          showYearDropdown
+                          selectsEnd
+                          dropdownMode="select"
+                          popperPlacement="auto"
+                        />
+                      </div>
                     </div>
                   </div>
                   <div className="row">
