@@ -13,20 +13,20 @@ export const easara = (sql, callback) => {
   const promise1 = new Promise(function (resolve, reject) {
     resolve(
       mysql.createConnection(
-        {
-          host: "192.168.1.15",
-          port: "1212",
-          username: "hr_devtm",
-          password: "d3vgrup@HR.m0",
-        }
         // {
-        //   host: "127.0.0.1",
-        //   port: "3306",
-        //   user: "admin",
-        //   password: "password",
-        //   database: "easara",
-        //   multipleStatements: true
+        //   host: "192.168.1.15",
+        //   port: "1212",
+        //   username: "hr_devtm",
+        //   password: "d3vgrup@HR.m0",
         // }
+        {
+          host: "127.0.0.1",
+          port: "3306",
+          user: "admin",
+          password: "password",
+          database: "easara",
+          multipleStatements: true
+        }
       )
     );
   });
