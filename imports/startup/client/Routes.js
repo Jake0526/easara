@@ -20,9 +20,10 @@ export default class Routes extends Component {
             name="application"
             component={Application}
           />
-           <FakeRoute path="/" name="dashboard" component={Dashboard} />
+          
           <FakeRoute path="/ranking" name="application" component={Ranking} />
-         
+          <FakeRoute path="/settings" name="settings" component={Settings} />
+          <FakeRoute path="/" name="dashboard" component={Dashboard} />
         </Switch>
       </Router>
     );
