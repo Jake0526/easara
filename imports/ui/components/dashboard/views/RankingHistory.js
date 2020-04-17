@@ -4,8 +4,8 @@ import { Button } from "react-bootstrap";
 import SideBar from "../sidebar/SideBar.js";
 import AppHeader from "../../app/AppHeader.js";
 import AppFooter from "../../app/app_footer.js";
-import AutoSuggestModal from "../../modal/AutoSuggestModal";
-import ApplicationModal from "../../modal/ApplicationModal";
+import AutoSuggestProfileModal from "../../modal/AutoSuggestProfileModal";
+import ApplicantProfileModal from "../../modal/ApplicantProfileModal";
 export default class Application extends Component {
   constructor(props) {
     super(props);
@@ -23,43 +23,12 @@ export default class Application extends Component {
     });
   };
 
-  toggleAutoSuggestModal = () => {
-    this.setState((prevState) => ({
-      showAutoSuggestModal: !prevState.showAutoSuggestModal,
-    }));
-  };
-
-  toggleApplicationModal = (value = "close", data = []) => {
-    if (value === "open") {
-      this.setState((prevState) => ({
-        showApplicationModal: !prevState.showApplicationModal,
-        showAutoSuggestModal: !prevState.showAutoSuggestModal,
-        applicationModalData: data,
-      }));
-    } else {
-      this.setState((prevState) => ({
-        showApplicationModal: !prevState.showApplicationModal,
-        applicationModalData: data,
-      }));
-    }
-  };
-
   render() {
-    const {} = this.state;
-    const {
-      applicationModalData,
-      data,
-      showApplicationModal,
-      showAutoSuggestModal,
-    } = this.state;
-    const contentMinHeight = {
-      minHeight: `${window.innerHeight - 101}px`,
-    };
-    let applicantProfilesColumns = [
+    let rankingHistoryColumns = [
       {
         Header: (
           <div>
-            <h4>Applications List</h4>
+            <h4>Rank List</h4>
           </div>
         ),
         width: 1000,
@@ -156,7 +125,7 @@ export default class Application extends Component {
           <div className="plantilla-content" id="content-area">
             <section className="content-header">
               <h1 style={{ color: "rgb(63,57,51)", fontSize: "20px" }}>
-                <i className="fa fa-cog"></i> Manage Applications
+                <i className="fa fa-list"></i> Ranking History
               </h1>
             </section>
             <section className="content">
@@ -196,19 +165,11 @@ export default class Application extends Component {
         </div>
         <AppFooter />
         <div className="control-sidebar-bg"></div>
-        <AutoSuggestModal
-          profiles={data.state.applicantsProfiles}
-          show={showAutoSuggestModal}
-          toggleAutoSuggestModal={this.toggleAutoSuggestModal}
-          toggleApplicationModal={this.toggleApplicationModal}
-          value={""}
-        />
-        <ApplicationModal
+        <ApplicantProfileModal
           data={applicationModalData}
           profiles={data.state.applicantsProfiles}
           show={showApplicationModal}
           selectApplications={data.selectApplications}
-          selectApplicantsProfile={data.selectApplicantsProfile}
           toggleApplicationModal={this.toggleApplicationModal}
         />
       </div>

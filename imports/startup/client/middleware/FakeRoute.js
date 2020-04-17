@@ -6,7 +6,8 @@ export default class FakeRoute extends Component {
     super(props);
 
     this.state = {
-      allEmployeeInformation: {},
+      applications: [],
+      existingPersonnelInformation: [],
       employeeInformation: {},
       applicantsProfiles: [],
       applicantsRanking: [],
@@ -140,14 +141,13 @@ export default class FakeRoute extends Component {
     this.selectApplication();
    // this.getRanking();
     this.getSettings();
-    console.log("done")
+    this.getAllCompleteProfile();
+    this.selectApplications();
   }
 
   selectApplicantsProfile = () => {
     Meteor.call("select-profiles", (error, result) => {
       if (!error) {
-        console.log(result);
-        console.log("result")
         this.setState({
           applicantsProfiles: result,
         });
@@ -158,16 +158,24 @@ export default class FakeRoute extends Component {
     });
   };
   selectApplication = () => {
-    Meteor.call("select-application", (error, result) => {
+    Meteor.call("select-applications", (error, result) => {
       if (!error) {
-        console.log(result);
-        console.log("result")
         this.setState({
           application: result,
         });
       }
       else{
         console.log(error)
+      }
+    });
+  };
+
+  selectApplications = () => {
+    Meteor.call("select-applications", (error, result) => {
+      if (!error) {
+        this.setState({
+          applications: result,
+        });
       }
     });
   };
@@ -190,6 +198,36 @@ export default class FakeRoute extends Component {
         });
       }
     });
+  };
+
+  getAllCompleteProfile = () => {
+    HTTP.post(
+      "http://localhost:3000/v2/graphql",
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        data: {
+          query: `{
+              profile {
+                  employeeNumber
+                  firstName
+                  middleName
+                  lastName
+                  maidenName
+                  suffixName
+              }
+            }`,
+        },
+      },
+      (err, res) => {
+        let result = JSON.parse(res.content);
+        this.setState({
+          existingPersonnelInformation: result.data.profile,
+        });
+      }
+    );
   };
 
   render() {

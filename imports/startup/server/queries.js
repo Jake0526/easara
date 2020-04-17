@@ -32,7 +32,7 @@ Meteor.method(
 );
 
 Meteor.method(
-  "select-application",
+  "select-applications",
   function () {
     var sql = `SELECT * FROM applications`;
     var fut = new Future();
@@ -43,7 +43,7 @@ Meteor.method(
     return fut.wait();
   },
   {
-    url: "select-profiles",
+    url: "select-applications",
     httpMethod: "post",
   }
 );
@@ -65,31 +65,31 @@ Meteor.method(
   }
 );
 
-Meteor.method(
-  "select-ranking",
-  function () {
-    var sql = `
-      SELECT
-          *
-      FROM
-          applicants_ranking
-      INNER JOIN
-        applicants_profile on applicants_profile.id = applicants_ranking.applicant_profile_id
-    `;
+// Meteor.method(
+//   "select-ranking",
+//   function () {
+//     var sql = `
+//       SELECT
+//           *
+//       FROM
+//           applicants_ranking
+//       INNER JOIN
+//         applicants_profile on applicants_profile.id = applicants_ranking.applicant_profile_id
+//     `;
 
-    var fut = new Future();
+//     var fut = new Future();
 
-    easara(sql, function (err, result) {
-      if (err) throw err;
-      fut.return(result);
-    });
-    return fut.wait();
-  },
-  {
-    url: "select-ranking",
-    httpMethod: "post",
-  }
-);
+//     easara(sql, function (err, result) {
+//       if (err) throw err;
+//       fut.return(result);
+//     });
+//     return fut.wait();
+//   },
+//   {
+//     url: "select-ranking",
+//     httpMethod: "post",
+//   }
+// );
 
 Meteor.method(
   "insert-new-applicant",
@@ -106,7 +106,7 @@ Meteor.method(
     var sql = `
       INSERT INTO applicant_profiles
       (code, first_name, last_name, middle_name, maiden_name, name_ext, address, contact_number, political_district, congressional_district,
-        birth_date, employee_number)
+        birth_date, employee_number, existing)
       VALUES ('${code}','${addslashes(applicantData.firstName)}', '${addslashes(
       applicantData.lastName
     )}', '${addslashes(applicantData.middleName)}',
@@ -121,7 +121,7 @@ Meteor.method(
         applicantData.employeeNumber === "000000"
           ? ""
           : applicantData.employeeNumber
-      )}');`;
+      )}', ${applicantData.existing});`;
     var fut = new Future();
     easara(sql, function (err, result) {
       if (err) {
@@ -138,6 +138,37 @@ Meteor.method(
     getArgsFromRequest: function (request) {
       var content = request.body;
       return [content.applicantData];
+    },
+  }
+);
+
+Meteor.method(
+  "insert-application",
+  function (code) {
+    check(code, String);
+
+    var sql = `
+      INSERT INTO applications
+      (profile_code, groupings)
+      VALUES ('${code}', 'test');`;
+    var fut = new Future();
+    console.log(sql);
+    easara(sql, function (err, result) {
+      if (err) {
+        console.log(err)
+        fut.return("bad");
+      } else {
+        fut.return("success");
+      }
+    });
+    return fut.wait();
+  },
+  {
+    url: "insert-application",
+    httpMethod: "post",
+    getArgsFromRequest: function (request) {
+      var content = request.body;
+      return [content.code];
     },
   }
 );
@@ -176,8 +207,11 @@ Meteor.method(
     )}'
     WHERE id = ${applicantData.applicantProfileId}`;
     var fut = new Future();
+
+    
     easara(sql, function (err, result) {
       if (err) {
+        console.log(err)
         fut.return("bad");
       } else {
         fut.return("success");
@@ -220,58 +254,58 @@ Meteor.method(
   }
 );
 
-Meteor.method(
-  "insert-rank",
-  function (rankData) {
-    console.log(rankData);
+// Meteor.method(
+//   "insert-rank",
+//   function (rankData) {
+//     console.log(rankData);
 
-    var sql = `
-      INSERT INTO applications
-      (
-        applicant_profile_id,
-        rank_no
-      )
-      VALUES(
-        ${rankData.applicantProfileId},
-        ${rankData.rankNo}
-      );`;
-    var fut = new Future();
+//     var sql = `
+//       INSERT INTO applications
+//       (
+//         applicant_profile_id,
+//         rank_no
+//       )
+//       VALUES(
+//         ${rankData.applicantProfileId},
+//         ${rankData.rankNo}
+//       );`;
+//     var fut = new Future();
 
-    easara(sql, function (err, result) {
-      if (err) throw err;
-      fut.return("success");
-    });
-    return fut.wait();
-  },
-  {
-    url: "insert-rank",
-    httpMethod: "post",
-    getArgsFromRequest: function (request) {
-      var content = request.body;
-      return [content.rankData];
-    },
-  }
-);
+//     easara(sql, function (err, result) {
+//       if (err) throw err;
+//       fut.return("success");
+//     });
+//     return fut.wait();
+//   },
+//   {
+//     url: "insert-rank",
+//     httpMethod: "post",
+//     getArgsFromRequest: function (request) {
+//       var content = request.body;
+//       return [content.rankData];
+//     },
+//   }
+// );
 
-Meteor.method(
-  "truncate-rank",
-  function () {
-    var sql = `
-      TRUNCATE TABLE applicants_ranking;`;
-    var fut = new Future();
+// Meteor.method(
+//   "truncate-rank",
+//   function () {
+//     var sql = `
+//       TRUNCATE TABLE applicants_ranking;`;
+//     var fut = new Future();
 
-    easara(sql, function (err, result) {
-      if (err) throw err;
-      fut.return("success");
-    });
-    return fut.wait();
-  },
-  {
-    url: "truncate-rank",
-    httpMethod: "post",
-    getArgsFromRequest: function (request) {
-      var content = request.body;
-      return [];
-    },
-  }
-);
+//     easara(sql, function (err, result) {
+//       if (err) throw err;
+//       fut.return("success");
+//     });
+//     return fut.wait();
+//   },
+//   {
+//     url: "truncate-rank",
+//     httpMethod: "post",
+//     getArgsFromRequest: function (request) {
+//       var content = request.body;
+//       return [];
+//     },
+//   }
+// );

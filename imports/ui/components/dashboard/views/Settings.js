@@ -4,37 +4,18 @@ import AppHeader from "../../app/AppHeader.js";
 import AppFooter from "../../app/app_footer.js";
 import { Button, ControlLabel, FormControl, FormGroup } from "react-bootstrap";
 import Swal from "sweetalert2";
+import ReactTable from "react-table";
 export default class Settings extends Component {
   constructor(props) {
     super(props);
     this.state = {
       data: props,
-      augmentation: props.state.settings
-        ? props.state.settings.length > 0
-          ? props.state.settings[0].value
-          : 0
-        : 0,
-      revolving: props.state.settings
-        ? props.state.settings.length > 0
-          ? props.state.settings[1].value
-          : 0
-        : 0,
     };
   }
 
   componentWillReceiveProps = (nextProps) => {
     this.setState({
       data: nextProps,
-      augmentation: nextProps.state.settings
-        ? nextProps.state.settings.length > 0
-          ? nextProps.state.settings[0].value
-          : 0
-        : 0,
-      revolving: nextProps.state.settings
-        ? nextProps.state.settings.length > 0
-          ? nextProps.state.settings[1].value
-          : 0
-        : 0,
     });
   };
 
@@ -83,10 +64,10 @@ export default class Settings extends Component {
                 title: "Settings has been successfuly updated",
                 showConfirmButton: false,
                 showClass: {
-                  popup: 'animated fadeInDown faster'
+                  popup: "animated fadeInDown faster",
                 },
                 hideClass: {
-                  popup: 'animated fadeOutUp faster'
+                  popup: "animated fadeOutUp faster",
                 },
                 timer: 2500,
               });
@@ -98,10 +79,10 @@ export default class Settings extends Component {
                 title: "Submission failed. Please try again",
                 showConfirmButton: false,
                 showClass: {
-                  popup: 'animated fadeInDown faster'
+                  popup: "animated fadeInDown faster",
                 },
                 hideClass: {
-                  popup: 'animated fadeOutUp faster'
+                  popup: "animated fadeOutUp faster",
                 },
                 timer: 2500,
               });
@@ -113,10 +94,10 @@ export default class Settings extends Component {
               text: "Submission failed. Please try again",
               showConfirmButton: false,
               showClass: {
-                popup: 'animated fadeInDown faster'
+                popup: "animated fadeInDown faster",
               },
               hideClass: {
-                popup: 'animated fadeOutUp faster'
+                popup: "animated fadeOutUp faster",
               },
               timer: 2500,
             });
@@ -138,16 +119,25 @@ export default class Settings extends Component {
 
   render() {
     const { augmentation, revolving } = this.state;
-
+    let reactTablePageSize = Math.floor(window.innerHeight - 220) * 0.0232;
     const formInstance = (
       <form>
         <this.FieldGroup
           id="formControlsText"
-          type="number"
-          label="Maximum Revolving Slots"
+          type="text"
+          label="Grouping Name"
           value={revolving}
           placeholder="Enter value"
           onChange={(e) => this.handleChange(e.target.value, "revolving")}
+        />
+        <br />
+        <this.FieldGroup
+          id="formControlsText"
+          type="number"
+          label="Maximum Augmentation Slots"
+          value={augmentation}
+          placeholder="Enter value"
+          onChange={(e) => this.handleChange(e.target.value, "augmentation")}
         />
         <br />
         <this.FieldGroup
@@ -164,6 +154,12 @@ export default class Settings extends Component {
     const contentMinHeight = {
       minHeight: `${window.innerHeight - 101}px`,
     };
+    const boxHeight = {
+      minHeight: `${window.innerHeight - 190}px`,
+    };
+    const boxBodyHeight = {
+      minHeight: `${window.innerHeight - 290}px`,
+    };
     return (
       <div className="wrapper">
         <AppHeader middleware={this.props.state} history={this.props.history} />
@@ -178,14 +174,16 @@ export default class Settings extends Component {
             </section>
             <section className="content">
               <div
-                className="col-md-6 col-lg-6 col-sm-12"
+                className="col-md-6 col-lg-6 col-sm-6"
                 style={{ paddingLeft: "0px", paddingRight: "15px" }}
               >
-                <div className="box box-primary">
+                <div className="box box-primary" style={boxHeight}>
                   <div class="box-header with-border">
                     <h4 class="box-title">Ranking</h4>
                   </div>
-                  <div className="box-body">{formInstance}</div>
+                  <div className="box-body" style={boxBodyHeight}>
+                    {formInstance}
+                  </div>
                   <div class="box-footer clearfix">
                     <Button
                       href="javascript:void(0)"
@@ -198,15 +196,36 @@ export default class Settings extends Component {
                   </div>
                 </div>
               </div>
+
               <div
-                className="col-md-6 col-lg-6 col-sm-12"
+                className="col-md-6 col-lg-6 col-sm-6"
                 style={{ paddingLeft: "0px", paddingRight: "15px" }}
               >
-                <div className="box box-danger">
+                <div className="box box-primary" style={boxHeight}>
                   <div class="box-header with-border">
                     <h4 class="box-title">Groupings</h4>
                   </div>
-                  <div className="box-body">{formInstance}</div>
+                  <div className="box-body" style={boxBodyHeight}>
+                    <ReactTable
+                      className="-striped -highlight"
+                      data={[]}
+                      columns={[]}
+                      defaultPageSize={reactTablePageSize}
+                      PreviousComponent={PreviousIcon}
+                      NextComponent={NextIcon}
+                      showPageSizeOptions={false}
+                      style={{
+                        height: window.innerHeight - 320,
+                      }}
+                      getTrProps={(state, rowInfo) => {
+                        return {
+                          onClick: (e) => {
+                            this.updateInformation(rowInfo.row._original);
+                          },
+                        };
+                      }}
+                    />
+                  </div>
                   <div class="box-footer clearfix">
                     <Button
                       href="javascript:void(0)"

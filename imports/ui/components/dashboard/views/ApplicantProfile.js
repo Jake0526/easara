@@ -4,62 +4,92 @@ import { Button } from "react-bootstrap";
 import SideBar from "../sidebar/SideBar.js";
 import AppHeader from "../../app/AppHeader.js";
 import AppFooter from "../../app/app_footer.js";
-import AutoSuggestModal from "../../modal/AutoSuggestModal";
-import ApplicationModal from "../../modal/ApplicationModal";
-export default class Application extends Component {
+import PreviousIcon from "../../react-table-custom-component/PreviousComponent";
+import NextIcon from "../../react-table-custom-component/NextComponent";
+//COMPONENTS
+import AutoSuggestProfileModal from "../../modal/AutoSuggestProfileModal";
+import ApplicantProfileModal from "../../modal/ApplicantProfileModal";
+
+import "react-confirm-alert/src/react-confirm-alert.css";
+import "../../css/app.css";
+
+export default class ApplicantProfile extends Component {
   constructor(props) {
     super(props);
+    this.users = [];
     this.state = {
-      applicationModalData: [],
       data: props,
-      showAutoSuggestModal: false,
+      lookUpData: [],
       showApplicationModal: false,
+      showAutoSuggestProfileModal: false,
+      updateData: null,
     };
   }
 
-  componentWillReceiveProps = (nextProps) => {
-    this.setState({
-      data: nextProps,
-    });
-  };
+  componentDidMount() {
+    $("body").addClass("sidebar-mini");
+  }
 
-  toggleAutoSuggestModal = () => {
-    this.setState((prevState) => ({
-      showAutoSuggestModal: !prevState.showAutoSuggestModal,
-    }));
-  };
+  componentWillReceiveProps(nextProps) {
+    this.setState({ data: nextProps });
+  }
 
-  toggleApplicationModal = (value = "close", data = []) => {
-    if (value === "open") {
+  toggleApplicationModal = (type) => {
+    if (type === "close") {
       this.setState((prevState) => ({
+        lookUpData: [],
         showApplicationModal: !prevState.showApplicationModal,
-        showAutoSuggestModal: !prevState.showAutoSuggestModal,
-        applicationModalData: data,
+        updateData: null,
+        update: false,
       }));
     } else {
       this.setState((prevState) => ({
         showApplicationModal: !prevState.showApplicationModal,
-        applicationModalData: data,
+      }));
+    }
+  };
+
+  updateInformation = (data) => {
+    this.setState({
+      updateData: data,
+      showApplicationModal: true,
+      update: true,
+    });
+  };
+
+  toggleAutoSuggestProfileModal = (value = "default", lookUpData = []) => {
+    if (value === "close") {
+      this.setState((prevState) => ({
+        showAutoSuggestProfileModal: !prevState.showAutoSuggestProfileModal,
+        lookUpData,
+      }));
+    } else {
+      this.setState((prevState) => ({
+        showAutoSuggestProfileModal: !prevState.showAutoSuggestProfileModal,
       }));
     }
   };
 
   render() {
-    const {} = this.state;
     const {
-      applicationModalData,
       data,
+      showAutoSuggestProfileModal,
       showApplicationModal,
-      showAutoSuggestModal,
+      lookUpData,
+      updateData,
+      update,
     } = this.state;
+
     const contentMinHeight = {
       minHeight: `${window.innerHeight - 101}px`,
     };
-    let applicantProfilesColumns = [
+    const { applicantsProfiles, religionOptions } = this.state.data.state;
+    let reactTablePageSize = Math.floor(window.innerHeight - 220) * 0.0232;
+    let applicantsColumn = [
       {
         Header: (
           <div>
-            <h4>Applications List</h4>
+            <h4>Applicant Profiles List</h4>
           </div>
         ),
         width: 1000,
@@ -67,7 +97,7 @@ export default class Application extends Component {
           {
             Header: "#",
             accessor: "id",
-            minWidth: 15,
+            minWidth: 25,
             className: "center",
             headerClassName: "wordwrap",
             style: { whiteSpace: "unset" },
@@ -87,16 +117,25 @@ export default class Application extends Component {
             style: { whiteSpace: "unset" },
           },
           {
-            Header: "Grouping",
-            accessor: "last_name",
-            minWidth: 50,
+            Header: "Address",
+            accessor: "address",
+            minWidth: 100,
             headerClassName: "wordwrap",
             style: { whiteSpace: "unset" },
           },
           {
-            Header: "Address",
-            accessor: "address",
-            minWidth: 100,
+            Header: "Political District",
+            accessor: "political_district",
+            minWidth: 65,
+            className: "right",
+            headerClassName: "wordwrap",
+            style: { whiteSpace: "unset" },
+          },
+          {
+            Header: "Congressional District",
+            accessor: "congressional_district",
+            minWidth: 65,
+            className: "right",
             headerClassName: "wordwrap",
             style: { whiteSpace: "unset" },
           },
@@ -105,6 +144,20 @@ export default class Application extends Component {
             accessor: "contact_number",
             minWidth: 65,
             className: "right",
+            headerClassName: "wordwrap",
+            style: { whiteSpace: "unset" },
+          },
+          {
+            Header: "Birth Date",
+            id: "birth_date",
+            accessor: (d) => {
+              return new Date(d.birth_date).toLocaleString("en-US", {
+                year: "numeric",
+                month: "short",
+                day: "2-digit",
+              });
+            },
+            minWidth: 50,
             headerClassName: "wordwrap",
             style: { whiteSpace: "unset" },
           },
@@ -147,25 +200,26 @@ export default class Application extends Component {
         ],
       },
     ];
-    let reactTablePageSize = Math.floor(window.innerHeight - 220) * 0.0232;
     return (
       <div className="wrapper">
         <AppHeader middleware={this.props.state} history={this.props.history} />
-        <SideBar middleware={this.props.state} page="application" />
+        <SideBar middleware={this.props.state} page="applicant-profiles" />
+
         <div className="content-wrapper" style={contentMinHeight}>
           <div className="plantilla-content" id="content-area">
             <section className="content-header">
               <h1 style={{ color: "rgb(63,57,51)", fontSize: "20px" }}>
-                <i className="fa fa-cog"></i> Manage Applications
+                <i className="fa fa-cog"></i> Manage Profiles
               </h1>
             </section>
+
             <section className="content">
               <div className="box box-primary">
                 <div className="box-body" style={{ padding: "0px" }}>
                   <ReactTable
                     className="-striped -highlight"
-                    data={[]}
-                    columns={applicantProfilesColumns}
+                    data={applicantsProfiles}
+                    columns={applicantsColumn}
                     defaultPageSize={reactTablePageSize}
                     PreviousComponent={PreviousIcon}
                     NextComponent={NextIcon}
@@ -186,30 +240,31 @@ export default class Application extends Component {
               <Button
                 className="pull-right"
                 bsStyle="primary"
-                onClick={() => this.toggleAutoSuggestModal()}
+                onClick={() => this.toggleApplicationModal()}
               >
-                <i className="fa fa-pencil" aria-hidden="true"></i> New
-                Application
+                <i className="fa fa-pencil" aria-hidden="true"></i> New Profile
               </Button>
             </section>
           </div>
         </div>
+
         <AppFooter />
         <div className="control-sidebar-bg"></div>
-        <AutoSuggestModal
-          profiles={data.state.applicantsProfiles}
-          show={showAutoSuggestModal}
-          toggleAutoSuggestModal={this.toggleAutoSuggestModal}
-          toggleApplicationModal={this.toggleApplicationModal}
+        <AutoSuggestProfileModal
+          profiles={data.state.existingPersonnelInformation}
+          show={showAutoSuggestProfileModal}
+          toggleAutoSuggestProfileModal={this.toggleAutoSuggestProfileModal}
           value={""}
         />
-        <ApplicationModal
-          data={applicationModalData}
-          profiles={data.state.applicantsProfiles}
+        <ApplicantProfileModal
+          lookUpData={lookUpData}
           show={showApplicationModal}
-          selectApplications={data.selectApplications}
-          selectApplicantsProfile={data.selectApplicantsProfile}
           toggleApplicationModal={this.toggleApplicationModal}
+          toggleAutoSuggestProfileModal={this.toggleAutoSuggestProfileModal}
+          selectApplicantsProfile={data.selectApplicantsProfile}
+          religionOptions={religionOptions}
+          updateData={updateData}
+          update={update}
         />
       </div>
     );

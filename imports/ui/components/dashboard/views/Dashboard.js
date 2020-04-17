@@ -574,8 +574,7 @@ export default class HelloWorld extends Component {
     })
 
     let filteredYear = [...new Set(yearBaseToday)]
-    console.log(settingstYearData)
-    console.log(filteredYear)
+ 
 
 
     let summaryApplication = []

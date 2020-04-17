@@ -18,11 +18,13 @@ import {
 } from "../../../startup/utils/react-gridforms/lib";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-export default class ApplicationModal extends Component {
+export default class ApplicantProfileModal extends Component {
   constructor(props) {
     super(props);
     this.state = {
       data: props,
+
+      //DB FIELDS
       lastName: "",
       firstName: "",
       middleName: "",
@@ -33,7 +35,11 @@ export default class ApplicationModal extends Component {
       politicalDistrict: "",
       congressionalDistrict: "",
       birthDate: new Date(),
-
+      employeeNumber: "",
+      createdAt: "",
+      updatedAt: "",
+      code: "",
+      profileId: "",
       //POLITICAL DISTRICTS
       firstDistrict: [
         <option key="poblacion" value="Poblacion">
@@ -74,127 +80,131 @@ export default class ApplicationModal extends Component {
           Tugbok
         </option>,
       ],
-
-      //RELIGION OPTIONS
-      religionOptions: props.religionOptions,
-
-      //EXISTING PERSONNEL
-      employeeNumber: "000000",
-      existingPersonnel: false,
-      applicantProfileId: "",
-      beginDate: "",
-      existing: 0,
-
-      //UPDATE
-      update: false,
     };
 
     this.errors = [];
+    this.isSame = true;
   }
 
   componentWillReceiveProps(nextProps) {
     this.setState({
       data: nextProps,
-      lastName:
-        nextProps.updateData != null ? nextProps.updateData.last_name : "",
-      firstName:
-        nextProps.updateData != null ? nextProps.updateData.first_name : "",
-      middleName:
-        nextProps.updateData != null ? nextProps.updateData.middle_name : "",
-      maidenName:
-        nextProps.updateData != null ? nextProps.updateData.maiden_name : "",
-      nameExtension:
-        nextProps.updateData != null ? nextProps.updateData.name_ext : "",
-      address: nextProps.updateData != null ? nextProps.updateData.address : "",
-      cellNumber:
-        nextProps.updateData != null ? nextProps.updateData.contact_number : "",
-      politicalDistrict:
-        nextProps.updateData != null
-          ? nextProps.updateData.political_district
-          : "",
-      congressionalDistrict:
-        nextProps.updateData != null
-          ? nextProps.updateData.congressional_district
-          : "",
-      birthDate:
-        nextProps.updateData != null
-          ? new Date(nextProps.updateData.birth_date)
-          : new Date(),
-      update: nextProps.update,
-      existingPersonnel: nextProps.updateData
-        ? nextProps.updateData.employee_number
-          ? true
-          : false
-        : false,
-      employeeNumber:
-        nextProps.updateData != null
-          ? nextProps.updateData.employee_number
-            ? nextProps.updateData.employee_number
-            : "000000"
-          : "000000",
-      applicantProfileId:
-        nextProps.updateData != null
-          ? nextProps.updateData.id
-            ? nextProps.updateData.id
-            : ""
-          : "",
-      beginDate:
-        nextProps.updateData != null
-          ? nextProps.updateData.last_begin_date
-            ? nextProps.updateData.last_begin_date
-            : ""
-          : "",
-      existing:
-        nextProps.updateData != null
-          ? nextProps.updateData.existing
-            ? nextProps.updateData.existing
-            : 0
-          : 0,
+      lastName: nextProps.data.last_name ? nextProps.data.last_name : "",
+      firstName: nextProps.data.first_name ? nextProps.data.first_name : "",
+      middleName: nextProps.data.middle_name ? nextProps.data.middle_name : "",
+      maidenName: nextProps.data.maiden_name ? nextProps.data.maiden_name : "",
+      nameExtension: nextProps.data.name_ext ? nextProps.data.name_ext : "",
+      address: nextProps.data.address ? nextProps.data.address : "",
+      cellNumber: nextProps.data.contact_number
+        ? nextProps.data.contact_number
+        : "",
+      politicalDistrict: nextProps.data.political_district
+        ? nextProps.data.political_district
+        : "",
+      congressionalDistrict: nextProps.data.congressional_district
+        ? nextProps.data.congressional_district
+        : "",
+      birthDate: nextProps.data.birth_date ? nextProps.data.birth_date : "",
+      code: nextProps.data.code ? nextProps.data.code : "",
+      profileId: nextProps.data.id ? nextProps.data.id : "",
+      employeeNumber: nextProps.data.employee_number
+        ? nextProps.data.employee_number
+        : "",
+      createdAt: nextProps.data.created_at ? nextProps.data.created_at : "",
+      updatedAt: nextProps.data.updated_at ? nextProps.data.updated_at : "",
     });
   }
 
   handleChange = (value, id) => {
+    const { data } = this.state.data;
+    const {
+      address,
+      birthDate,
+      code,
+      congressionalDistrict,
+      cellNumber,
+      createdAt,
+      employeeNumber,
+      firstName,
+      profileId,
+      lastName,
+      maidenName,
+      middleName,
+      nameExtension,
+      politicalDistrict,
+      updatedAt,
+    } = this.state;
+    let info = {
+      id: profileId,
+      code,
+      employee_number: employeeNumber,
+      first_name: firstName,
+      last_name: lastName,
+      middle_name: middleName,
+      maiden_name: maidenName,
+      name_ext: nameExtension,
+      address,
+      political_district: politicalDistrict,
+      congressional_district: congressionalDistrict,
+      contact_number: cellNumber,
+      birth_date: birthDate,
+      created_at: createdAt,
+      updated_at: updatedAt,
+    };
+
     if (id === "lastName") {
+      info.last_name = value;
       this.setState({
         lastName: value,
       });
     } else if (id === "firstName") {
+      info.first_name = value;
       this.setState({
         firstName: value,
       });
     } else if (id === "middleName") {
+      info.middle_name = value;
       this.setState({
         middleName: value,
       });
     } else if (id === "maidenName") {
+      info.maiden_name = value;
       this.setState({
         maidenName: value,
       });
     } else if (id === "nameExtension") {
+      info.name_ext = value;
       this.setState({
         nameExtension: value,
       });
     } else if (id === "address") {
+      info.address = value;
       this.setState({
         address: value,
       });
     } else if (id === "cellNumber") {
+      info.contact_number = value;
       this.setState({
         cellNumber: value,
       });
     } else if (id === "politicalDistrict") {
+      info.political_district = value;
       this.setState({
         politicalDistrict: value,
       });
     } else if (id === "congressionalDistrict") {
+      info.congressional_district = value;
       this.setState({
         congressionalDistrict: value,
       });
     } else if (id === "birthDate") {
+      info.birth_date = value;
       this.setState({
-        birthDate: value.toString(),
+        birthDate: value,
       });
     }
+
+    this.isSame = JSON.stringify(data) == JSON.stringify(info);
   };
 
   getValidationState = (id) => {
@@ -265,109 +275,96 @@ export default class ApplicationModal extends Component {
     }
   };
 
-  insertNewApplicant = () => {
-    const { selectApplicantsProfile, toggleApplicationModal } = this.state.data;
-    Swal.fire({
-      title: "Submit Form?",
-      text: "You won't be able to revert this!",
-      icon: "warning",
-      showCancelButton: true,
-      showClass: {
-        popup: "animated fadeInDown faster",
-      },
-      hideClass: {
-        popup: "animated fadeOutUp faster",
-      },
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Continue",
-    }).then((result) => {
-      if (result.value) {
-        const {
-          firstName,
-          lastName,
-          middleName,
-          maidenName,
-          nameExtension,
-          address,
-          cellNumber,
-          politicalDistrict,
-          congressionalDistrict,
-          birthDate,
-          employeeNumber,
-          beginDate,
-          existing,
-        } = this.state;
-        let data = {
-          firstName,
-          lastName,
-          middleName,
-          maidenName,
-          nameExtension,
-          address,
-          cellNumber,
-          politicalDistrict,
-          congressionalDistrict,
-          birthDate,
-          employeeNumber,
-          beginDate,
-          existing,
-        };
-        Meteor.call("insert-new-applicant", data, (error, result) => {
-          if (!error) {
-            if (result === "success") {
-              selectApplicantsProfile();
-              Swal.fire({
-                position: "center",
-                icon: "success",
-                title: "Application has been successfuly recorded",
-                showConfirmButton: false,
-                showClass: {
-                  popup: "animated fadeInDown faster",
-                },
-                hideClass: {
-                  popup: "animated fadeOutUp faster",
-                },
-                timer: 2500,
-              });
-              toggleApplicationModal();
-            } else {
-              Swal.fire({
-                position: "center",
-                icon: "error",
-                title: "Submission failed. Please try again",
-                showConfirmButton: false,
-                showClass: {
-                  popup: "animated fadeInDown faster",
-                },
-                hideClass: {
-                  popup: "animated fadeOutUp faster",
-                },
-                timer: 2500,
-              });
-            }
-          } else {
-            Swal.fire({
-              position: "center",
-              icon: "error",
-              text: "Submission failed. Please try again",
-              showConfirmButton: false,
-              showClass: {
-                popup: "animated fadeInDown faster",
-              },
-              hideClass: {
-                popup: "animated fadeOutUp faster",
-              },
-              timer: 2500,
-            });
-          }
+  updateInformation = (id) => {
+    const {
+      selectApplications,
+      selectApplicantsProfile,
+      toggleApplicationModal,
+    } = this.state.data;
+    const {
+      firstName,
+      lastName,
+      middleName,
+      maidenName,
+      nameExtension,
+      address,
+      cellNumber,
+      politicalDistrict,
+      congressionalDistrict,
+      birthDate,
+      employeeNumber,
+      beginDate,
+      profileId,
+    } = this.state;
+    let data = {
+      firstName,
+      lastName,
+      middleName,
+      maidenName,
+      nameExtension,
+      address,
+      cellNumber,
+      politicalDistrict,
+      congressionalDistrict,
+      birthDate,
+      employeeNumber,
+      beginDate,
+      applicantProfileId: profileId,
+    };
+    Meteor.call("update-profile", data, (error, result) => {
+      if (!error) {
+        if (result === "success") {
+          selectApplications();
+          selectApplicantsProfile();
+          Swal.fire({
+            position: "center",
+            icon: "success",
+            title: "Application has been submitted",
+            showConfirmButton: false,
+            showClass: {
+              popup: "animated fadeInDown faster",
+            },
+            hideClass: {
+              popup: "animated fadeOutUp faster",
+            },
+            timer: 2500,
+          });
+          toggleApplicationModal("close");
+        } else {
+          Swal.fire({
+            position: "center",
+            icon: "error",
+            title: "Submission failed. Please try again",
+            showConfirmButton: false,
+            showClass: {
+              popup: "animated fadeInDown faster",
+            },
+            hideClass: {
+              popup: "animated fadeOutUp faster",
+            },
+            timer: 2500,
+          });
+        }
+      } else {
+        Swal.fire({
+          position: "center",
+          icon: "error",
+          text: "Submission failed. Please try again",
+          showConfirmButton: false,
+          showClass: {
+            popup: "animated fadeInDown faster",
+          },
+          hideClass: {
+            popup: "animated fadeOutUp faster",
+          },
+          timer: 2500,
         });
       }
     });
   };
 
-  updateInformation = (id) => {
-    const { selectApplicantsProfile, toggleApplicationModal } = this.state.data;
+  insertApplication = () => {
+    const { code } = this.state;
     Swal.fire({
       title: "Submit Form?",
       text: "You won't be able to revert this!",
@@ -384,54 +381,10 @@ export default class ApplicationModal extends Component {
       confirmButtonText: "Continue",
     }).then((result) => {
       if (result.value) {
-        const {
-          firstName,
-          lastName,
-          middleName,
-          maidenName,
-          nameExtension,
-          address,
-          cellNumber,
-          politicalDistrict,
-          congressionalDistrict,
-          birthDate,
-          employeeNumber,
-          beginDate,
-          applicantProfileId,
-        } = this.state;
-        let data = {
-          firstName,
-          lastName,
-          middleName,
-          maidenName,
-          nameExtension,
-          address,
-          cellNumber,
-          politicalDistrict,
-          congressionalDistrict,
-          birthDate,
-          employeeNumber,
-          beginDate,
-          applicantProfileId,
-        };
-        Meteor.call("update-profile", data, (error, result) => {
+        Meteor.call("insert-application", code, (error, result) => {
           if (!error) {
             if (result === "success") {
-              selectApplicantsProfile();
-              Swal.fire({
-                position: "center",
-                icon: "success",
-                title: "Personnel information has been successfuly updated",
-                showConfirmButton: false,
-                showClass: {
-                  popup: "animated fadeInDown faster",
-                },
-                hideClass: {
-                  popup: "animated fadeOutUp faster",
-                },
-                timer: 2500,
-              });
-              toggleApplicationModal("close");
+              this.updateInformation();
             } else {
               Swal.fire({
                 position: "center",
@@ -468,153 +421,7 @@ export default class ApplicationModal extends Component {
   };
 
   changeBirthDate = (date) => {
-    this.setState({
-      birthDate: date,
-    });
-  };
-
-  fetchExistingPersonnelData = () => {
-    this.fixBootstrapModal();
-    Swal.fire({
-      title: "Submit Employee Number",
-      input: "text",
-      inputAttributes: {
-        autocapitalize: "off",
-      },
-      showCancelButton: true,
-      showClass: {
-        popup: "animated fadeInDown faster",
-      },
-      hideClass: {
-        popup: "animated fadeOutUp faster",
-      },
-      confirmButtonText: "Look up",
-      showLoaderOnConfirm: true,
-      preConfirm: (login) => {
-        let getSomePromise = (myVar) => {
-          let fetchExistingPersonnelApiData = new Promise((resolve, reject) => {
-            HTTP.post(
-              "http://localhost:3000/v2/graphql",
-              {
-                headers: {
-                  "Content-Type": "application/json",
-                  Accept: "application/json",
-                },
-                data: {
-                  query: `
-                  {
-                    allEmployee(employeeNumber: "${myVar}") {
-                      employeeNumber
-                      employee {
-                        lastName
-                        firstName
-                        extensionName
-                        middleName
-                        maidenName
-                        nickName
-                        fullName
-                        fullNameReverse
-                      }
-                      address
-                      cellNumber
-                      politicalDistrict
-                      congressionalDistrict
-                      birthDate
-                      hdmf
-                      beginDate
-                      employed
-                    }
-                  }`,
-                },
-              },
-              (err, res) => {
-                if (!err) {
-                  let employeeInformation = JSON.parse(res.content);
-                  let result_j_data = employeeInformation.data.allEmployee[0];
-                  if (employeeInformation.data.allEmployee.length === 0) {
-                    reject("Personnel not found");
-                  } else {
-                    resolve(result_j_data);
-                  }
-                } else {
-                  reject(err);
-                }
-              }
-            );
-          });
-          return fetchExistingPersonnelApiData;
-        };
-
-        return getSomePromise(login)
-          .then(function (x) {
-            if (x.employed === "1") {
-              Swal.showValidationMessage(
-                `Error: Personnel is currently employed.`
-              );
-            } else {
-              return x;
-            }
-          })
-          .catch(function (err) {
-            Swal.showValidationMessage(`Error: ${err}`);
-          });
-      },
-      allowOutsideClick: () => !Swal.isLoading(),
-    }).then((result) => {
-      if (result.value) {
-        const {
-          address,
-          employeeNumber,
-          cellNumber,
-          politicalDistrict,
-          congressionalDistrict,
-          birthDate,
-          beginDate,
-          employed,
-        } = result.value;
-        const {
-          lastName,
-          firstName,
-          extensionName,
-          middleName,
-          maidenName,
-        } = result.value.employee;
-        this.setState({
-          employeeNumber: employeeNumber ? employeeNumber : "",
-          lastName: lastName ? lastName : "",
-          firstName: firstName ? firstName : "",
-          middleName: middleName ? middleName : "",
-          maidenName: maidenName ? maidenName : "",
-          nameExtension: extensionName ? extensionName : "",
-          address: address ? address : "",
-          cellNumber: cellNumber ? cellNumber : "",
-          politicalDistrict: politicalDistrict ? politicalDistrict : "",
-          congressionalDistrict: congressionalDistrict
-            ? congressionalDistrict
-            : "",
-          birthDate: birthDate ? new Date(birthDate) : new Date(),
-          existingPersonnel: true,
-          beginDate: beginDate ? beginDate : "",
-          existing: employed ? employed : "",
-        });
-        const Toast = Swal.mixin({
-          toast: true,
-          position: "top-end",
-          showConfirmButton: false,
-          timer: 3000,
-          timerProgressBar: true,
-          onOpen: (toast) => {
-            toast.addEventListener("mouseenter", Swal.stopTimer);
-            toast.addEventListener("mouseleave", Swal.resumeTimer);
-          },
-        });
-
-        Toast.fire({
-          icon: "success",
-          title: "Employee data fetched successfully",
-        });
-      }
-    });
+    this.handleChange(date, "birthDate");
   };
 
   fixBootstrapModal = () => {
@@ -657,26 +464,17 @@ export default class ApplicationModal extends Component {
       existingPersonnel,
 
       //UPDATE
-      update,
-      applicantProfileId,
+      profileId,
     } = this.state;
-    let personelLegend = existingPersonnel ? "- " + employeeNumber : "";
-    let legend = "Personal Information " + personelLegend;
+    let personelLegend = existingPersonnel
+      ? "ID Number - " + employeeNumber
+      : "";
+    let legend = personelLegend;
     return (
       <Modal bsSize="large" role="document" show={show}>
         <Modal.Header>
           <Modal.Title id="contained-modal-title-lg">
-            {update ? "Update Information" : "Application Form"}
-            {update ? null : (
-              <Button
-                bsStyle="primary"
-                className="pull-right"
-                onClick={() => this.fetchExistingPersonnelData()}
-              >
-                <i className="fa fa-search" aria-hidden="true"></i> Existing
-                Personnel
-              </Button>
-            )}
+            Application Form
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
@@ -910,18 +708,12 @@ export default class ApplicationModal extends Component {
             <Button
               disabled={this.errors.length > 0 ? true : false}
               bsStyle="success"
-              onClick={
-                update
-                  ? () => this.updateInformation(applicantProfileId)
-                  : () => this.insertNewApplicant()
-              }
+              onClick={() => this.insertApplication(profileId)}
             >
               <i className="fa fa-check" aria-hidden="true"></i>{" "}
-              {update ? "Update" : "Submit"}
+              {this.isSame ? "Submit" : "Update Profile and Submit Application"}
             </Button>
-            <Button onClick={() => toggleApplicationModal("close")}>
-              Close
-            </Button>
+            <Button onClick={() => toggleApplicationModal()}>Close</Button>
           </ButtonGroup>
         </Modal.Footer>
       </Modal>
