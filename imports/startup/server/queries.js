@@ -106,7 +106,7 @@ Meteor.method(
     var sql = `
       INSERT INTO applicant_profiles
       (code, first_name, last_name, middle_name, maiden_name, name_ext, address, contact_number, political_district, congressional_district,
-        birth_date, employee_number)
+        birth_date, employee_number, existing)
       VALUES ('${code}','${addslashes(applicantData.firstName)}', '${addslashes(
       applicantData.lastName
     )}', '${addslashes(applicantData.middleName)}',
@@ -121,7 +121,7 @@ Meteor.method(
         applicantData.employeeNumber === "000000"
           ? ""
           : applicantData.employeeNumber
-      )}');`;
+      )}', ${applicantData.existing});`;
     var fut = new Future();
     easara(sql, function (err, result) {
       if (err) {
@@ -144,22 +144,18 @@ Meteor.method(
 
 Meteor.method(
   "insert-application",
-  function (applicantData) {
-    check(applicantData, Object);
-    function addslashes(str) {
-      if (str == null) {
-        return "";
-      } else {
-        return (str + "").replace(/[\\"']/g, "\\$&").replace(/\u0000/g, "\\0");
-      }
-    }
+  function (code) {
+    check(code, String);
+
     var sql = `
-      INSERT INTO applicant_profiles
-      (code, groupings)
-      VALUES ('${code}','${addslashes(applicantData.firstName)}');`;
+      INSERT INTO applications
+      (profile_code, groupings)
+      VALUES ('${code}', 'test');`;
     var fut = new Future();
+    console.log(sql);
     easara(sql, function (err, result) {
       if (err) {
+        console.log(err)
         fut.return("bad");
       } else {
         fut.return("success");
@@ -172,7 +168,7 @@ Meteor.method(
     httpMethod: "post",
     getArgsFromRequest: function (request) {
       var content = request.body;
-      return [content.applicantData];
+      return [content.code];
     },
   }
 );
@@ -211,8 +207,11 @@ Meteor.method(
     )}'
     WHERE id = ${applicantData.applicantProfileId}`;
     var fut = new Future();
+
+    
     easara(sql, function (err, result) {
       if (err) {
+        console.log(err)
         fut.return("bad");
       } else {
         fut.return("success");

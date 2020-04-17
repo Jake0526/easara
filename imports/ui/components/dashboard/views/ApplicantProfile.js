@@ -59,7 +59,6 @@ export default class ApplicantProfile extends Component {
 
   toggleAutoSuggestProfileModal = (value = "default", lookUpData = []) => {
     if (value === "close") {
-      console.log(lookUpData);
       this.setState((prevState) => ({
         showAutoSuggestProfileModal: !prevState.showAutoSuggestProfileModal,
         lookUpData,
@@ -67,7 +66,6 @@ export default class ApplicantProfile extends Component {
     } else {
       this.setState((prevState) => ({
         showAutoSuggestProfileModal: !prevState.showAutoSuggestProfileModal,
-        lookUpData,
       }));
     }
   };
@@ -81,6 +79,7 @@ export default class ApplicantProfile extends Component {
       updateData,
       update,
     } = this.state;
+
     const contentMinHeight = {
       minHeight: `${window.innerHeight - 101}px`,
     };
@@ -252,7 +251,7 @@ export default class ApplicantProfile extends Component {
         <AppFooter />
         <div className="control-sidebar-bg"></div>
         <AutoSuggestProfileModal
-          profiles={data.state.applicantsProfiles}
+          profiles={data.state.existingPersonnelInformation}
           show={showAutoSuggestProfileModal}
           toggleAutoSuggestProfileModal={this.toggleAutoSuggestProfileModal}
           value={""}

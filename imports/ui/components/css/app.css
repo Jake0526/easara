@@ -428,4 +428,6 @@ body:not(.modal-close) {
 .react-autosuggest__suggestion--focused .highlight {
   color: #120000;
 }
-
+.grid-form fieldset legend {
+  padding-bottom: 0px;
+}

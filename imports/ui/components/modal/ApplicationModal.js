@@ -290,7 +290,7 @@ export default class ApplicantProfileModal extends Component {
       birthDate,
       employeeNumber,
       beginDate,
-      applicantProfileId,
+      profileId,
     } = this.state;
     let data = {
       firstName,
@@ -305,7 +305,7 @@ export default class ApplicantProfileModal extends Component {
       birthDate,
       employeeNumber,
       beginDate,
-      applicantProfileId,
+      applicantProfileId: profileId,
     };
     Meteor.call("update-profile", data, (error, result) => {
       if (!error) {
@@ -459,8 +459,7 @@ export default class ApplicantProfileModal extends Component {
       existingPersonnel,
 
       //UPDATE
-      update,
-      applicantProfileId,
+      profileId,
     } = this.state;
     console.log(this.isSame);
     let personelLegend = existingPersonnel
@@ -705,7 +704,7 @@ export default class ApplicantProfileModal extends Component {
             <Button
               disabled={this.errors.length > 0 ? true : false}
               bsStyle="success"
-              onClick={() => this.insertApplication(applicantProfileId)}
+              onClick={() => this.insertApplication(profileId)}
             >
               <i className="fa fa-check" aria-hidden="true"></i>{" "}
               {this.isSame ? "Submit" : "Update Profile and Submit Application"}

@@ -85,10 +85,10 @@ export default class ApplicantProfileModal extends Component {
       existingPersonnel: false,
       applicantProfileId: "",
       beginDate: "",
-      existing: 0,
 
       //UPDATE
       update: false,
+      existing: 0,
     };
 
     this.errors = [];
@@ -153,13 +153,35 @@ export default class ApplicantProfileModal extends Component {
             : 0
           : 0,
     });
-    
+
     if (nextProps.updateData === null) {
       this.setState({
+        employeeNumber:
+          nextProps.lookUpData.length !== 0
+            ? nextProps.lookUpData.employeeNumber
+            : "000000",
+        firstName:
+          nextProps.lookUpData.length !== 0
+            ? nextProps.lookUpData.firstName
+            : "",
         lastName:
           nextProps.lookUpData.length !== 0
-            ? nextProps.lookUpData.last_name
+            ? nextProps.lookUpData.lastName
             : "",
+        middleName:
+          nextProps.lookUpData.length !== 0
+            ? nextProps.lookUpData.middleName
+            : "",
+        maidenName:
+          nextProps.lookUpData.length !== 0
+            ? nextProps.lookUpData.maidenName
+            : "",
+        nameExtension:
+          nextProps.lookUpData.length !== 0
+            ? nextProps.lookUpData.suffixName
+            : "",
+        existing: nextProps.lookUpData.length !== 0 ? 1 : 0,
+        existingPersonnel: nextProps.lookUpData.length !== 0 ? true : false,
       });
     }
   }
@@ -650,7 +672,6 @@ export default class ApplicantProfileModal extends Component {
       toggleAutoSuggestProfileModal,
       toggleApplicationModal,
     } = this.state.data;
-    console.log(this.state.data);
     const {
       firstName,
       lastName,

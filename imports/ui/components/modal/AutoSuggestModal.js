@@ -112,7 +112,7 @@ export default class AutoSuggestModal extends Component {
         <Modal.Body>
           <Autosuggest
             onSuggestionSelected={this.onSuggestionSelected}
-            suggestions={suggestions}
+            suggestions={suggestions.slice(0, 5)}
             onSuggestionsFetchRequested={this.onSuggestionsFetchRequested}
             onSuggestionsClearRequested={this.onSuggestionsClearRequested}
             getSuggestionValue={this.getSuggestionValue}

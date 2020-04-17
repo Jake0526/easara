@@ -7,7 +7,7 @@ export default class FakeRoute extends Component {
 
     this.state = {
       applications: [],
-      allEmployeeInformation: {},
+      existingPersonnelInformation: [],
       employeeInformation: {},
       applicantsProfiles: [],
       applicantsRanking: [],
@@ -144,7 +144,6 @@ export default class FakeRoute extends Component {
   selectApplicantsProfile = () => {
     Meteor.call("select-profiles", (error, result) => {
       if (!error) {
-        console.log(result);
         this.setState({
           applicantsProfiles: result,
         });
@@ -155,7 +154,6 @@ export default class FakeRoute extends Component {
   selectApplications = () => {
     Meteor.call("select-applications", (error, result) => {
       if (!error) {
-        console.log(result);
         this.setState({
           applications: result,
         });
@@ -193,98 +191,22 @@ export default class FakeRoute extends Component {
         },
         data: {
           query: `{
-              completeProfileForActivePlantillaNonPlantilla {
-                          employeeNumber
-                          employee {
-                              lastName
-                              firstName
-                              extensionName
-                              middleName
-                              maidenName
-                              nickName
-                              fullName
-                              fullNameReverse
-                          }
-                          phoneNumber
-                          birthDate
-                          age
-                          religion
-                          sex
-                          tin
-                          gsis
-                          hdmf
-                          philHealth
-                          sss
-                          umid
-                          psn
-                          isLicensed
-                          contact {
-                              name
-                              relationship
-                              address
-                              number
-                          }
-                          picture
-                          signature
-                          biometrics {
-                              fingerprints {
-                                  finger1
-                                  finger2
-                                  finger3
-                                  finger4
-                                  finger5
-                              }
-                              facial
-                              iris
-                          }
-                          rfid  {
-                              officialID
-                              atm
-                          }
-                          currentAppointment {
-                              employmentType
-                              officeCode
-                              officeName
-                              subOfficeName
-                              position
-                              itemNumber
-                              programCode
-                              program
-                              division
-                              districtSectionUnit
-                              extensionOffice
-                              areaCode
-                              areaType
-                              vacancyDate
-                              vacancyStatus
-                              publicationCode
-                          }
-                          currentEmployment {
-                              actualSalaryAnnual
-                              actualSalaryMonthly
-                              step
-                              statusAppointment
-                              remarksAppointment
-                              designationCode 
-                              workStationCode
-                              workStationExtensionCode
-                              rate
-                          }
-                          workSchedule {
-                              mon
-                              tue
-                              wed
-                              thu
-                              fri
-                              sat
-                              sun
-                          }
-                      }
-                  }`,
+              profile {
+                  employeeNumber
+                  firstName
+                  middleName
+                  lastName
+                  maidenName
+                  suffixName
+              }
+            }`,
         },
       },
       (err, res) => {
-        console.log(JSON.parse(res.content));
+        let result = JSON.parse(res.content);
+        this.setState({
+          existingPersonnelInformation: result.data.profile,
+        });
       }
     );
   };

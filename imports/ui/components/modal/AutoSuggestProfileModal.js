@@ -31,24 +31,21 @@ export default class AutoSuggestModal extends Component {
 
   getSuggestions = (value) => {
     const escapedValue = this.escapeRegexCharacters(value.trim());
-
     if (escapedValue === "") {
       return [];
     }
-
     const regex = new RegExp("\\b" + escapedValue, "i");
-
     return this.state.people.filter((person) =>
       regex.test(this.getSuggestionValue(person))
     );
   };
 
   getSuggestionValue = (suggestion) => {
-    return `${suggestion.first_name} ${suggestion.last_name}`;
+    return `${suggestion.employeeNumber} - ${suggestion.firstName} ${suggestion.lastName}`;
   };
 
   renderSuggestion = (suggestion, { query }) => {
-    const suggestionText = `${suggestion.first_name} ${suggestion.last_name}, District ${suggestion.congressional_district}, ${suggestion.political_district}`;
+    const suggestionText = `${suggestion.employeeNumber} - ${suggestion.firstName} ${suggestion.lastName}`;
     const matches = AutosuggestHighlightMatch(suggestionText, query);
     const parts = AutosuggestHighlightParse(suggestionText, matches);
 
@@ -95,7 +92,7 @@ export default class AutoSuggestModal extends Component {
     const { show, toggleAutoSuggestProfileModal } = this.state.data;
 
     const inputProps = {
-      placeholder: "Enter Name / Employee Number / Distinctive Information",
+      placeholder: "Enter Name / Employee Number",
       value,
       onChange: this.onChange,
     };
@@ -107,7 +104,7 @@ export default class AutoSuggestModal extends Component {
         <Modal.Body>
           <Autosuggest
             onSuggestionSelected={this.onSuggestionSelected}
-            suggestions={suggestions}
+            suggestions={suggestions.slice(0, 5)}
             onSuggestionsFetchRequested={this.onSuggestionsFetchRequested}
             onSuggestionsClearRequested={this.onSuggestionsClearRequested}
             getSuggestionValue={this.getSuggestionValue}
