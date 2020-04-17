@@ -276,7 +276,11 @@ export default class ApplicantProfileModal extends Component {
   };
 
   updateInformation = (id) => {
-    const { selectApplications, toggleApplicationModal } = this.state.data;
+    const {
+      selectApplications,
+      selectApplicantsProfile,
+      toggleApplicationModal,
+    } = this.state.data;
     const {
       firstName,
       lastName,
@@ -311,6 +315,7 @@ export default class ApplicantProfileModal extends Component {
       if (!error) {
         if (result === "success") {
           selectApplications();
+          selectApplicantsProfile();
           Swal.fire({
             position: "center",
             icon: "success",
@@ -461,7 +466,6 @@ export default class ApplicantProfileModal extends Component {
       //UPDATE
       profileId,
     } = this.state;
-    console.log(this.isSame);
     let personelLegend = existingPersonnel
       ? "ID Number - " + employeeNumber
       : "";

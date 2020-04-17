@@ -139,6 +139,7 @@ export default class FakeRoute extends Component {
     this.getRanking();
     this.getSettings();
     this.getAllCompleteProfile();
+    this.selectApplications();
   }
 
   selectApplicantsProfile = () => {
