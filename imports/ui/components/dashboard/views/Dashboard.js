@@ -64,8 +64,8 @@ export default class HelloWorld extends Component {
       yeargraphSelected: "",
       onLoad: 0,
       baseGroupData: "",
-      baseGroupDataNOTCHANGED:"",
-      baseGroupDidMount:[]
+      baseGroupDataNOTCHANGED: "",
+      baseGroupDidMount: []
 
     };
   }
@@ -76,12 +76,11 @@ export default class HelloWorld extends Component {
     let chartData = this.state.data.state.applicantsProfiles
     let chartApplicationData = this.state.data.state.application
     let chartSettings = this.state.data.state.settings
-
-    let baseGroup = chartSettings[chartSettings.length - 1].group_name
-    console.log(baseGroup)
+    console.log(chartSettings)
+    let baseGroup = chartSettings[chartSettings.length - 1].groupings
     let baseData = []
 
-    
+    //groupname Basis
 
     chartApplicationData.forEach(element1 => {
       if (element1.groupings == baseGroup) {
@@ -95,7 +94,7 @@ export default class HelloWorld extends Component {
     })
 
     this.setState({
-      baseGroupDataNOTCHANGED:baseGroup,
+      baseGroupDataNOTCHANGED: baseGroup,
       baseGroupData: baseGroup,
       baseGroupDidMount: baseData
     });
@@ -113,10 +112,10 @@ export default class HelloWorld extends Component {
     let chartData = nextProps.state.applicantsProfiles
     let chartApplicationData = nextProps.state.application
     let chartSettings = nextProps.state.settings
-    let baseGroup = chartSettings[chartSettings.length - 1].group_name
+    let baseGroup = chartSettings[chartSettings.length - 1].groupings
     let baseData = []
 
-   
+
 
     chartApplicationData.forEach(element1 => {
       if (element1.groupings == baseGroup) {
@@ -129,7 +128,7 @@ export default class HelloWorld extends Component {
 
     })
     this.setState({
-      baseGroupDataNOTCHANGED:baseGroup,
+      baseGroupDataNOTCHANGED: baseGroup,
       data: nextProps,
       dataPrevious: prevProps,
       applicantsProfiles: nextProps,
@@ -640,19 +639,15 @@ export default class HelloWorld extends Component {
 
       defaultYear = filteredAllYear[filteredAllYear.length - 1]
 
-      console.log(defaultYear)
       this.setState({
         yearFiltered: filteredAllYear.reverse(),
         yearDefaultLast: defaultYear,
         yeargraphSelected: defaultYear,
       })
-      console.log("true")
     }
     else if (load == "yes") {
       yearFilteredThisFunction = yearselected
-      console.log(yearFilteredThisFunction)
     }
-    console.log(yearFilteredThisFunction)
     let summaryApplication = []
     data.forEach(element => {
       (element.groupings !== null) && (element.groupings !== "") ?
@@ -731,7 +726,6 @@ export default class HelloWorld extends Component {
 
 
     let lastFilteredData = filteredApplication[filteredApplication.length - 1]
-    console.log(lastFilteredData)
     this.setState({
       stackedOptions: filteredApplication,
       selectDefaultValue: lastFilteredData,
@@ -803,9 +797,6 @@ export default class HelloWorld extends Component {
 
     }
     let type = 'line'
-    console.log(finalCountAugmentation)
-
-    console.log(finalCountRevolving)
     if (this.state.data !== this.state.dataPrevious) {
       console.log("state data is not equal to data previous")
       //NEEDS TO BE OBSERVED IF IT CAUSES BUG ...
@@ -819,9 +810,7 @@ export default class HelloWorld extends Component {
 
         let chart = this.state.showAugmentationRankingReport
         if (chart != "") {
-          console.log(chart.data)
           chart.data = dataChart
-
           chart.update()
         }
         else {
@@ -926,9 +915,7 @@ export default class HelloWorld extends Component {
 
         let chart = this.state.showAugmentationReport
         if (chart != "") {
-          console.log(chart.data)
           chart.data = dataChart
-
           chart.update()
         }
         else {
@@ -950,9 +937,7 @@ export default class HelloWorld extends Component {
       else {
         let chart = this.state.showAugmentationReport
         if (chart != "") {
-          console.log(chart.data)
           chart.data = dataChart
-
           chart.update()
         }
       }
@@ -963,9 +948,6 @@ export default class HelloWorld extends Component {
 
 
   showRankingReport = (filteredApplication, filteredRevolvinglabel, finalCountRevolving, color) => {
-
-
-
     var ctx = document.getElementById('showRankingReport').getContext('2d');
     let dataChart = {
 
@@ -978,13 +960,6 @@ export default class HelloWorld extends Component {
           backgroundColor: color,
           borderColor: color,
         }
-        // , {
-        //   label: 'Total Augmentation Filtered',
-        //   fill: false,
-        //   data: finalCountAugmentation,
-        //   backgroundColor: randomColorResult[1],
-        //   borderColor: randomColorResult[1]
-        // }
       ]
     }
     let options = {
@@ -996,12 +971,8 @@ export default class HelloWorld extends Component {
       hover: {
         mode: 'index'
       },
-
       scales: {
-
         yAxes: [{
-
-
           ticks: {
             beginAtZero: true,
             precision: 0,
@@ -1023,7 +994,6 @@ export default class HelloWorld extends Component {
         text: 'Yearly Statistics Report'
       },
       responsive: true,
-
     }
     let type = 'line'
 
@@ -1036,9 +1006,7 @@ export default class HelloWorld extends Component {
       if ((Array.isArray(finalCountRevolving) && finalCountRevolving.length)) {
         let chart = this.state.showRankingReport
         if (chart != "") {
-          console.log(chart.data)
           chart.data = dataChart
-
           chart.update()
         }
         else {
@@ -1060,9 +1028,7 @@ export default class HelloWorld extends Component {
       else {
         let chart = this.state.showRankingReport
         if (chart != "") {
-          console.log(chart.data)
           chart.data = dataChart
-
           chart.update()
         }
       }
@@ -1444,7 +1410,7 @@ export default class HelloWorld extends Component {
     let resultYearData = []
     settingsData.forEach(element => {
       if (moment(data).format("YYYY") == moment(element.created_at).format("YYYY")) {
-        resultYearData.push(element.group_name)
+        resultYearData.push(element.groupings)
       }
 
 
@@ -1474,7 +1440,6 @@ export default class HelloWorld extends Component {
 
     let result = [];
     let copyState = this.state.yearFiltered
-    console.log(copyState)
     let defaultData = ""
     for (let i = 0; i < copyState.length; i++) {
       // DIRI MAG  <option selected="selected"> </option> para default sa latest month makuha
@@ -1504,7 +1469,6 @@ export default class HelloWorld extends Component {
 
   groupSelectedYear = (e) => {
     let yearselected = (e.target.value)
-    console.log(yearselected)
     let settingsData = this.state.data.state.settings
     let data = this.state.data.state.application
     let resultYearData = []
@@ -1514,12 +1478,11 @@ export default class HelloWorld extends Component {
     })
     settingsData.forEach(element => {
       if (yearselected == moment(element.created_at).format("YYYY")) {
-        resultYearData.push(element.group_name)
+        resultYearData.push(element.groupings)
       }
 
 
     })
-    console.log(resultYearData)
     // showAugmentationRankingReport: "",
     // showAugmentationReport: "",
     // showRankingReport: "",
@@ -1607,17 +1570,14 @@ export default class HelloWorld extends Component {
 
 
   groupProcessGraph = (groupDataSelected) => {
-    console.log("here")
-    console.log(groupDataSelected)
     let dateData = this.state.data.state.applicantsProfiles
     let groupData = this.state.data.state.application
-    console.log(groupData)
+
     let groupDataResult = []
 
     groupData.forEach(element1 => {
       if (element1.groupings == groupDataSelected) {
         dateData.forEach(element2 => {
-          console.log(element1)
           if (element2.code == element1.profile_code) {
             groupDataResult.push(element2)
           }
@@ -1636,8 +1596,8 @@ export default class HelloWorld extends Component {
   }
 
   augmentationRakingYear = (e) => {
+    e.preventDefault()
     let yearselected = (e.target.value)
-    console.log(yearselected)
     let settingsData = this.state.data.state.settings
     let data = this.state.data.state.application
     let resultYearData = []
@@ -1665,7 +1625,6 @@ export default class HelloWorld extends Component {
   augmentationRakingYearBuild = () => {
     let result = [];
     let copyState = this.state.yearFiltered
-    console.log(copyState)
     let defaultData = ""
     for (let i = 0; i < copyState.length; i++) {
       // DIRI MAG  <option selected="selected"> </option> para default sa latest month makuha
@@ -1685,28 +1644,31 @@ export default class HelloWorld extends Component {
 
 
   render() {
+    var lastClicked = 0
 
-
-    $('#contentGraph li').on('click', 'a', function (e) {
+    $('#contentGraph').on('click', 'a', function (e) {
       //Change content displayed
+      // console.log($($("#contentGraph li a.active")[0].hash))
       $($("#contentGraph li a.active")[0].hash).hide();
       $(this.hash).show();
+      //sessionStorage.setItem('visible', this.hash);
       //Change active item
       $("ul a.active").removeClass("active");
       $(this).addClass("active");
-
-      e.preventDefault();
     });
+
     $("#contentGraph li a").each(function (index) {
+      var repeat = 0
       if (index != 0) {
         $(this.hash).hide();
       }
       else {
-
         $(this).addClass("active");
       }
-    });
 
+
+
+    });
 
     const { exisingEmployee, newEmployee } = this.state
 
@@ -1849,7 +1811,7 @@ export default class HelloWorld extends Component {
                 <div className="col-sm-12 col-md-12 col-lg-12">
                   <div className="box">
                     <div className="box-header with-border">
-                      <h3 className="box-title">As of Today's EASARA Report {this.state.baseGroupData} </h3>
+                      <h3 className="box-title">As of Today's EASARA Report </h3>
 
                       {/* <div className="box-tools pull-right">
                         <button type="button" className="btn btn-box-tool" data-widget="collapse"><i className="fa fa-minus"></i>
@@ -1988,15 +1950,15 @@ export default class HelloWorld extends Component {
                           <li className=""><a href="#showAugmentation" data-toggle="tab" aria-expanded="false">Augmentation</a></li>
                           <li className=""><a href="#showRanking" data-toggle="tab" aria-expanded="false">Revolving</a></li>
                           <div className="pull-right">
-                            <li className="">
-                              <select className="form-control"
-                                id="augmentationRankingYear"
-                                style={{ width: "auto" }}
-                                value={this.state.yeargraphSelected}
-                                onChange={this.augmentationRakingYear.bind(this)}
-                              >
-                                {this.augmentationRakingYearBuild(this.state.yeargraphSelected)}
-                              </select></li></div>
+
+                            <select className="form-control"
+                              id="augmentationRankingYear"
+                              style={{ width: "auto" }}
+                              value={this.state.yeargraphSelected}
+                              onChange={this.augmentationRakingYear.bind(this)}
+                            >
+                              {this.augmentationRakingYearBuild(this.state.yeargraphSelected)}
+                            </select></div>
                         </ul>
                         {/* 
                         <div className="pull-right">
@@ -2130,7 +2092,8 @@ export default class HelloWorld extends Component {
                           showYearDropdown
                           selectsEnd
                           style={{
-                            width: "100%",
+                            height: "20px",
+                            width: "200px",
                             overflow: "true",
                           }}
                           dropdownMode="select"
@@ -2193,7 +2156,7 @@ export default class HelloWorld extends Component {
                     <div className="col-sm-12 col-md-6 col-lg-6" >
                       <div className="box box-primary">
                         <div className="box-header with-border">
-                          <h4><label> Congressional District</label> <button className="btn btn-primary" onClick={this.showModalViewPoliticalDistrict}>Show More</button></h4>
+                          <h4><label> Congressional District</label> <button className="btn btn-info" onClick={this.showModalViewPoliticalDistrict}>Show More</button></h4>
                         </div>
                         <div className="box-body no-padding">
                           <canvas id="showCongressionalDistrict" className="chartjs" style={{ display: "block", width: "100", height: "100" }}></canvas>
