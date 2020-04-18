@@ -2022,26 +2022,26 @@ export default class HelloWorld extends Component {
                     <div className="col-lg-12" style={{ display: "flex" }} >
 
 
-                      <div style={{ flex: "50%", paddingLeft: "40%" }}> <DatePicker
-                        selected={this.state.fromDate}
-                        onChange={(date) => this.setStartDate(date)}
-                        showMonthDropdown
-                        showYearDropdown
-                        selectsStart
-                        style={{
-                          width: "100%",
-                          overflow: "true",
-                          float: "left",
-                        }}
-                        dropdownMode="select"
-                        popperPlacement="auto"
-                        startDate={this.state.fromDate}
-                        endDate={this.state.toDate}
-                        dateFormat="📅 MMMM dd yyyy"
-                      />
+                      <div style={{ flex: "50%", paddingLeft: "40%" ,paddingTop:"10px"}}>
+                        <DatePicker
+                          selected={this.state.fromDate}
+                          onChange={(date) => this.setStartDate(date)}
+                          showMonthDropdown
+                          showYearDropdown
+                          selectsStart
+                          style={{
+                            overflow: "true",
+                            float: "left",
+                          }}
+                          dropdownMode="select"
+                          popperPlacement="auto"
+                          startDate={this.state.fromDate}
+                          endDate={this.state.toDate}
+                          dateFormat="📅 MMMM dd yyyy"
+                        />
                       </div>
 
-                      <div style={{ flex: "70%", paddingLeft: "1%" }}>
+                      <div style={{ flex: "70%", paddingLeft: "1%" ,paddingBottom:"20px",paddingTop:"10px"}} id="reactTestDate">
                         <DatePicker
                           selected={this.state.toDate}
                           onChange={(date) => this.setEndDate(date)}
@@ -2049,12 +2049,13 @@ export default class HelloWorld extends Component {
                           showYearDropdown
                           selectsEnd
                           style={{
-                            height: "20px",
-                            width: "200px",
+                            // width: "35%",
                             overflow: "true",
+                            float: "left",
+                            marginleft: "-300px",
                           }}
                           dropdownMode="select"
-                          popperPlacement="auto"
+                          popperPlacement="bottom"
                           startDate={this.state.toDate}
                           endDate={this.state.toDate}
                           dateFormat="📅 MMMM dd yyyy"
