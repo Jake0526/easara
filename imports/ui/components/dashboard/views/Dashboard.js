@@ -64,6 +64,7 @@ export default class HelloWorld extends Component {
       yeargraphSelected: "",
       onLoad: 0,
       baseGroupData: "",
+      baseGroupDataNOTCHANGED:"",
       baseGroupDidMount:[]
 
     };
@@ -94,6 +95,7 @@ export default class HelloWorld extends Component {
     })
 
     this.setState({
+      baseGroupDataNOTCHANGED:baseGroup,
       baseGroupData: baseGroup,
       baseGroupDidMount: baseData
     });
@@ -127,6 +129,7 @@ export default class HelloWorld extends Component {
 
     })
     this.setState({
+      baseGroupDataNOTCHANGED:baseGroup,
       data: nextProps,
       dataPrevious: prevProps,
       applicantsProfiles: nextProps,
@@ -1521,7 +1524,6 @@ export default class HelloWorld extends Component {
     // showAugmentationReport: "",
     // showRankingReport: "",
 
-
     this.buildOptions(this.state.yearDefaultLast)
     e.preventDefault()
 
@@ -1553,10 +1555,6 @@ export default class HelloWorld extends Component {
     this.showCongressionalDistrict(dateDataResult)
     this.showPoliticalDistrict(dateDataResult)
 
-
-
-
-
   }
 
   setEndDate = (date) => {
@@ -1586,11 +1584,6 @@ export default class HelloWorld extends Component {
     this.showAgeParticipation(dateDataResult)
     this.showCongressionalDistrict(dateDataResult)
     this.showPoliticalDistrict(dateDataResult)
-
-
-
-
-
   }
   groupSelected = (e) => {
 
@@ -1946,24 +1939,24 @@ export default class HelloWorld extends Component {
 
                     <div className="box-footer">
                       <div className="row">
-                        <div className="col-sm-4 col-xs-6">
+                        <div className="col-sm-6 col-xs-6">
                           <div className="description-block border-right">
                             <h5 className="description-header text-green">{newEmployee + exisingEmployee}</h5>
                             <span className="description-text">As of Total </span>
                           </div>
                         </div>
-                        <div className="col-sm-4 col-xs-6">
+                        {/* <div className="col-sm-4 col-xs-6">
                           <div className="description-block border-right">
-                            {/* <span className="description-percentage text-green"><i className="fa fa-caret-up"></i> 20%</span> */}
+                             <span className="description-percentage text-green"><i className="fa fa-caret-up"></i> 20%</span> 
                             <h5 className="description-header text-orange">{100 - (applicantsRanking.length)}</h5>
-                            <span className="description-text">Total Rankings </span>
+                            <span className="description-text"> </span>
                           </div>
-                        </div>
-                        <div className="col-sm-4 col-xs-6">
+                        </div> */}
+                        <div className="col-sm-6 col-xs-6">
                           <div className="description-block border-right">
                             {/* <span className="description-percentage text-green"><i className="fa fa-caret-up"></i> 20%</span> */}
-                            <h5 className="description-header text-red">{300 - (newEmployee + exisingEmployee)}</h5>
-                            <span className="description-text">New Employee</span>
+                            <h5 className="description-header text-red">{this.state.baseGroupDataNOTCHANGED}</h5>
+                            <span className="description-text">GROUP NAME</span>
                           </div>
                         </div>
                         {/* <div className="col-sm-3 col-xs-6">
@@ -2110,7 +2103,7 @@ export default class HelloWorld extends Component {
                     <div className="col-lg-12" style={{ display: "flex" }} >
 
 
-                      <div style={{ flex: "50%", paddingLeft: "350px" }}> <DatePicker
+                      <div style={{ flex: "50%", paddingLeft: "40%" }}> <DatePicker
                         selected={this.state.fromDate}
                         onChange={(date) => this.setStartDate(date)}
                         showMonthDropdown
