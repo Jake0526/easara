@@ -1617,18 +1617,6 @@ export default class HelloWorld extends Component {
     })
 
     this.showAugmentationRankingReport(resultYearData, yearselected, "yes")
-
-
-    $('#showAugmentationRanking').show();
-    $('#showAugmentation').show();
-    $('#showRanking').show();
-    $('#showRanking').addClass("active");
-    $("ul a.active").removeClass("active");
-    $(this).addClass("active");
-
-    // e.preventDefault()
-
-
   }
   augmentationRakingYearBuild = () => {
     let result = [];
@@ -1961,7 +1949,7 @@ export default class HelloWorld extends Component {
                         </select>
                         {/* <h3 className="box-title"></h3> */}
                         <Tabs defaultActiveKey={1} id="uncontrolled-tab-example">
-                          <Tab eventKey={1} title="showAugmentationRankingReport">
+                          <Tab eventKey={1} title="Augmentation & Ranking">
                             <canvas id="showAugmentationRankingReport" className="chartjs" height="110" style={{ display: "block", width: "100 ", height: "100" }}></canvas>
                             <div className="dashboardtable" id="dashboardIdtable">
                               <ReactTable
@@ -1978,18 +1966,15 @@ export default class HelloWorld extends Component {
                               />
                             </div>
                           </Tab>
-                          <Tab eventKey={2} title="showAugmentationReport">
+                          <Tab eventKey={2} title="Augmentation">
                             <canvas id="showAugmentationReport" className="chartjs" height="110" style={{ display: "block", width: "100 ", height: "100" }}></canvas>
 
                           </Tab>
-                          <Tab eventKey={3} title="showRankingReport" >
+                          <Tab eventKey={3} title="Revolving" >
                             <canvas id="showRankingReport" className="chartjs" height="110" style={{ display: "block", width: "100 ", height: "100" }}></canvas>
 
                           </Tab>
                         </Tabs>
-
-
-
                       </div>
 
                     </div>
@@ -2028,8 +2013,6 @@ export default class HelloWorld extends Component {
                           >
                             {this.buildYearOptions(this.state.yearDefaultLast)}
                           </select>
-
-
                         </div>
                       </h3>
 
