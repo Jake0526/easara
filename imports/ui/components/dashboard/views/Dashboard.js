@@ -6,7 +6,9 @@ import SideBar from '../sidebar/SideBar.js';
 import AppHeader from '../../app/AppHeader.js';
 import AppFooter from '../../app/app_footer.js';
 import DatePicker from "react-datepicker";
-
+import {
+  Tabs, Tab
+} from "react-bootstrap";
 import PreviousIcon from '../../react-table-custom-component/PreviousComponent';
 import NextIcon from '../../react-table-custom-component/NextComponent';
 
@@ -65,7 +67,7 @@ export default class HelloWorld extends Component {
       onLoad: 0,
       baseGroupData: "",
       baseGroupDataNOTCHANGED: "",
-      baseGroupDidMount: []
+      baseGroupDidMount: [],
 
     };
   }
@@ -1617,6 +1619,12 @@ export default class HelloWorld extends Component {
     this.showAugmentationRankingReport(resultYearData, yearselected, "yes")
 
 
+    $('#showAugmentationRanking').show();
+    $('#showAugmentation').show();
+    $('#showRanking').show();
+    $('#showRanking').addClass("active");
+    $("ul a.active").removeClass("active");
+    $(this).addClass("active");
 
     // e.preventDefault()
 
@@ -1651,7 +1659,7 @@ export default class HelloWorld extends Component {
       // console.log($($("#contentGraph li a.active")[0].hash))
       $($("#contentGraph li a.active")[0].hash).hide();
       $(this.hash).show();
-      //sessionStorage.setItem('visible', this.hash);
+      sessionStorage.setItem('visible', this.hash);
       //Change active item
       $("ul a.active").removeClass("active");
       $(this).addClass("active");
@@ -1943,81 +1951,47 @@ export default class HelloWorld extends Component {
                     <div className="box-header with-border" >
 
                       <div>
+                        <select className="form-control"
+                          id="augmentationRankingYear"
+                          style={{ width: "auto", float: "right" }}
+                          value={this.state.yeargraphSelected}
+                          onChange={this.augmentationRakingYear.bind(this)}
+                        >
+                          {this.augmentationRakingYearBuild(this.state.yeargraphSelected)}
+                        </select>
                         {/* <h3 className="box-title"></h3> */}
+                        <Tabs defaultActiveKey={1} id="uncontrolled-tab-example">
+                          <Tab eventKey={1} title="showAugmentationRankingReport">
+                            <canvas id="showAugmentationRankingReport" className="chartjs" height="110" style={{ display: "block", width: "100 ", height: "100" }}></canvas>
+                            <div className="dashboardtable" id="dashboardIdtable">
+                              <ReactTable
+                                className="-striped -highlight"
+                                data={this.state.reactTableGroupings}
+                                columns={easaraGroupingTable}
+                                defaultPageSize={5}
+                                PreviousComponent={PreviousIcon}
+                                NextComponent={NextIcon}
+                                showPageSizeOptions={false}
+                                style={{
+                                  height: 260,
+                                }}
+                              />
+                            </div>
+                          </Tab>
+                          <Tab eventKey={2} title="showAugmentationReport">
+                            <canvas id="showAugmentationReport" className="chartjs" height="110" style={{ display: "block", width: "100 ", height: "100" }}></canvas>
 
-                        <ul className="nav nav-tabs ui-sortable-handle" id="contentGraph">
-                          <li className="active"><a href="#showAugmentationRanking" data-toggle="tab" aria-expanded="true">Augmentation & Ranking Report</a></li>
-                          <li className=""><a href="#showAugmentation" data-toggle="tab" aria-expanded="false">Augmentation</a></li>
-                          <li className=""><a href="#showRanking" data-toggle="tab" aria-expanded="false">Revolving</a></li>
-                          <div className="pull-right">
+                          </Tab>
+                          <Tab eventKey={3} title="showRankingReport" >
+                            <canvas id="showRankingReport" className="chartjs" height="110" style={{ display: "block", width: "100 ", height: "100" }}></canvas>
 
-                            <select className="form-control"
-                              id="augmentationRankingYear"
-                              style={{ width: "auto" }}
-                              value={this.state.yeargraphSelected}
-                              onChange={this.augmentationRakingYear.bind(this)}
-                            >
-                              {this.augmentationRakingYearBuild(this.state.yeargraphSelected)}
-                            </select></div>
-                        </ul>
-                        {/* 
-                        <div className="pull-right">
-                          <select className="form-control" style={{ width: "auto" }} id="groupApplicants"
-                        
-                           onChange={this.groupSelected()}>
-                            {this.buildOptions()}
-                          </select>
-                        </div> */}
+                          </Tab>
+                        </Tabs>
+
+
+
                       </div>
-                      {/* <div className="box-tools pull-right">
-        <button type="button" className="btn btn-box-tool" data-widget="collapse"><i className="fa fa-minus"></i>
-        </button>
-        <div className="btn-group">
-          <button type="button" className="btn btn-box-tool dropdown-toggle" data-toggle="dropdown">
-            <i className="fa fa-wrench"></i></button>
-          <ul className="dropdown-menu" role="menu">
-            <li><a href="#">Action</a></li>
-            <li><a href="#">Another action</a></li>
-            <li><a href="#">Something else here</a></li>
-            <li className="divider"></li>
-            <li><a href="#">Separated link</a></li>
-          </ul>
-        </div>
-        <button type="button" className="btn btn-box-tool" data-widget="remove"><i className="fa fa-times"></i></button>
-      </div> */}
-                    </div>
 
-
-
-                    <div className="box-body">
-                      <div className="row">
-                        <div className="col-lg-12" id="showAugmentationRanking">
-                          <canvas id="showAugmentationRankingReport" className="chartjs" height="110" style={{ display: "block", width: "100 ", height: "100" }}></canvas>
-                          <div className="dashboardtable" id="dashboardIdtable">
-                            <ReactTable
-                              className="-striped -highlight"
-                              data={this.state.reactTableGroupings}
-                              columns={easaraGroupingTable}
-                              defaultPageSize={5}
-                              PreviousComponent={PreviousIcon}
-                              NextComponent={NextIcon}
-                              showPageSizeOptions={false}
-                              style={{
-                                height: 260,
-                              }}
-                            />
-                          </div>
-                        </div>
-                        <div className="col-lg-12" id="showAugmentation">
-                          {/* borderDash: [5, 5], */}
-                          <canvas id="showAugmentationReport" className="chartjs" height="110" style={{ display: "block", width: "100 ", height: "100" }}></canvas>
-
-                        </div>
-                        <div className="col-lg-12" id="showRanking">
-                          <canvas id="showRankingReport" className="chartjs" height="110" style={{ display: "block", width: "100 ", height: "100" }}></canvas>
-
-                        </div>
-                      </div>
                     </div>
                     <div className="box-footer" >
                     </div>
