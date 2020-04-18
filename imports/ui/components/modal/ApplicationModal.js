@@ -322,10 +322,10 @@ export default class ApplicantProfileModal extends Component {
             title: "Application has been submitted",
             showConfirmButton: false,
             showClass: {
-              popup: "animated fadeInDown faster",
+              popup: "animated fadeIn",
             },
             hideClass: {
-              popup: "animated fadeOutUp faster",
+              popup: "animated fadeOut faster",
             },
             timer: 2500,
           });
@@ -337,10 +337,10 @@ export default class ApplicantProfileModal extends Component {
             title: "Submission failed. Please try again",
             showConfirmButton: false,
             showClass: {
-              popup: "animated fadeInDown faster",
+              popup: "animated fadeIn",
             },
             hideClass: {
-              popup: "animated fadeOutUp faster",
+              popup: "animated fadeOut faster",
             },
             timer: 2500,
           });
@@ -352,10 +352,10 @@ export default class ApplicantProfileModal extends Component {
           text: "Submission failed. Please try again",
           showConfirmButton: false,
           showClass: {
-            popup: "animated fadeInDown faster",
+            popup: "animated fadeIn",
           },
           hideClass: {
-            popup: "animated fadeOutUp faster",
+            popup: "animated fadeOut faster",
           },
           timer: 2500,
         });
@@ -371,10 +371,10 @@ export default class ApplicantProfileModal extends Component {
       icon: "warning",
       showCancelButton: true,
       showClass: {
-        popup: "animated fadeInDown faster",
+        popup: "animated fadeIn",
       },
       hideClass: {
-        popup: "animated fadeOutUp faster",
+        popup: "animated fadeOut faster",
       },
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
@@ -392,10 +392,10 @@ export default class ApplicantProfileModal extends Component {
                 title: "Submission failed. Please try again",
                 showConfirmButton: false,
                 showClass: {
-                  popup: "animated fadeInDown faster",
+                  popup: "animated fadeIn",
                 },
                 hideClass: {
-                  popup: "animated fadeOutUp faster",
+                  popup: "animated fadeOut faster",
                 },
                 timer: 2500,
               });
@@ -407,10 +407,10 @@ export default class ApplicantProfileModal extends Component {
               text: "Submission failed. Please try again",
               showConfirmButton: false,
               showClass: {
-                popup: "animated fadeInDown faster",
+                popup: "animated fadeIn",
               },
               hideClass: {
-                popup: "animated fadeOutUp faster",
+                popup: "animated fadeOut faster",
               },
               timer: 2500,
             });

@@ -45,7 +45,7 @@ export default class Application extends Component {
   };
 
   render() {
-    const {} = this.state;
+    const { applications } = this.state.data.state;
     const {
       applicationModalData,
       data,
@@ -55,7 +55,7 @@ export default class Application extends Component {
     const contentMinHeight = {
       minHeight: `${window.innerHeight - 101}px`,
     };
-    let applicantProfilesColumns = [
+    let applicationsColumns = [
       {
         Header: (
           <div>
@@ -67,7 +67,7 @@ export default class Application extends Component {
           {
             Header: "#",
             accessor: "id",
-            minWidth: 15,
+            minWidth: 10,
             className: "center",
             headerClassName: "wordwrap",
             style: { whiteSpace: "unset" },
@@ -75,30 +75,24 @@ export default class Application extends Component {
           {
             Header: "First Name",
             accessor: "first_name",
-            minWidth: 50,
+            minWidth: 40,
             headerClassName: "wordwrap",
             style: { whiteSpace: "unset" },
           },
           {
             Header: "Last Name",
             accessor: "last_name",
-            minWidth: 50,
+            minWidth: 40,
             headerClassName: "wordwrap",
             style: { whiteSpace: "unset" },
           },
           {
-            Header: "Grouping",
-            accessor: "last_name",
+            Header: "Groupings",
+            accessor: "groupings",
             minWidth: 50,
             headerClassName: "wordwrap",
             style: { whiteSpace: "unset" },
-          },
-          {
-            Header: "Address",
-            accessor: "address",
-            minWidth: 100,
-            headerClassName: "wordwrap",
-            style: { whiteSpace: "unset" },
+            className: "center",
           },
           {
             Header: "Contact Number",
@@ -107,12 +101,13 @@ export default class Application extends Component {
             className: "right",
             headerClassName: "wordwrap",
             style: { whiteSpace: "unset" },
+            className: "center",
           },
           {
-            Header: "Created At",
-            id: "created_at",
+            Header: "Birth Date",
+            id: "birth_date",
             accessor: (d) => {
-              return new Date(d.created_at).toLocaleString("en-US", {
+              return new Date(d.birth_date).toLocaleString("en-US", {
                 year: "numeric",
                 month: "short",
                 day: "2-digit",
@@ -121,16 +116,24 @@ export default class Application extends Component {
                 minute: "2-digit",
               });
             },
-            minWidth: 40,
-            className: "right",
+            minWidth: 50,
+            headerClassName: "wordwrap",
+            style: { whiteSpace: "unset" },
+            className: "center",
+          },
+          {
+            Header: "Address",
+            accessor: "address",
+            minWidth: 90,
             headerClassName: "wordwrap",
             style: { whiteSpace: "unset" },
           },
+
           {
-            Header: "Updated At",
-            id: "updated_at",
+            Header: "Date of Application",
+            id: "date_applied",
             accessor: (d) => {
-              return new Date(d.updated_at).toLocaleString("en-US", {
+              return new Date(d.date_applied).toLocaleString("en-US", {
                 year: "numeric",
                 month: "short",
                 day: "2-digit",
@@ -139,10 +142,11 @@ export default class Application extends Component {
                 minute: "2-digit",
               });
             },
-            minWidth: 40,
+            minWidth: 50,
             className: "right",
             headerClassName: "wordwrap",
             style: { whiteSpace: "unset" },
+            className: "center",
           },
         ],
       },
@@ -164,8 +168,8 @@ export default class Application extends Component {
                 <div className="box-body" style={{ padding: "0px" }}>
                   <ReactTable
                     className="-striped -highlight"
-                    data={[]}
-                    columns={applicantProfilesColumns}
+                    data={applications}
+                    columns={applicationsColumns}
                     defaultPageSize={reactTablePageSize}
                     PreviousComponent={PreviousIcon}
                     NextComponent={NextIcon}

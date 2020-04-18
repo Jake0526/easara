@@ -118,7 +118,8 @@ export default class Settings extends Component {
   };
 
   render() {
-    const { augmentation, revolving } = this.state;
+    const { settings } = this.state.data.state;
+    console.log(settings);
     let reactTablePageSize = Math.floor(window.innerHeight - 220) * 0.0232;
     const formInstance = (
       <form>
@@ -126,7 +127,7 @@ export default class Settings extends Component {
           id="formControlsText"
           type="text"
           label="Grouping Name"
-          value={revolving}
+          value={""}
           placeholder="Enter value"
           onChange={(e) => this.handleChange(e.target.value, "revolving")}
         />
@@ -135,7 +136,7 @@ export default class Settings extends Component {
           id="formControlsText"
           type="number"
           label="Maximum Augmentation Slots"
-          value={augmentation}
+          value={""}
           placeholder="Enter value"
           onChange={(e) => this.handleChange(e.target.value, "augmentation")}
         />
@@ -144,7 +145,7 @@ export default class Settings extends Component {
           id="formControlsText"
           type="number"
           label="Maximum Augmentation Slots"
-          value={augmentation}
+          value={""}
           placeholder="Enter value"
           onChange={(e) => this.handleChange(e.target.value, "augmentation")}
         />
@@ -208,7 +209,7 @@ export default class Settings extends Component {
                   <div className="box-body" style={boxBodyHeight}>
                     <ReactTable
                       className="-striped -highlight"
-                      data={[]}
+                      data={settings}
                       columns={[]}
                       defaultPageSize={reactTablePageSize}
                       PreviousComponent={PreviousIcon}

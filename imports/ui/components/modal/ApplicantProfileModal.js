@@ -88,7 +88,6 @@ export default class ApplicantProfileModal extends Component {
 
       //UPDATE
       update: false,
-      existing: 0,
     };
 
     this.errors = [];
@@ -146,12 +145,6 @@ export default class ApplicantProfileModal extends Component {
             ? nextProps.updateData.last_begin_date
             : ""
           : "",
-      existing:
-        nextProps.updateData != null
-          ? nextProps.updateData.existing
-            ? nextProps.updateData.existing
-            : 0
-          : 0,
     });
 
     if (nextProps.updateData === null) {
@@ -180,7 +173,6 @@ export default class ApplicantProfileModal extends Component {
           nextProps.lookUpData.length !== 0
             ? nextProps.lookUpData.suffixName
             : "",
-        existing: nextProps.lookUpData.length !== 0 ? 1 : 0,
         existingPersonnel: nextProps.lookUpData.length !== 0 ? true : false,
       });
     }
@@ -299,17 +291,21 @@ export default class ApplicantProfileModal extends Component {
   };
 
   insertNewApplicant = () => {
-    const { selectApplicantsProfile, toggleApplicationModal } = this.state.data;
+    const {
+      selectApplicantsProfile,
+      selectApplications,
+      toggleApplicationModal,
+    } = this.state.data;
     Swal.fire({
-      title: "Submit Form?",
+      title: "Create Profile?",
       text: "You won't be able to revert this!",
       icon: "warning",
       showCancelButton: true,
       showClass: {
-        popup: "animated fadeInDown faster",
+        popup: "animated fadeIn",
       },
       hideClass: {
-        popup: "animated fadeOutUp faster",
+        popup: "animated fadeOut faster",
       },
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
@@ -329,7 +325,6 @@ export default class ApplicantProfileModal extends Component {
           birthDate,
           employeeNumber,
           beginDate,
-          existing,
         } = this.state;
         let data = {
           firstName,
@@ -344,26 +339,26 @@ export default class ApplicantProfileModal extends Component {
           birthDate,
           employeeNumber,
           beginDate,
-          existing,
         };
         Meteor.call("insert-new-applicant", data, (error, result) => {
           if (!error) {
             if (result === "success") {
               selectApplicantsProfile();
+              selectApplications();
               Swal.fire({
                 position: "center",
                 icon: "success",
                 title: "Application has been successfuly recorded",
                 showConfirmButton: false,
                 showClass: {
-                  popup: "animated fadeInDown faster",
+                  popup: "animated fadeIn",
                 },
                 hideClass: {
-                  popup: "animated fadeOutUp faster",
+                  popup: "animated fadeOut faster",
                 },
                 timer: 2500,
               });
-              toggleApplicationModal();
+              toggleApplicationModal("close");
             } else {
               Swal.fire({
                 position: "center",
@@ -371,10 +366,10 @@ export default class ApplicantProfileModal extends Component {
                 title: "Submission failed. Please try again",
                 showConfirmButton: false,
                 showClass: {
-                  popup: "animated fadeInDown faster",
+                  popup: "animated fadeIn",
                 },
                 hideClass: {
-                  popup: "animated fadeOutUp faster",
+                  popup: "animated fadeOut faster",
                 },
                 timer: 2500,
               });
@@ -386,10 +381,10 @@ export default class ApplicantProfileModal extends Component {
               text: "Submission failed. Please try again",
               showConfirmButton: false,
               showClass: {
-                popup: "animated fadeInDown faster",
+                popup: "animated fadeIn",
               },
               hideClass: {
-                popup: "animated fadeOutUp faster",
+                popup: "animated fadeOut faster",
               },
               timer: 2500,
             });
@@ -399,18 +394,130 @@ export default class ApplicantProfileModal extends Component {
     });
   };
 
+  insertNewApplicantAndInsertApplication = () => {
+    const {
+      selectApplicantsProfile,
+      selectApplications,
+      toggleApplicationModal,
+    } = this.state.data;
+    Swal.fire({
+      title: "Create Profile and Submit Application?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      showClass: {
+        popup: "animated fadeIn",
+      },
+      hideClass: {
+        popup: "animated fadeOut faster",
+      },
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Continue",
+    }).then((result) => {
+      if (result.value) {
+        const {
+          firstName,
+          lastName,
+          middleName,
+          maidenName,
+          nameExtension,
+          address,
+          cellNumber,
+          politicalDistrict,
+          congressionalDistrict,
+          birthDate,
+          employeeNumber,
+          beginDate,
+        } = this.state;
+        let data = {
+          firstName,
+          lastName,
+          middleName,
+          maidenName,
+          nameExtension,
+          address,
+          cellNumber,
+          politicalDistrict,
+          congressionalDistrict,
+          birthDate,
+          employeeNumber,
+          beginDate,
+        };
+        Meteor.call(
+          "insert-new-applicant-application",
+          data,
+          (error, result) => {
+            if (!error) {
+              if (result === "success") {
+                selectApplicantsProfile();
+                selectApplications();
+                Swal.fire({
+                  position: "center",
+                  icon: "success",
+                  title: "Form has been successfuly recorded",
+                  showConfirmButton: false,
+                  showClass: {
+                    popup: "animated fadeIn",
+                  },
+                  hideClass: {
+                    popup: "animated fadeOut faster",
+                  },
+                  timer: 2500,
+                });
+                toggleApplicationModal("close");
+              } else {
+                Swal.fire({
+                  position: "center",
+                  icon: "error",
+                  title: "Submission failed. Please try again",
+                  showConfirmButton: false,
+                  showClass: {
+                    popup: "animated fadeIn",
+                  },
+                  hideClass: {
+                    popup: "animated fadeOut faster",
+                  },
+                  timer: 2500,
+                });
+              }
+            } else {
+              Swal.fire({
+                position: "center",
+                icon: "error",
+                text: "Submission failed. Please try again",
+                showConfirmButton: false,
+                showClass: {
+                  popup: "animated fadeIn",
+                },
+                hideClass: {
+                  popup: "animated fadeOut faster",
+                },
+                timer: 2500,
+              });
+            }
+          }
+        );
+      }
+    });
+  };
+
   updateInformation = (id) => {
-    const { selectApplicantsProfile, toggleApplicationModal } = this.state.data;
+    const {
+      selectApplicantsProfile,
+      selectApplications,
+      toggleApplicationModal,
+    } = this.state.data;
     Swal.fire({
       title: "Submit Form?",
       text: "You won't be able to revert this!",
       icon: "warning",
       showCancelButton: true,
       showClass: {
-        popup: "animated fadeInDown faster",
+        popup: "animated fadeIn",
       },
       hideClass: {
-        popup: "animated fadeOutUp faster",
+        popup: "animated fadeOut faster",
       },
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
@@ -451,16 +558,17 @@ export default class ApplicantProfileModal extends Component {
           if (!error) {
             if (result === "success") {
               selectApplicantsProfile();
+              selectApplications();
               Swal.fire({
                 position: "center",
                 icon: "success",
                 title: "Personnel information has been successfuly updated",
                 showConfirmButton: false,
                 showClass: {
-                  popup: "animated fadeInDown faster",
+                  popup: "animated fadeIn",
                 },
                 hideClass: {
-                  popup: "animated fadeOutUp faster",
+                  popup: "animated fadeOut faster",
                 },
                 timer: 2500,
               });
@@ -472,10 +580,10 @@ export default class ApplicantProfileModal extends Component {
                 title: "Submission failed. Please try again",
                 showConfirmButton: false,
                 showClass: {
-                  popup: "animated fadeInDown faster",
+                  popup: "animated fadeIn",
                 },
                 hideClass: {
-                  popup: "animated fadeOutUp faster",
+                  popup: "animated fadeOut faster",
                 },
                 timer: 2500,
               });
@@ -487,10 +595,10 @@ export default class ApplicantProfileModal extends Component {
               text: "Submission failed. Please try again",
               showConfirmButton: false,
               showClass: {
-                popup: "animated fadeInDown faster",
+                popup: "animated fadeIn",
               },
               hideClass: {
-                popup: "animated fadeOutUp faster",
+                popup: "animated fadeOut faster",
               },
               timer: 2500,
             });
@@ -628,7 +736,6 @@ export default class ApplicantProfileModal extends Component {
           birthDate: birthDate ? new Date(birthDate) : new Date(),
           existingPersonnel: true,
           beginDate: beginDate ? beginDate : "",
-          existing: employed ? employed : "",
         });
         const Toast = Swal.mixin({
           toast: true,
@@ -955,9 +1062,21 @@ export default class ApplicantProfileModal extends Component {
         </Modal.Body>
         <Modal.Footer>
           <ButtonGroup>
+            {update ? null : (
+              <Button
+                disabled={this.errors.length > 0 ? true : false}
+                bsStyle="primary"
+                onClick={() => this.insertNewApplicantAndInsertApplication()}
+              >
+                <i className="fa fa-check" aria-hidden="true"></i>{" "}
+                {"Create Profile and Submit Application"}
+              </Button>
+            )}
+
             <Button
               disabled={this.errors.length > 0 ? true : false}
               bsStyle="success"
+              style={{ marginLeft: "0px" }}
               onClick={
                 update
                   ? () => this.updateInformation(applicantProfileId)
@@ -965,7 +1084,7 @@ export default class ApplicantProfileModal extends Component {
               }
             >
               <i className="fa fa-check" aria-hidden="true"></i>{" "}
-              {update ? "Update" : "Submit"}
+              {update ? "Update" : "Create Profile"}
             </Button>
             <Button onClick={() => toggleApplicationModal("close")}>
               Close

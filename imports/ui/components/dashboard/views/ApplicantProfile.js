@@ -97,7 +97,7 @@ export default class ApplicantProfile extends Component {
           {
             Header: "#",
             accessor: "id",
-            minWidth: 25,
+            minWidth: 10,
             className: "center",
             headerClassName: "wordwrap",
             style: { whiteSpace: "unset" },
@@ -146,6 +146,7 @@ export default class ApplicantProfile extends Component {
             className: "right",
             headerClassName: "wordwrap",
             style: { whiteSpace: "unset" },
+            className: "center",
           },
           {
             Header: "Birth Date",
@@ -157,9 +158,10 @@ export default class ApplicantProfile extends Component {
                 day: "2-digit",
               });
             },
-            minWidth: 50,
+            minWidth: 40,
             headerClassName: "wordwrap",
             style: { whiteSpace: "unset" },
+            className: "center",
           },
           {
             Header: "Created At",
@@ -174,8 +176,8 @@ export default class ApplicantProfile extends Component {
                 minute: "2-digit",
               });
             },
-            minWidth: 40,
-            className: "right",
+            minWidth: 55,
+            className: "center",
             headerClassName: "wordwrap",
             style: { whiteSpace: "unset" },
           },
@@ -192,8 +194,8 @@ export default class ApplicantProfile extends Component {
                 minute: "2-digit",
               });
             },
-            minWidth: 40,
-            className: "right",
+            minWidth: 55,
+            className: "center",
             headerClassName: "wordwrap",
             style: { whiteSpace: "unset" },
           },
@@ -261,6 +263,7 @@ export default class ApplicantProfile extends Component {
           show={showApplicationModal}
           toggleApplicationModal={this.toggleApplicationModal}
           toggleAutoSuggestProfileModal={this.toggleAutoSuggestProfileModal}
+          selectApplications={data.selectApplications}
           selectApplicantsProfile={data.selectApplicantsProfile}
           religionOptions={religionOptions}
           updateData={updateData}

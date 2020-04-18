@@ -34,7 +34,10 @@ Meteor.method(
 Meteor.method(
   "select-applications",
   function () {
-    var sql = `SELECT * FROM applications`;
+    var sql = `Select ap.id, ap.first_name, ap.last_name, s.groupings, ap.contact_number, ap.birth_date, ap.address, s.date_from, s.date_to, a.date_applied
+    FROM applicant_profiles ap
+    INNER JOIN applications a ON ap.code = a.profile_code 
+    INNER JOIN settings s ON s.id = a.groupings_id`;
     var fut = new Future();
     easara(sql, function (err, result) {
       if (err) throw err;
@@ -106,7 +109,7 @@ Meteor.method(
     var sql = `
       INSERT INTO applicant_profiles
       (code, first_name, last_name, middle_name, maiden_name, name_ext, address, contact_number, political_district, congressional_district,
-        birth_date, employee_number, existing)
+        birth_date, employee_number)
       VALUES ('${code}','${addslashes(applicantData.firstName)}', '${addslashes(
       applicantData.lastName
     )}', '${addslashes(applicantData.middleName)}',
@@ -121,7 +124,7 @@ Meteor.method(
         applicantData.employeeNumber === "000000"
           ? ""
           : applicantData.employeeNumber
-      )}', ${applicantData.existing});`;
+      )}');`;
     var fut = new Future();
     easara(sql, function (err, result) {
       if (err) {
@@ -148,14 +151,12 @@ Meteor.method(
     check(code, String);
 
     var sql = `
-      INSERT INTO applications
-      (profile_code, groupings)
-      VALUES ('${code}', 'test');`;
+    INSERT INTO applications (profile_code, groupings_id) VALUES ('${code}', (SELECT id FROM settings ORDER BY id DESC LIMIT 1));`;
     var fut = new Future();
     console.log(sql);
     easara(sql, function (err, result) {
       if (err) {
-        console.log(err)
+        console.log(err);
         fut.return("bad");
       } else {
         fut.return("success");
@@ -169,6 +170,59 @@ Meteor.method(
     getArgsFromRequest: function (request) {
       var content = request.body;
       return [content.code];
+    },
+  }
+);
+
+Meteor.method(
+  "insert-new-applicant-application",
+  function (applicantData) {
+    check(applicantData, Object);
+    function addslashes(str) {
+      if (str == null) {
+        return "";
+      } else {
+        return (str + "").replace(/[\\"']/g, "\\$&").replace(/\u0000/g, "\\0");
+      }
+    }
+    let code = Random.id([17]);
+    var sql = `
+      INSERT INTO applicant_profiles
+      (code, first_name, last_name, middle_name, maiden_name, name_ext, address, contact_number, political_district, congressional_district,
+        birth_date, employee_number)
+      VALUES ('${code}','${addslashes(applicantData.firstName)}', '${addslashes(
+      applicantData.lastName
+    )}', '${addslashes(applicantData.middleName)}',
+        '${addslashes(applicantData.maidenName)}', '${addslashes(
+      applicantData.nameExtension
+    )}', '${addslashes(applicantData.address)}',
+        '${addslashes(applicantData.cellNumber)}', '${addslashes(
+      applicantData.politicalDistrict
+    )}', '${addslashes(applicantData.congressionalDistrict)}', 
+        '${moment(applicantData.birthDate).format("YYYY-MM-DD HH:mm:ss")}',
+      '${addslashes(
+        applicantData.employeeNumber === "000000"
+          ? ""
+          : applicantData.employeeNumber
+      )}');
+      INSERT INTO applications (profile_code, groupings_id) VALUES ('${code}', (SELECT id FROM settings ORDER BY id DESC LIMIT 1));`;
+    var fut = new Future();
+    easara(sql, function (err, result) {
+      if (err) {
+        console.log(err);
+        fut.return("bad");
+      } else {
+        fut.return("success");
+      }
+    });
+    return fut.wait();
+  },
+  {
+    url: "insert-new-applicant-application",
+    httpMethod: "post",
+    getArgsFromRequest: function (request) {
+      var content = request.body;
+      return [content.applicantData];
     },
   }
 );
@@ -208,10 +262,9 @@ Meteor.method(
     WHERE id = ${applicantData.applicantProfileId}`;
     var fut = new Future();
 
-    
     easara(sql, function (err, result) {
       if (err) {
-        console.log(err)
+        console.log(err);
         fut.return("bad");
       } else {
         fut.return("success");
