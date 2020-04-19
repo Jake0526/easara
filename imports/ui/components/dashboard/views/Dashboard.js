@@ -706,13 +706,12 @@ export default class Dashboard extends Component {
         finalCountRevolving.splice(i, 0, 0)
         finallabelRevolving.splice(i, 0, filteredApplication[i])
       }
-      else if (filteredApplication[i] != finallabelAugmentation[i]) {
+      if (filteredApplication[i] != finallabelAugmentation[i]) {
         finalCountAugmentation.splice(i, 0, 0)
         finallabelAugmentation.splice(i, 0, filteredApplication[i])
       }
     }
-
-
+   
     //THE FILERED APPLICATION RESULT SHOULD BE ADDED TO DROP DOWN SELECT ATTRIBUTE
 
     let randomColorResult = []
@@ -1439,7 +1438,7 @@ export default class Dashboard extends Component {
     for (let i = 0; i < copyState.length; i++) {
       // DIRI MAG  <option selected="selected"> </option> para default sa latest month makuha
       if(i == 0){
-        arr.push(<option key={i} value={""} ></option>)
+        arr.push(<option key={-1} value={""} ></option>)
       }
 
       if (i == copyState.length - 1) {
@@ -1725,7 +1724,7 @@ export default class Dashboard extends Component {
           className: 'center',
           headerClassName: 'wordwrap',
           style: { whiteSpace: 'unset' },
-          Cell: c => c.row._original.group,
+          accessor: "group",
         }, {
 
           Header: 'Type',
@@ -1733,7 +1732,7 @@ export default class Dashboard extends Component {
           className: 'center',
           headerClassName: 'wordwrap',
           style: { whiteSpace: 'unset' },
-          Cell: c => c.row._original.name,
+          accessor: "name",
         }, {
 
           Header: 'Data',
@@ -1741,7 +1740,7 @@ export default class Dashboard extends Component {
           className: 'center',
           headerClassName: 'wordwrap',
           style: { whiteSpace: 'unset' },
-          Cell: c => c.row._original.data,
+          accessor: "data",
         },
         ],
 
@@ -1994,10 +1993,10 @@ export default class Dashboard extends Component {
                     </div>
                   </div>
                   <div className="row">
-                    <div className="col-lg-12" style={{ display: "flex" }} >
+                    <div className="col-lg-12 center" style={{ display: "block",width:"50%",}} >
 
 
-                      <div style={{ flex: "50%", paddingLeft: "40%", paddingTop: "10px" }}>
+                      <div style={{ paddingTop: "10px" ,paddingLeft:"10%",float:"left"}}>
                         <DatePicker
                           selected={this.state.fromDate}
                           onChange={(date) => this.setStartDate(date)}
@@ -2005,8 +2004,7 @@ export default class Dashboard extends Component {
                           showYearDropdown
                           selectsStart
                           style={{
-                            overflow: "true",
-                            float: "left",
+                           
                           }}
                           dropdownMode="select"
                           popperPlacement="auto"
@@ -2016,7 +2014,7 @@ export default class Dashboard extends Component {
                         />
                       </div>
 
-                      <div style={{ flex: "70%", paddingLeft: "1%", paddingBottom: "20px", paddingTop: "10px" }} id="reactTestDate">
+                      <div style={{  paddingTop: "50px",float:"left",width:"50%", paddingTop: "10px" }}>
                         <DatePicker
                           selected={this.state.toDate}
                           onChange={(date) => this.setEndDate(date)}
@@ -2024,10 +2022,7 @@ export default class Dashboard extends Component {
                           showYearDropdown
                           selectsEnd
                           style={{
-                            // width: "35%",
-                            overflow: "true",
-                            float: "left",
-                            marginleft: "-300px",
+                           
                           }}
                           dropdownMode="select"
                           popperPlacement="bottom"
