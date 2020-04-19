@@ -13,8 +13,8 @@
         "tokenURL": "https://ssocentral.davaocity.gov.ph/oauth2/token",
         "clientID": "easara-client-meteor-local",
         "clientSecret": "this_is_my_secret",
-        "callbackURL": "http://localhost:3000/callback",
-        "host": "http://localhost:3000/",
+        "callbackURL": "http://localhost:3100/callback",
+        "host": "http://localhost:3100/",
         "scope": "easara",
         "clientName": "easara-local"
     }
