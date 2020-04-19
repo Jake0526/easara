@@ -80,7 +80,7 @@ export default class Dashboard extends Component {
     let chartApplicationData = this.state.data.state.application
     let chartSettings = this.state.data.state.settings
     console.log(chartSettings[chartSettings.length - 1])
-    let baseGroup = chartSettings[chartSettings.length - 1].id
+    let baseGroup = chartSettings[chartSettings.length - 1].id ? chartSettings[chartSettings.length - 1].id : ""
     let baseData = []
 
     //groupname Basis
@@ -917,7 +917,7 @@ export default class Dashboard extends Component {
       },
       title: {
         display: true,
-        text: 'Yearly Statistics Report'
+        text: 'Yearly Statistics Augmentation Report'
       },
       responsive: true,
 
@@ -1010,7 +1010,7 @@ export default class Dashboard extends Component {
       },
       title: {
         display: true,
-        text: 'Yearly Statistics Report'
+        text: 'Yearly Statistics Revolving Report'
       },
       responsive: true,
     }
@@ -1674,30 +1674,6 @@ export default class Dashboard extends Component {
   render() {
     var lastClicked = 0
 
-    $('#contentGraph').on('click', 'a', function (e) {
-      //Change content displayed
-      // console.log($($("#contentGraph li a.active")[0].hash))
-      $($("#contentGraph li a.active")[0].hash).hide();
-      $(this.hash).show();
-      sessionStorage.setItem('visible', this.hash);
-      //Change active item
-      $("ul a.active").removeClass("active");
-      $(this).addClass("active");
-    });
-
-    $("#contentGraph li a").each(function (index) {
-      var repeat = 0
-      if (index != 0) {
-        $(this.hash).hide();
-      }
-      else {
-        $(this).addClass("active");
-      }
-
-
-
-    });
-
     const { exisingEmployee, newEmployee } = this.state
 
     const { totalRankingFilled } = this.state
@@ -1928,7 +1904,7 @@ export default class Dashboard extends Component {
               </div>
             </div>
 
-            <section className="AugmentationRankingReport" >
+            <section className="AugmentationRankingReport"style={{height:"100%"}} >
               <div className="row">
 
                 <div className="col-sm-12 col-md-12 col-lg-12">
@@ -1945,8 +1921,8 @@ export default class Dashboard extends Component {
                         {this.augmentationRakingYearBuild(this.state.yeargraphSelected)}
                       </select>
                       {/* <h3 className="box-title"></h3> */}
-                      <Tabs defaultActiveKey="s1" transition={"false"} id="noanim-tab-example">
-                        <Tab eventKey="s1" title="Augmentation & Ranking">
+                      <Tabs defaultActiveKey="s1" transition={"false"}  id="noanim-tab-example">
+                        <Tab eventKey="s1"  style={{height:"100vh"}} title="Augmentation & Ranking">
                           <canvas id="showAugmentationRankingReport" className="chartjs" height="110" style={{ display: "block", width: "100 ", height: "100" }}></canvas>
                           <div className="dashboardtable">
                             <ReactTable
@@ -1957,17 +1933,17 @@ export default class Dashboard extends Component {
                               PreviousComponent={PreviousIcon}
                               NextComponent={NextIcon}
                               showPageSizeOptions={false}
-                              style={{
-                                height: 260,
-                              }}
+                              // style={{
+                              //   height: 260,
+                              // }}
                             />
                           </div>
                         </Tab>
-                        <Tab eventKey="s2" title="Augmentation">
+                        <Tab eventKey="s2" style={{height:"68vh"}} title="Augmentation">
                           <canvas id="showAugmentationReport" className="chartjs" height="110" style={{ display: "block", width: "100 ", height: "100" }}></canvas>
 
                         </Tab>
-                        <Tab eventKey="s3" title="Revolving" >
+                        <Tab eventKey="s3" style={{height:"68vh"}} title="Revolving" >
                           <canvas id="showRankingReport" className="chartjs" height="110" style={{ display: "block", width: "100 ", height: "100" }}></canvas>
 
                         </Tab>
