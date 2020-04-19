@@ -11,6 +11,7 @@ import {
 } from "react-bootstrap";
 import PreviousIcon from '../../react-table-custom-component/PreviousComponent';
 import NextIcon from '../../react-table-custom-component/NextComponent';
+import { element } from 'prop-types';
 
 var converter = require('number-to-words');
 var Chart = require('chart.js');
@@ -20,7 +21,7 @@ var moment = require('moment');
 
 //Component
 
-export default class HelloWorld extends Component {
+export default class Dashboard extends Component {
   constructor(props) {
     super(props);
 
@@ -78,14 +79,13 @@ export default class HelloWorld extends Component {
     let chartData = this.state.data.state.applicantsProfiles
     let chartApplicationData = this.state.data.state.application
     let chartSettings = this.state.data.state.settings
-    console.log(chartSettings)
-    let baseGroup = chartSettings[chartSettings.length - 1].groupings
+    console.log(chartSettings[chartSettings.length - 1])
+    let baseGroup = chartSettings[chartSettings.length - 1].id ? chartSettings[chartSettings.length - 1].id : ""
     let baseData = []
 
     //groupname Basis
-
     chartApplicationData.forEach(element1 => {
-      if (element1.groupings == baseGroup) {
+      if (element1.groupings_id == baseGroup) {
         chartData.forEach(element2 => {
           if (element1.profile_code == element2.code) {
             baseData.push(element2)
@@ -100,7 +100,6 @@ export default class HelloWorld extends Component {
       baseGroupData: baseGroup,
       baseGroupDidMount: baseData
     });
-
     this.showApplication(baseData)
     this.showAgeParticipation(baseData)
     this.showMainDashboardReport(baseData)
@@ -114,13 +113,13 @@ export default class HelloWorld extends Component {
     let chartData = nextProps.state.applicantsProfiles
     let chartApplicationData = nextProps.state.application
     let chartSettings = nextProps.state.settings
-    let baseGroup = chartSettings[chartSettings.length - 1].groupings
+    let baseGroup = chartSettings[chartSettings.length - 1].id
     let baseData = []
 
 
 
     chartApplicationData.forEach(element1 => {
-      if (element1.groupings == baseGroup) {
+      if (element1.groupings_id == baseGroup) {
         chartData.forEach(element2 => {
           if (element1.profile_code == element2.code) {
             baseData.push(element2)
@@ -616,14 +615,16 @@ export default class HelloWorld extends Component {
   }
 
   showAugmentationRankingReport = (data, yearselected, load) => {
+    let profilesData = this.state.data.state.applicantsProfiles
     let application_data = data
     let settingstYearData = []
     let yearThisFunction = []
     let filteredAllYear = []
     let yearFilteredThisFunction = ""
     let defaultYear = ""
+    let settings_data = this.state.data.state.settings
     if (load != "yes") {
-      let settings_data = this.state.data.state.settings
+      // settings_data = this.state.data.state.settings
 
       //INITAL SHOWING last GROUP AND PRESENT YEAR through Settings based
 
@@ -650,25 +651,40 @@ export default class HelloWorld extends Component {
     else if (load == "yes") {
       yearFilteredThisFunction = yearselected
     }
+
     let summaryApplication = []
     data.forEach(element => {
-      (element.groupings !== null) && (element.groupings !== "") ?
-        (moment(element.created_at).format("YYYY") == yearFilteredThisFunction) ?
-          summaryApplication.push(element.groupings) : '' : ''
-    });
-    let filteredApplication = [...new Set(summaryApplication)]
-
-    let countFilteredRevolving = []
-    let countFilteredAugmentation = []
-    for (let i = 0; i < filteredApplication.length; i++)
-      data.forEach(element => {
-        if (filteredApplication[i] == element.groupings && element.category == "Revolving") {
-          countFilteredRevolving[element.groupings] = (countFilteredRevolving[element.groupings] || 0) + 1
+      if ((element.groupings_id !== null) && (element.groupings_id !== "")) {
+        if (moment(element.created_at).format("YYYY") == yearFilteredThisFunction) {
+          summaryApplication.push(element.groupings_id)
         }
-        else if (filteredApplication[i] == element.groupings && element.category == "Augmentation") {
-          countFilteredAugmentation[element.groupings] = (countFilteredRevolving[element.groupings] || 0) + 1
+      }
+
+    });
+    let finalGroup = []
+    summaryApplication.forEach(element1 => {
+      settings_data.forEach(element2 => {
+        if (element1 == element2.id) {
+          finalGroup.push(element2.groupings)
         }
       })
+    })
+    let filteredGroup = [...new Set(finalGroup)]
+    let filteredApplication = [...new Set(summaryApplication)]
+    let countFilteredRevolving = []
+    let countFilteredAugmentation = []
+    for (let i = 0; i < filteredApplication.length; i++) {
+      data.forEach(element => {
+        if (filteredApplication[i] == element.groupings_id && element.category == "Revolving") {
+          countFilteredRevolving[element.groupings_id] = (countFilteredRevolving[element.groupings_id] || 0) + 1
+        }
+        else if (filteredApplication[i] == element.groupings_id && element.category == "Augmentation") {
+          countFilteredAugmentation[element.groupings_id] = (countFilteredRevolving[element.groupings_id] || 0) + 1
+        }
+      })
+    }
+
+
     let finalCountRevolving = []
     let finallabelRevolving = []
     for (let [key, value] of Object.entries(countFilteredRevolving)) {
@@ -696,6 +712,7 @@ export default class HelloWorld extends Component {
       }
     }
 
+
     //THE FILERED APPLICATION RESULT SHOULD BE ADDED TO DROP DOWN SELECT ATTRIBUTE
 
     let randomColorResult = []
@@ -711,14 +728,14 @@ export default class HelloWorld extends Component {
     for (let i = 0; i < filteredApplication.length; i++) {
 
       let objData2 = {
-        group: finallabelAugmentation[i],
+        group: filteredGroup[i],
         name: "Augmentation",
         data: finalCountAugmentation[i]
       }
       tempReactData.push(objData2)
 
       let objData1 = {
-        group: finallabelRevolving[i],
+        group: filteredGroup[i],
         name: "Revolving",
         data: finalCountRevolving[i],
 
@@ -741,7 +758,7 @@ export default class HelloWorld extends Component {
     var ctx = document.getElementById('showAugmentationRankingReport').getContext('2d');
     let dataChart = {
 
-      labels: filteredApplication,
+      labels: filteredGroup,
       datasets: [
         {
           label: 'Total Augmentation Filtered',
@@ -806,8 +823,8 @@ export default class HelloWorld extends Component {
     }
     else {
       if ((Array.isArray(data) && data.length)) {
-        this.showAugmentationReport(filteredApplication, finallabelAugmentation, finalCountAugmentation, randomColorResult[1])
-        this.showRankingReport(filteredApplication, finallabelRevolving, finalCountRevolving, randomColorResult[0])
+        this.showAugmentationReport(filteredGroup, finallabelAugmentation, finalCountAugmentation, randomColorResult[1])
+        this.showRankingReport(filteredGroup, finallabelRevolving, finalCountRevolving, randomColorResult[0])
 
 
         let chart = this.state.showAugmentationRankingReport
@@ -853,7 +870,7 @@ export default class HelloWorld extends Component {
     var ctx = document.getElementById('showAugmentationReport').getContext('2d');
     let dataChart = {
 
-      labels: filteredAugmentationlabel,
+      labels: filteredApplication,
       datasets: [
         // {
         //   label: 'Total Revolving Filtered',
@@ -900,7 +917,7 @@ export default class HelloWorld extends Component {
       },
       title: {
         display: true,
-        text: 'Yearly Statistics Report'
+        text: 'Yearly Statistics Augmentation Report'
       },
       responsive: true,
 
@@ -993,7 +1010,7 @@ export default class HelloWorld extends Component {
       },
       title: {
         display: true,
-        text: 'Yearly Statistics Report'
+        text: 'Yearly Statistics Revolving Report'
       },
       responsive: true,
     }
@@ -1421,7 +1438,9 @@ export default class HelloWorld extends Component {
     let defaultnone = ""
     for (let i = 0; i < copyState.length; i++) {
       // DIRI MAG  <option selected="selected"> </option> para default sa latest month makuha
-
+      if(i == 0){
+        arr.push(<option key={i} value={""} ></option>)
+      }
 
       if (i == copyState.length - 1) {
         arr.push(<option key={i} value={copyState[i]} >{copyState[i]}</option>)
@@ -1434,7 +1453,7 @@ export default class HelloWorld extends Component {
     }
     // this.setState({
     //   selectDefaultValue: defaultData
-    // })
+    // }) cannot setState on return function///
     return arr;
 
   }
@@ -1574,11 +1593,18 @@ export default class HelloWorld extends Component {
   groupProcessGraph = (groupDataSelected) => {
     let dateData = this.state.data.state.applicantsProfiles
     let groupData = this.state.data.state.application
-
+    let settingsData = this.state.data.state.settings
+    let groupDataBasis = ""
     let groupDataResult = []
 
+
+    settingsData.forEach(element => {
+      element.groupings == groupDataSelected ?
+        groupDataBasis = (element.id) : ''
+    })
+
     groupData.forEach(element1 => {
-      if (element1.groupings == groupDataSelected) {
+      if (element1.groupings_id == groupDataBasis) {
         dateData.forEach(element2 => {
           if (element2.code == element1.profile_code) {
             groupDataResult.push(element2)
@@ -1603,18 +1629,26 @@ export default class HelloWorld extends Component {
     let settingsData = this.state.data.state.settings
     let data = this.state.data.state.application
     let resultYearData = []
+    let resultYearSettings = []
     this.setState({
       yeargraphSelected: yearselected,
       update: "yes"
 
     })
-    data.forEach(element => {
+
+    settingsData.forEach(element=>{
       if (yearselected == moment(element.created_at).format("YYYY")) {
-        resultYearData.push(element)
+        resultYearSettings.push(element)
       }
-
-
     })
+    resultYearSettings.forEach(element1=>{
+      data.forEach(element2 => {
+        if (element1.id == element2.groupings_id) {
+          resultYearData.push(element2)
+        }
+      })
+    })
+   
 
     this.showAugmentationRankingReport(resultYearData, yearselected, "yes")
   }
@@ -1641,30 +1675,6 @@ export default class HelloWorld extends Component {
 
   render() {
     var lastClicked = 0
-
-    $('#contentGraph').on('click', 'a', function (e) {
-      //Change content displayed
-      // console.log($($("#contentGraph li a.active")[0].hash))
-      $($("#contentGraph li a.active")[0].hash).hide();
-      $(this.hash).show();
-      sessionStorage.setItem('visible', this.hash);
-      //Change active item
-      $("ul a.active").removeClass("active");
-      $(this).addClass("active");
-    });
-
-    $("#contentGraph li a").each(function (index) {
-      var repeat = 0
-      if (index != 0) {
-        $(this.hash).hide();
-      }
-      else {
-        $(this).addClass("active");
-      }
-
-
-
-    });
 
     const { exisingEmployee, newEmployee } = this.state
 
@@ -1797,47 +1807,21 @@ export default class HelloWorld extends Component {
               </div>
             </div>
 
+            <div className="row">
+              <div className="col-sm-12 col-md-12 col-lg-12">
+                <div className="box">
+                  <div className="box-header with-border">
+                    <h3 className="box-title">As of Today's EASARA Report </h3>
+                  </div>
+                  <div className="box-body">
+                    <div className="row">
+                      <div className="col-lg-8">
+                        <canvas id="showMainDashBoardReport" className="chartjs" height="150" style={{ display: "block", width: "100 ", height: "100" }}></canvas>
 
+                      </div>
 
-
-            <section className="main dashboard">
-
-              <div className="row">
-
-                <div className="col-sm-12 col-md-12 col-lg-12">
-                  <div className="box">
-                    <div className="box-header with-border">
-                      <h3 className="box-title">As of Today's EASARA Report </h3>
-
-                      {/* <div className="box-tools pull-right">
-                        <button type="button" className="btn btn-box-tool" data-widget="collapse"><i className="fa fa-minus"></i>
-                        </button>
-                        <div className="btn-group">
-                          <button type="button" className="btn btn-box-tool dropdown-toggle" data-toggle="dropdown">
-                            <i className="fa fa-wrench"></i></button>
-                          <ul className="dropdown-menu" role="menu">
-                            <li><a href="#">Action</a></li>
-                            <li><a href="#">Another action</a></li>
-                            <li><a href="#">Something else here</a></li>
-                            <li className="divider"></li>
-                            <li><a href="#">Separated link</a></li>
-                          </ul>
-                        </div>
-                        <button type="button" className="btn btn-box-tool" data-widget="remove"><i className="fa fa-times"></i></button>
-                      </div> */}
-                    </div>
-
-
-
-                    <div className="box-body">
-                      <div className="row">
-                        <div className="col-lg-8">
-                          <canvas id="showMainDashBoardReport" className="chartjs" height="150" style={{ display: "block", width: "100 ", height: "100" }}></canvas>
-
-                        </div>
-
-                        <div className="col-lg-4">
-                          {/* <div className="progress-group">
+                      <div className="col-lg-4">
+                        {/* <div className="progress-group">
                             <span className="progress-text">Required Applicants on Ranking</span>
                             <span className="progress-number">
                               <b>{(newEmployee + exisingEmployee) >= 100 ?
@@ -1866,7 +1850,7 @@ export default class HelloWorld extends Component {
                                 }}></div>
                             </div>
                           </div> */}
-                          {/*
+                        {/*
                           <div className="progress-group">
                             <span className="progress-text">Emoployee's Left</span>
                             <span className="progress-number">
@@ -1877,115 +1861,106 @@ export default class HelloWorld extends Component {
                                 style={{ width: (((newEmployee + exisingEmployee)) / 400) * 100 + "%" }}></div>
                             </div>
                           </div> */}
-                          <div className="dashboardtable" id="dashboardIdtable">
-                            <ReactTable
-                              className="-striped -highlight"
-                              data={this.state.baseGroupDidMount}
-                              columns={easaraMiniTable}
-                              defaultPageSize={10}
-                              PreviousComponent={PreviousIcon}
-                              NextComponent={NextIcon}
-                              showPageSizeOptions={false}
-                              style={{
-                                minheight: 55 + "%",
-                              }}
-                            />
-                          </div>
+                        <div className="dashboardtable" id="dashboardIdtable">
+                          <ReactTable
+                            className="-striped -highlight"
+                            data={this.state.baseGroupDidMount}
+                            columns={easaraMiniTable}
+                            defaultPageSize={10}
+                            PreviousComponent={PreviousIcon}
+                            NextComponent={NextIcon}
+                            showPageSizeOptions={false}
+                            style={{
+                              minheight: 55 + "%",
+                            }}
+                          />
                         </div>
                       </div>
                     </div>
+                  </div>
 
-                    <div className="box-footer">
-                      <div className="row">
-                        <div className="col-sm-6 col-xs-6">
-                          <div className="description-block border-right">
-                            <h5 className="description-header text-green">{newEmployee + exisingEmployee}</h5>
-                            <span className="description-text">As of Total </span>
-                          </div>
+                  <div className="box-footer">
+                    <div className="row">
+                      <div className="col-sm-6 col-xs-6">
+                        <div className="description-block border-right">
+                          <h5 className="description-header text-green">{newEmployee + exisingEmployee}</h5>
+                          <span className="description-text">As of Total </span>
                         </div>
-                        {/* <div className="col-sm-4 col-xs-6">
+                      </div>
+                      {/* <div className="col-sm-4 col-xs-6">
                           <div className="description-block border-right">
                              <span className="description-percentage text-green"><i className="fa fa-caret-up"></i> 20%</span> 
                             <h5 className="description-header text-orange">{100 - (applicantsRanking.length)}</h5>
                             <span className="description-text"> </span>
                           </div>
                         </div> */}
-                        <div className="col-sm-6 col-xs-6">
-                          <div className="description-block border-right">
-                            {/* <span className="description-percentage text-green"><i className="fa fa-caret-up"></i> 20%</span> */}
-                            <h5 className="description-header text-red">{this.state.baseGroupDataNOTCHANGED}</h5>
-                            <span className="description-text">GROUP NAME</span>
-                          </div>
+                      <div className="col-sm-6 col-xs-6">
+                        <div className="description-block border-right">
+                          <h5 className="description-header text-red">{this.state.baseGroupDataNOTCHANGED}</h5>
+                          <span className="description-text">GROUP NAME</span>
                         </div>
-                        {/* <div className="col-sm-3 col-xs-6">
-                          <div className="description-block">
-                           
-                            <h5 className="description-header text-red">{400 - (newEmployee + exisingEmployee)}</h5>
-                            <span className="description-text">Total Exmployee Left</span>
-                          </div>
-                        </div> */}
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </section>
+            </div>
 
-            <section className="AugmentationRankingReport" >
+            <section className="AugmentationRankingReport"style={{height:"100%"}} >
               <div className="row">
 
                 <div className="col-sm-12 col-md-12 col-lg-12">
                   <div className="box" >
                     <div className="box-header with-border" >
 
-                      <div>
-                        <select className="form-control"
-                          id="augmentationRankingYear"
-                          style={{ width: "auto", float: "right" }}
-                          value={this.state.yeargraphSelected}
-                          onChange={this.augmentationRakingYear.bind(this)}
-                        >
-                          {this.augmentationRakingYearBuild(this.state.yeargraphSelected)}
-                        </select>
-                        {/* <h3 className="box-title"></h3> */}
-                        <Tabs defaultActiveKey={1} id="uncontrolled-tab-example">
-                          <Tab eventKey={1} title="Augmentation & Ranking">
-                            <canvas id="showAugmentationRankingReport" className="chartjs" height="110" style={{ display: "block", width: "100 ", height: "100" }}></canvas>
-                            <div className="dashboardtable" id="dashboardIdtable">
-                              <ReactTable
-                                className="-striped -highlight"
-                                data={this.state.reactTableGroupings}
-                                columns={easaraGroupingTable}
-                                defaultPageSize={5}
-                                PreviousComponent={PreviousIcon}
-                                NextComponent={NextIcon}
-                                showPageSizeOptions={false}
-                                style={{
-                                  height: 260,
-                                }}
-                              />
-                            </div>
-                          </Tab>
-                          <Tab eventKey={2} title="Augmentation">
-                            <canvas id="showAugmentationReport" className="chartjs" height="110" style={{ display: "block", width: "100 ", height: "100" }}></canvas>
 
-                          </Tab>
-                          <Tab eventKey={3} title="Revolving" >
-                            <canvas id="showRankingReport" className="chartjs" height="110" style={{ display: "block", width: "100 ", height: "100" }}></canvas>
+                      <select className="form-control"
+                        id="augmentationRankingYear"
+                        style={{ width: "auto", float: "right" }}
+                        value={this.state.yeargraphSelected}
+                        onChange={this.augmentationRakingYear.bind(this)}
+                      >
+                        {this.augmentationRakingYearBuild(this.state.yeargraphSelected)}
+                      </select>
+                      {/* <h3 className="box-title"></h3> */}
+                      <Tabs defaultActiveKey="s1" transition={"false"}  id="noanim-tab-example">
+                        <Tab eventKey="s1"  style={{height:"100vh"}} title="Augmentation & Ranking">
+                          <canvas id="showAugmentationRankingReport" className="chartjs" height="110" style={{ display: "block", width: "100 ", height: "100" }}></canvas>
+                          <div className="dashboardtable">
+                            <ReactTable
+                              className="-striped -highlight"
+                              data={this.state.reactTableGroupings}
+                              columns={easaraGroupingTable}
+                              defaultPageSize={5}
+                              PreviousComponent={PreviousIcon}
+                              NextComponent={NextIcon}
+                              showPageSizeOptions={false}
+                              // style={{
+                              //   height: 260,
+                              // }}
+                            />
+                          </div>
+                        </Tab>
+                        <Tab eventKey="s2" style={{height:"68vh"}} title="Augmentation">
+                          <canvas id="showAugmentationReport" className="chartjs" height="110" style={{ display: "block", width: "100 ", height: "100" }}></canvas>
 
-                          </Tab>
-                        </Tabs>
-                      </div>
+                        </Tab>
+                        <Tab eventKey="s3" style={{height:"68vh"}} title="Revolving" >
+                          <canvas id="showRankingReport" className="chartjs" height="110" style={{ display: "block", width: "100 ", height: "100" }}></canvas>
+
+                        </Tab>
+                      </Tabs>
+
 
                     </div>
-                    <div className="box-footer" >
-                    </div>
+                    {/* <div className="box-footer" >
+                    </div> */}
                   </div>
                 </div>
               </div>
             </section>
 
-            <section className="Graph">
+            <section className="graph">
               <div className="row">
                 <div className="col-sm-12 col-lg-12 col-md-12" >
                   <div className="row">
@@ -2022,7 +1997,7 @@ export default class HelloWorld extends Component {
                     <div className="col-lg-12" style={{ display: "flex" }} >
 
 
-                      <div style={{ flex: "50%", paddingLeft: "40%" ,paddingTop:"10px"}}>
+                      <div style={{ flex: "50%", paddingLeft: "40%", paddingTop: "10px" }}>
                         <DatePicker
                           selected={this.state.fromDate}
                           onChange={(date) => this.setStartDate(date)}
@@ -2041,7 +2016,7 @@ export default class HelloWorld extends Component {
                         />
                       </div>
 
-                      <div style={{ flex: "70%", paddingLeft: "1%" ,paddingBottom:"20px",paddingTop:"10px"}} id="reactTestDate">
+                      <div style={{ flex: "70%", paddingLeft: "1%", paddingBottom: "20px", paddingTop: "10px" }} id="reactTestDate">
                         <DatePicker
                           selected={this.state.toDate}
                           onChange={(date) => this.setEndDate(date)}
@@ -2097,20 +2072,6 @@ export default class HelloWorld extends Component {
                   </div>
 
                   <div className="row" >
-                    {/* <div className="col-sm-12 col-md-6 col-lg-6" >
-                      <div className="box box-primary">
-                        <div className="box-header with-border">
-                          <h4><label> Religion</label></h4>
-                        </div>
-                        <div className="box-body no-padding">
-                          <canvas id="showReligion" className="chartjs" style={{ display: "block", width: "100", height: "100" }}></canvas>
-                        </div>
-                        <div className="box-footer">
-                          <label>Total:<span style={{ color: "green" }}> {exisingEmployee + newEmployee + " " + converter.toWords(exisingEmployee + newEmployee)}</span></label>
-                        </div>
-                      </div>
-                    </div> */}
-
                     <div className="col-sm-12 col-md-6 col-lg-6" >
                       <div className="box box-primary">
                         <div className="box-header with-border">
@@ -2128,101 +2089,11 @@ export default class HelloWorld extends Component {
                 </div>
               </div>
             </section>
-
-            {/* <section className="content-header"  >
-              <div className="row" >
-                <div className="col-sm-12 col-md-6 col-lg-6" style={{ margin: "0 0 5em 0" }}>
-                  <h3> <p className="text-center">
-                    <strong>Places Filled </strong>
-                  </p></h3>
-                  <div className="progress-group">
-                    <h4><span className="progress-text">MA-A (90%)</span>
-                      <span className="progress-number"><b>190</b>/200</span></h4>
-                    <div className="progress sm">
-                      <div className="progress-bar progress-bar-aqua" style={{ width: "90%" }}></div>
-                    </div>
-                  </div>
-                  <div className="progress-group">
-                    <h4><span className="progress-text">Matina</span>
-                      <span className="progress-number"><b>310</b>/400</span></h4>
-                    <div className="progress sm">
-                      <div className="progress-bar progress-bar-red" style={{ width: "80%" }}></div>
-                    </div>
-                  </div>
-                  <div className="progress-group">
-                    <h4> <span className="progress-text">Lanang</span>
-                      <span className="progress-number"><b>480</b>/800</span></h4>
-                    <div className="progress sm">
-                      <div className="progress-bar progress-bar-green" style={{ width: "60%" }}></div>
-                    </div>
-                  </div>
-                  <div className="progress-group">
-                    <h4> <span className="progress-text">Laverna</span>
-                      <span className="progress-number"><b>250</b>/500</span></h4>
-                    <div className="progress sm">
-                      <div className="progress-bar progress-bar-yellow" style={{ width: "50%" }}></div>
-                    </div>
-                  </div>
-                  <div className="progress-group">
-                    <h4> <span className="progress-text">San Pedro</span>
-                      <span className="progress-number"><b>190</b>/200</span></h4>
-                    <div className="progress sm">
-                      <div className="progress-bar progress-bar-blue" style={{ width: "90%" }}></div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="col-sm-12 col-md-6 col-lg-6" >
-                  <h3><p className="text-center">
-                    <strong>Places Filled 2</strong>
-                  </p></h3>
-                  <div className="progress-group">
-                    <h4><span className="progress-text">City Hall</span>
-                      <span className="progress-number"><b>190</b>/200</span></h4>
-                    <div className="progress sm">
-                      <div className="progress-bar progress-bar-orange" style={{ width: "90%" }}></div>
-                    </div>
-                  </div>
-                  <div className="progress-group">
-                    <h4> <span className="progress-text">Sanggunian Panglungsod</span>
-                      <span className="progress-number"><b>310</b>/400</span></h4>
-                    <div className="progress sm">
-                      <div className="progress-bar progress-bar-aqua" style={{ width: "80%" }}></div>
-                    </div>
-                  </div>
-                  <div className="progress-group">
-                    <h4> <span className="progress-text">Buhangin</span>
-                      <span className="progress-number"><b>480</b>/800</span></h4>
-                    <div className="progress sm">
-                      <div className="progress-bar progress-bar-red" style={{ width: "60%" }}></div>
-                    </div>
-                  </div>
-                  <div className="progress-group">
-                    <h4><span className="progress-text">Boulevard</span>
-                      <span className="progress-number"><b>250</b>/500</span></h4>
-                    <div className="progress sm">
-                      <div className="progress-bar progress-bar-yellow" style={{ width: "50%" }}></div>
-                    </div>
-                  </div>
-                  <div className="progress-group">
-                    <h4><span className="progress-text">Roxas</span>
-                      <span className="progress-number"><b>190</b>/200</span></h4>
-                    <div className="progress sm">
-                      <div className="progress-bar progress-bar-pink" style={{ width: "90%" }}></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </section> */}
           </section>
         </div>
 
         <AppFooter />
-
-
         {/* MODAL FOR POLITICAL DISTRICT */}
-
-
         <section className="modalShowingAllDetails">
 
           <div className="modal fade" id="modal-show-politicalDistrict" role="dialog">
@@ -2241,9 +2112,7 @@ export default class HelloWorld extends Component {
             </div>
           </div>
         </section>
-
       </div >
     );
-
   }
 }
