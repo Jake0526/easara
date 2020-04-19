@@ -34,7 +34,8 @@ Meteor.method(
 Meteor.method(
   "select-applications",
   function () {
-    var sql = `Select ap.id, ap.first_name, ap.last_name, s.groupings, ap.contact_number, ap.birth_date, ap.address, s.date_from, s.date_to, a.date_applied
+    var sql = `Select ap.id, ap.first_name, ap.last_name, s.groupings, ap.contact_number,
+     ap.birth_date, ap.address, s.date_from, s.date_to, a.date_applied
     FROM applicant_profiles ap
     INNER JOIN applications a ON ap.code = a.profile_code 
     INNER JOIN settings s ON s.id = a.groupings_id`;
@@ -50,6 +51,26 @@ Meteor.method(
     httpMethod: "post",
   }
 );
+
+Meteor.method(
+  "select-applications-all",
+  function () {
+    var sql = `Select *
+    FROM applications`;
+    var fut = new Future();
+    easara(sql, function (err, result) {
+      if (err) throw err;
+      fut.return(result);
+    });
+    return fut.wait();
+  },
+  {
+    url: "select-applications-all",
+    httpMethod: "post",
+  }
+);
+
+
 
 Meteor.method(
   "select-settings",

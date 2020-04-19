@@ -138,11 +138,12 @@ export default class FakeRoute extends Component {
     console.log("queries will run")
     //Queries
     this.selectApplicantsProfile();
-    this.selectApplication();
+    this.selectApplicationALL()
    // this.getRanking();
     this.getSettings();
     this.getAllCompleteProfile();
     this.selectApplications();
+    this.selectApplications()
   }
 
   selectApplicantsProfile = () => {
@@ -157,8 +158,8 @@ export default class FakeRoute extends Component {
       }
     });
   };
-  selectApplication = () => {
-    Meteor.call("select-applications", (error, result) => {
+  selectApplicationALL = () => {
+    Meteor.call("select-applications-all", (error, result) => {
       if (!error) {
         this.setState({
           application: result,

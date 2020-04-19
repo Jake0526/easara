@@ -434,3 +434,6 @@ body:not(.modal-close) {
 #reactTestDate .react-datepicker-wrapper{
   width: 35%;
 }
+.graph{
+  display:block
+}
