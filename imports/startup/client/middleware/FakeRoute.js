@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
-import "animate.css/animate.css";
+
 export default class FakeRoute extends Component {
   constructor(props) {
     super(props);
@@ -11,6 +11,7 @@ export default class FakeRoute extends Component {
       employeeInformation: {},
       applicantsProfiles: [],
       applicantsRanking: [],
+      application:[],
       introspect: {},
       isLogin: null,
       isLoad: false,
@@ -22,15 +23,16 @@ export default class FakeRoute extends Component {
 
   componentDidMount() {
     HTTP.post(
-      "http://localhost:3000/v2/graphql",
+      'http://111.125.114.29:13000/v2/graphql',
       {
         headers: {
           "Content-Type": "application/json",
           Accept: "application/json",
         },
         data: {
-          query: `{
-              completeProfileForActivePlantillaNonPlantillaByEmpno(employeeNumber: "368158") {
+          query:
+            `{
+              completeProfileForActivePlantillaNonPlantillaByEmpno(employeeNumber: "501444") {
                           employeeNumber
                           employee {
                               lastName
@@ -133,10 +135,11 @@ export default class FakeRoute extends Component {
         });
       }
     );
-
+    console.log("queries will run")
     //Queries
     this.selectApplicantsProfile();
-    this.getRanking();
+    this.selectApplication();
+   // this.getRanking();
     this.getSettings();
     this.getAllCompleteProfile();
     this.selectApplications();
@@ -148,6 +151,21 @@ export default class FakeRoute extends Component {
         this.setState({
           applicantsProfiles: result,
         });
+      }
+      else{
+        console.log(error)
+      }
+    });
+  };
+  selectApplication = () => {
+    Meteor.call("select-applications", (error, result) => {
+      if (!error) {
+        this.setState({
+          application: result,
+        });
+      }
+      else{
+        console.log(error)
       }
     });
   };

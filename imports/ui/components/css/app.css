@@ -431,3 +431,6 @@ body:not(.modal-close) {
 .grid-form fieldset legend {
   padding-bottom: 0px;
 }
+#reactTestDate .react-datepicker-wrapper{
+  width: 35%;
+}

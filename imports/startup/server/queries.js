@@ -228,6 +228,39 @@ Meteor.method(
 );
 
 Meteor.method(
+  "insert-grouping",
+  function (data) {
+    check(data, Object);
+
+    var sql = `
+    INSERT INTO settings (groupings, date_from, date_to) VALUES ('${
+      data.groupingName
+    }', '${moment(data.dateFrom).format("YYYY-MM-DD")}', '${moment(
+      data.dateTo
+    ).format("YYYY-MM-DD")}');`;
+    var fut = new Future();
+    console.log(sql);
+    easara(sql, function (err, result) {
+      if (err) {
+        console.log(err);
+        fut.return("bad");
+      } else {
+        fut.return("success");
+      }
+    });
+    return fut.wait();
+  },
+  {
+    url: "insert-grouping",
+    httpMethod: "post",
+    getArgsFromRequest: function (request) {
+      var content = request.body;
+      return [content.data];
+    },
+  }
+);
+
+Meteor.method(
   "update-profile",
   function (applicantData) {
     check(applicantData, Object);
@@ -283,22 +316,31 @@ Meteor.method(
 );
 
 Meteor.method(
-  "update-settings",
+  "update-grouping",
   function (data) {
     check(data, Object);
     console.log(data);
-    var sql = `UPDATE settings SET value=${data.augmentation} WHERE id = 1;
-               UPDATE settings SET value=${data.revolving} WHERE id = 2;`;
+    var sql = `UPDATE settings SET groupings='${
+      data.groupings
+    }', date_from='${moment(data.date_from).format(
+      "YYYY-MM-DD"
+    )}', date_to='${moment(data.date_to).format("YYYY-MM-DD")}' WHERE id = ${
+      data.id
+    };`;
     var fut = new Future();
 
     easara(sql, function (err, result) {
-      if (err) throw err;
-      fut.return("success");
+      if (err) {
+        console.log(err);
+        fut.return("bad");
+      } else {
+        fut.return("success");
+      }
     });
     return fut.wait();
   },
   {
-    url: "update-settings",
+    url: "update-grouping",
     httpMethod: "post",
     getArgsFromRequest: function (request) {
       var content = request.body;
