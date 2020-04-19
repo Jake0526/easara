@@ -84,7 +84,6 @@ export default class Dashboard extends Component {
     let baseData = []
 
     //groupname Basis
-    console.log(chartApplicationData)
     chartApplicationData.forEach(element1 => {
       if (element1.groupings_id == baseGroup) {
         chartData.forEach(element2 => {
@@ -101,7 +100,6 @@ export default class Dashboard extends Component {
       baseGroupData: baseGroup,
       baseGroupDidMount: baseData
     });
-    console.log(baseData)
     this.showApplication(baseData)
     this.showAgeParticipation(baseData)
     this.showMainDashboardReport(baseData)
@@ -617,15 +615,16 @@ export default class Dashboard extends Component {
   }
 
   showAugmentationRankingReport = (data, yearselected, load) => {
+    let profilesData = this.state.data.state.applicantsProfiles
     let application_data = data
     let settingstYearData = []
     let yearThisFunction = []
     let filteredAllYear = []
     let yearFilteredThisFunction = ""
     let defaultYear = ""
-    let settings_data = []
+    let settings_data = this.state.data.state.settings
     if (load != "yes") {
-      settings_data = this.state.data.state.settings
+      // settings_data = this.state.data.state.settings
 
       //INITAL SHOWING last GROUP AND PRESENT YEAR through Settings based
 
@@ -652,6 +651,7 @@ export default class Dashboard extends Component {
     else if (load == "yes") {
       yearFilteredThisFunction = yearselected
     }
+
     let summaryApplication = []
     data.forEach(element => {
       if ((element.groupings_id !== null) && (element.groupings_id !== "")) {
@@ -664,15 +664,13 @@ export default class Dashboard extends Component {
     let finalGroup = []
     summaryApplication.forEach(element1 => {
       settings_data.forEach(element2 => {
-        if (element1 = element2.id) {
+        if (element1 == element2.id) {
           finalGroup.push(element2.groupings)
         }
       })
     })
-
     let filteredGroup = [...new Set(finalGroup)]
     let filteredApplication = [...new Set(summaryApplication)]
-    console.log(filteredApplication)
     let countFilteredRevolving = []
     let countFilteredAugmentation = []
     for (let i = 0; i < filteredApplication.length; i++) {
@@ -1629,18 +1627,26 @@ export default class Dashboard extends Component {
     let settingsData = this.state.data.state.settings
     let data = this.state.data.state.application
     let resultYearData = []
+    let resultYearSettings = []
     this.setState({
       yeargraphSelected: yearselected,
       update: "yes"
 
     })
-    data.forEach(element => {
+
+    settingsData.forEach(element=>{
       if (yearselected == moment(element.created_at).format("YYYY")) {
-        resultYearData.push(element)
+        resultYearSettings.push(element)
       }
-
-
     })
+    resultYearSettings.forEach(element1=>{
+      data.forEach(element2 => {
+        if (element1.id == element2.groupings_id) {
+          resultYearData.push(element2)
+        }
+      })
+    })
+   
 
     this.showAugmentationRankingReport(resultYearData, yearselected, "yes")
   }
