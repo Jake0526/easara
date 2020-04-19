@@ -81,6 +81,8 @@ export default class Dashboard extends Component {
     let chartSettings = this.state.data.state.settings
     console.log(chartSettings[chartSettings.length - 1])
     let baseGroup = chartSettings[chartSettings.length - 1].id ? chartSettings[chartSettings.length - 1].id : ""
+    let baseGroupName = chartSettings[chartSettings.length - 1].groupings ? chartSettings[chartSettings.length - 1].groupings : ""
+   
     let baseData = []
 
     //groupname Basis
@@ -96,9 +98,11 @@ export default class Dashboard extends Component {
     })
 
     this.setState({
-      baseGroupDataNOTCHANGED: baseGroup,
+      baseGroupDataNOTCHANGED: baseGroupName,
       baseGroupData: baseGroup,
-      baseGroupDidMount: baseData
+      baseGroupDidMount: baseData,
+      baseGroupData: baseGroupName,
+      
     });
     this.showApplication(baseData)
     this.showAgeParticipation(baseData)
@@ -115,7 +119,8 @@ export default class Dashboard extends Component {
     let chartSettings = nextProps.state.settings
     let baseGroup = chartSettings[chartSettings.length - 1].id
     let baseData = []
-
+    let baseGroupName = chartSettings[chartSettings.length - 1].groupings ? chartSettings[chartSettings.length - 1].groupings : ""
+   
 
 
     chartApplicationData.forEach(element1 => {
@@ -129,11 +134,11 @@ export default class Dashboard extends Component {
 
     })
     this.setState({
-      baseGroupDataNOTCHANGED: baseGroup,
+      baseGroupDataNOTCHANGED: baseGroupName,
       data: nextProps,
       dataPrevious: prevProps,
       applicantsProfiles: nextProps,
-      baseGroupData: baseGroup,
+      baseGroupData: baseGroupName,
       baseGroupDidMount: baseData
     });
 
@@ -1673,8 +1678,6 @@ export default class Dashboard extends Component {
 
 
   render() {
-    var lastClicked = 0
-
     const { exisingEmployee, newEmployee } = this.state
 
     const { totalRankingFilled } = this.state
@@ -1863,7 +1866,7 @@ export default class Dashboard extends Component {
                         <div className="dashboardtable" id="dashboardIdtable">
                           <ReactTable
                             className="-striped -highlight"
-                            data={this.state.baseGroupDidMount}
+                            data={this.state.baseGroupDidMount.reverse()}
                             columns={easaraMiniTable}
                             defaultPageSize={10}
                             PreviousComponent={PreviousIcon}
