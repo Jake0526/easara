@@ -1438,7 +1438,9 @@ export default class Dashboard extends Component {
     let defaultnone = ""
     for (let i = 0; i < copyState.length; i++) {
       // DIRI MAG  <option selected="selected"> </option> para default sa latest month makuha
-
+      if(i == 0){
+        arr.push(<option key={i} value={""} ></option>)
+      }
 
       if (i == copyState.length - 1) {
         arr.push(<option key={i} value={copyState[i]} >{copyState[i]}</option>)
