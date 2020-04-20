@@ -20,7 +20,6 @@ var d3 = require('d3-scale-chromatic')
 var moment = require('moment');
 
 //Component
-
 export default class Dashboard extends Component {
   constructor(props) {
     super(props);
@@ -75,44 +74,53 @@ export default class Dashboard extends Component {
 
   componentDidMount() {
     $('body').addClass('sidebar-mini');
-
+    console.log(this.props.state.application)
     let chartData = this.state.data.state.applicantsProfiles
     let chartApplicationData = this.state.data.state.application
     let chartSettings = this.state.data.state.settings
     console.log(chartSettings[chartSettings.length - 1])
     let baseGroup = chartSettings[chartSettings.length - 1].id ? chartSettings[chartSettings.length - 1].id : ""
     let baseGroupName = chartSettings[chartSettings.length - 1].groupings ? chartSettings[chartSettings.length - 1].groupings : ""
-   
-    let baseData = []
 
+    let baseData = []
+    let historyApplications = []
+    console.log(baseGroup)
     //groupname Basis
     chartApplicationData.forEach(element1 => {
+      console.log(element1)
       if (element1.groupings_id == baseGroup) {
         chartData.forEach(element2 => {
           if (element1.profile_code == element2.code) {
             baseData.push(element2)
+            historyApplications.push({
+              first_name: element2.first_name,
+              last_name: element2.last_name,
+              created_at: element1.created_at
+            })
           }
         })
       }
 
     })
-
+    console.log(historyApplications)
     this.setState({
       baseGroupDataNOTCHANGED: baseGroupName,
       baseGroupData: baseGroup,
-      baseGroupDidMount: baseData,
+      baseGroupDidMount: historyApplications,
       baseGroupData: baseGroupName,
-      
+
     });
     this.showApplication(baseData)
     this.showAgeParticipation(baseData)
-    this.showMainDashboardReport(baseData)
+    this.showMainDashboardReport(chartApplicationData, baseGroup)
     this.showAugmentationRankingReport(chartApplicationData)
     this.showCongressionalDistrict(baseData)
     this.showPoliticalDistrict(baseData)
   }
 
   componentWillReceiveProps(nextProps, prevProps) {
+    console.log(nextProps)
+    console.log(prevProps)
 
     let chartData = nextProps.state.applicantsProfiles
     let chartApplicationData = nextProps.state.application
@@ -120,38 +128,42 @@ export default class Dashboard extends Component {
     let baseGroup = chartSettings[chartSettings.length - 1].id
     let baseData = []
     let baseGroupName = chartSettings[chartSettings.length - 1].groupings ? chartSettings[chartSettings.length - 1].groupings : ""
-   
-
+    let historyApplications = []
 
     chartApplicationData.forEach(element1 => {
       if (element1.groupings_id == baseGroup) {
         chartData.forEach(element2 => {
           if (element1.profile_code == element2.code) {
             baseData.push(element2)
+            historyApplications.push({
+              first_name: element2.first_name,
+              last_name: element2.last_name,
+              created_at: element1.created_at
+            })
           }
         })
       }
 
     })
+    console.log(historyApplications)
     this.setState({
       baseGroupDataNOTCHANGED: baseGroupName,
       data: nextProps,
       dataPrevious: prevProps,
       applicantsProfiles: nextProps,
       baseGroupData: baseGroupName,
-      baseGroupDidMount: baseData
+      baseGroupDidMount: historyApplications
     });
 
 
     this.showApplication(baseData)
-    this.showMainDashboardReport(baseData)
+    this.showMainDashboardReport(chartApplicationData, baseGroup)
     this.showAugmentationRankingReport(nextProps.state.application)
     this.showAgeParticipation(baseData)
     this.showCongressionalDistrict(baseData)
     this.showPoliticalDistrict(baseData)
 
   }
-
 
   createChart = (ctx, dataChart, typeChart, optionsChart) => {
     var myChart = new Chart(ctx, {
@@ -176,7 +188,6 @@ export default class Dashboard extends Component {
     myChart.destroy()
 
   }
-
 
   showApplication = (data, updateData) => {
     let currentlyEmployed = 0
@@ -231,7 +242,6 @@ export default class Dashboard extends Component {
     let type = 'pie'
     if (this.state.data !== this.state.dataPrevious) {
 
-
     }
     else {
       if ((Array.isArray(data) && data.length)) {
@@ -266,19 +276,37 @@ export default class Dashboard extends Component {
       }
     }
   }
-  showMainDashboardReport = (data) => {
-
+  showMainDashboardReport = (data, baseGroup) => {
 
     let daysDataDashboard = []
     daysDataDashboard.length = 0
 
-
     let uniqueDays = []
+
+    let countUniqueData = []
+    let countExistingData = []
+    let countNewData = []
+    let applicantsProfilesData = this.state.data.state.applicantsProfiles
+
+    console.log(data)
     data.forEach(element => {
-      uniqueDays.push(moment(element.created_at).format("MMMM DD,YYYY"))
+      if (element.groupings_id == baseGroup) {
+        uniqueDays.push(moment(element.created_at).format("MMMM DD,YYYY"))
+        applicantsProfilesData.forEach(element2 => {
+          if (element.profile_code == element2.code) {
+
+            if (element2.employee_number == null || element2.employee_number == "") {
+              countNewData.push([moment(element.created_at).format("MMMM DD,YYYY"), 0])
+            }
+            else {
+              countNewData.push([moment(element.created_at).format("MMMM DD,YYYY"), 1])
+            }
+          }
+        })
+      }
     })
     let unique = [...new Set(uniqueDays)]
-
+    console.log(countNewData)
     //Get first 5 (last) days
     let first5days = []
     for (let i = unique.length - 1, j = 1; ; i--, j++) {
@@ -294,26 +322,21 @@ export default class Dashboard extends Component {
     }
     let resultUnique = (first5days.reverse())
 
-    let countUniqueData = []
-    let countExistingData = []
-    let countNewData = []
 
 
-    //For PreExisting DATA
-    for (let i = 0; i < resultUnique.length; i++) {
-      data.forEach(element => {
-        if (moment(element.created_at).format("MMMM DD,YYYY") == resultUnique[i]) {
-          if (element.employee_number == null || element.employee_number == "") {
-            countNewData.push([moment(element.created_at).format("MMMM DD,YYYY"), 0])
-          }
-          else {
-            countNewData.push([moment(element.created_at).format("MMMM DD,YYYY"), 1])
-          }
+    console.log(resultUnique)
+    // //For PreExisting DATA
+    // for (let i = 0; i < resultUnique.length; i++) {
+    //   data.forEach(element => {
+    //     if (moment(element.created_at).format("MMMM DD,YYYY") == resultUnique[i]) {
 
-        }
 
-      });
-    }
+
+
+    //     }
+
+    //   });
+    // }
 
     //TESTING VALUES STACKED BAR GRAPH
     let test = []
@@ -332,7 +355,6 @@ export default class Dashboard extends Component {
 
     })
     //let theCount = [Object.keys(obj),Object.values(obj)];
-
     let finalbase = []
     let finalvalue0 = []
     let finalvalue1 = []
@@ -364,9 +386,7 @@ export default class Dashboard extends Component {
 
       }
     }
-
     //The employee left finalvalue0 or finalvalue1 length
-
     //Increasing Total of finalValue 0 and 1
     let preExistingData = uniqueDays.length - countNewData.length
     let incrementalValue1 = []
@@ -429,7 +449,6 @@ export default class Dashboard extends Component {
       hover: {
         mode: 'index'
       },
-
       scales: {
         xAxes: [{
           stacked: true
@@ -556,7 +575,6 @@ export default class Dashboard extends Component {
         display: false,
         labels: {
           // This more specific font property overrides the global property
-
           defaultFontSize: 14,
           fontColor: 'black'
         }
@@ -632,8 +650,6 @@ export default class Dashboard extends Component {
       // settings_data = this.state.data.state.settings
 
       //INITAL SHOWING last GROUP AND PRESENT YEAR through Settings based
-
-
       settings_data.forEach(element => {
         if (moment(new Date()).format("YYYY") == moment(element.created_at).format("YYYY")) {
           yearThisFunction.push(moment(element.created_at).format("YYYY"))
@@ -689,7 +705,6 @@ export default class Dashboard extends Component {
       })
     }
 
-
     let finalCountRevolving = []
     let finallabelRevolving = []
     for (let [key, value] of Object.entries(countFilteredRevolving)) {
@@ -716,7 +731,7 @@ export default class Dashboard extends Component {
         finallabelAugmentation.splice(i, 0, filteredApplication[i])
       }
     }
-   
+
     //THE FILERED APPLICATION RESULT SHOULD BE ADDED TO DROP DOWN SELECT ATTRIBUTE
 
     let randomColorResult = []
@@ -747,7 +762,6 @@ export default class Dashboard extends Component {
       tempReactData.push(objData1)
     }
 
-
     let lastFilteredData = filteredApplication[filteredApplication.length - 1]
     this.setState({
       stackedOptions: filteredApplication,
@@ -756,9 +770,6 @@ export default class Dashboard extends Component {
     })
 
     //CALLING THE AUGMENTATION GRAPH REPORT AND RANKING GRAPH REPORT
-
-
-
     var ctx = document.getElementById('showAugmentationRankingReport').getContext('2d');
     let dataChart = {
 
@@ -790,10 +801,7 @@ export default class Dashboard extends Component {
       },
 
       scales: {
-
         yAxes: [{
-
-
           ticks: {
             beginAtZero: true,
             precision: 0,
@@ -876,13 +884,6 @@ export default class Dashboard extends Component {
 
       labels: filteredApplication,
       datasets: [
-        // {
-        //   label: 'Total Revolving Filtered',
-        //   fill: false,
-        //   data: finalCountRevolving,
-        //   backgroundColor: randomColorResult[0],
-        //   borderColor: randomColorResult[0]
-        // }
         {
           label: 'Total Augmentation Filtered',
           fill: false,
@@ -965,15 +966,11 @@ export default class Dashboard extends Component {
         }
       }
     }
-
-
   }
-
 
   showRankingReport = (filteredApplication, filteredRevolvinglabel, finalCountRevolving, color) => {
     var ctx = document.getElementById('showRankingReport').getContext('2d');
     let dataChart = {
-
       labels: filteredApplication,
       datasets: [
         {
@@ -1057,11 +1054,7 @@ export default class Dashboard extends Component {
       }
     }
 
-
   }
-
-
-
   // showReligion = (data) => {
   //   let religion = []
   //   data.forEach(element => {
@@ -1174,7 +1167,6 @@ export default class Dashboard extends Component {
     }
 
     let options = {
-
       legend: {
         display: false,
         labels: {
@@ -1184,7 +1176,6 @@ export default class Dashboard extends Component {
           fontColor: 'black'
         }
       },
-
       scales: {
         yAxes: [{
           ticks: {
@@ -1239,9 +1230,8 @@ export default class Dashboard extends Component {
       }
     }
 
-
-
   }
+
   showModalViewPoliticalDistrict = () => {
     $('#modal-show-politicalDistrict').modal({
       backdrop: 'static',
@@ -1279,7 +1269,6 @@ export default class Dashboard extends Component {
           element.congressional_district == "3" ? countPolicalDistrict3Unique[element.political_district] = (countPolicalDistrict3Unique[element.political_district] || 0) + 1 : ""
 
     });
-
 
     data.forEach(element => {
       element.congressional_district == "1" ? politicalDistrict1Container.push(element.political_district) :
@@ -1337,8 +1326,6 @@ export default class Dashboard extends Component {
     }
 
     /* For Coloring Selecting at least 3 */
-
-
     // ANG MALI KAY WALA NA IMPLEMENT ANG POLITICAL DISTRICT
     var ctx = document.getElementById('showPoliticalDistrict').getContext('2d');
     let dataChart = {
@@ -1435,14 +1422,12 @@ export default class Dashboard extends Component {
       if (moment(data).format("YYYY") == moment(element.created_at).format("YYYY")) {
         resultYearData.push(element.groupings)
       }
-
-
     })
     let copyState = resultYearData
     let defaultnone = ""
     for (let i = 0; i < copyState.length; i++) {
       // DIRI MAG  <option selected="selected"> </option> para default sa latest month makuha
-      if(i == 0){
+      if (i == 0) {
         arr.push(<option key={-1} value={""} ></option>)
       }
 
@@ -1459,10 +1444,9 @@ export default class Dashboard extends Component {
     //   selectDefaultValue: defaultData
     // }) cannot setState on return function///
     return arr;
-
   }
-  buildYearOptions = () => {
 
+  buildYearOptions = () => {
     let result = [];
     let copyState = this.state.yearFiltered
     let defaultData = ""
@@ -1488,9 +1472,6 @@ export default class Dashboard extends Component {
     return result;
 
   }
-
-
-
 
   groupSelectedYear = (e) => {
     let yearselected = (e.target.value)
@@ -1593,7 +1574,6 @@ export default class Dashboard extends Component {
     e.preventDefault()
   }
 
-
   groupProcessGraph = (groupDataSelected) => {
     let dateData = this.state.data.state.applicantsProfiles
     let groupData = this.state.data.state.application
@@ -1640,19 +1620,18 @@ export default class Dashboard extends Component {
 
     })
 
-    settingsData.forEach(element=>{
+    settingsData.forEach(element => {
       if (yearselected == moment(element.created_at).format("YYYY")) {
         resultYearSettings.push(element)
       }
     })
-    resultYearSettings.forEach(element1=>{
+    resultYearSettings.forEach(element1 => {
       data.forEach(element2 => {
         if (element1.id == element2.groupings_id) {
           resultYearData.push(element2)
         }
       })
     })
-   
 
     this.showAugmentationRankingReport(resultYearData, yearselected, "yes")
   }
@@ -1662,40 +1641,29 @@ export default class Dashboard extends Component {
     let defaultData = ""
     for (let i = 0; i < copyState.length; i++) {
       // DIRI MAG  <option selected="selected"> </option> para default sa latest month makuha
-
-
       if (i == copyState.length - 1) {
         result.push(<option key={i} value={copyState[i]} >{copyState[i]}</option>)
-
       }
       else {
         result.push(<option key={i} value={copyState[i]}>{copyState[i]}</option>)
       }
     }
     return result
-
   }
-
 
   render() {
     const { exisingEmployee, newEmployee } = this.state
-
     const { totalRankingFilled } = this.state
-
     const contentMinHeight = {
       minHeight: `${window.innerHeight - 101}px`,
     };
-
     const applicantsRanking = this.state.data.state.applicantsRanking
-
     /*For React Table */
     const easaraMiniTable = [
-
       {
         Header: 'History (Date Application Order)',
         className: 'center',
         columns: [{
-
           Header: 'Name',
           minWidth: 25,
           className: 'center',
@@ -1703,7 +1671,6 @@ export default class Dashboard extends Component {
           style: { whiteSpace: 'unset' },
           Cell: c => c.row._original.first_name + " " + c.row._original.last_name,
         }, {
-
           Header: 'Date Applied',
           minWidth: 25,
           className: 'center',
@@ -1712,16 +1679,13 @@ export default class Dashboard extends Component {
           Cell: c => moment(c.row._original.created_at).format("MMMM DD, YYYY hh:mm a"),
         },
         ],
-
         // minWidth: 50,
       }]
     const easaraGroupingTable = [
-
       {
         Header: 'Yearly Table Data',
         className: 'center',
         columns: [{
-
           Header: 'Group',
           minWidth: 25,
           className: 'center',
@@ -1729,7 +1693,6 @@ export default class Dashboard extends Component {
           style: { whiteSpace: 'unset' },
           accessor: "group",
         }, {
-
           Header: 'Type',
           minWidth: 25,
           className: 'center',
@@ -1737,7 +1700,6 @@ export default class Dashboard extends Component {
           style: { whiteSpace: 'unset' },
           accessor: "name",
         }, {
-
           Header: 'Data',
           minWidth: 25,
           className: 'center',
@@ -1746,11 +1708,8 @@ export default class Dashboard extends Component {
           accessor: "data",
         },
         ],
-
         // minWidth: 50,
       }]
-
-
     return (
       <div className="wrapper">
         <AppHeader middleware={this.props.state} history={this.props.history} />
@@ -1764,12 +1723,10 @@ export default class Dashboard extends Component {
           <section className="content body">
             <div className="row">
               <div className="col-sm-12 col-lg-3 col-xs-6">
-
                 <div className="small-box bg-green">
                   <div className="inner">
                     <h3>{this.state.newEmployee}</h3>
                     <p>New Applicants</p>
-
                     <div className="icon">
                       <i className="fa fa-user-plus"></i>
                     </div>
@@ -1790,25 +1747,19 @@ export default class Dashboard extends Component {
                   </div>
                 </div>
               </div>
-
               <div className="col-sm-12 col-lg-3 col-xs-6">
-
                 <div className="small-box bg-blue">
                   <div className="inner">
                     <h3>{this.state.newEmployee + this.state.exisingEmployee}</h3>
-
                     <p> Total Employees</p>
-
                     <div className="icon">
                       <i className="fa fa-group"></i>
                     </div>
-
                     <div className="small-box footer"></div>
                   </div>
                 </div>
               </div>
             </div>
-
             <div className="row">
               <div className="col-sm-12 col-md-12 col-lg-12">
                 <div className="box">
@@ -1872,9 +1823,9 @@ export default class Dashboard extends Component {
                             PreviousComponent={PreviousIcon}
                             NextComponent={NextIcon}
                             showPageSizeOptions={false}
-                            style={{
-                              minheight: 55 + "%",
-                            }}
+                          // style={{
+                          //   height: "100%",
+                          // }}
                           />
                         </div>
                       </div>
@@ -1908,7 +1859,7 @@ export default class Dashboard extends Component {
               </div>
             </div>
 
-            <section className="AugmentationRankingReport"style={{height:"100%"}} >
+            <section className="AugmentationRankingReport" style={{ height: "100%" }} >
               <div className="row">
 
                 <div className="col-sm-12 col-md-12 col-lg-12">
@@ -1925,8 +1876,8 @@ export default class Dashboard extends Component {
                         {this.augmentationRakingYearBuild(this.state.yeargraphSelected)}
                       </select>
                       {/* <h3 className="box-title"></h3> */}
-                      <Tabs defaultActiveKey="s1" transition={"false"}  id="noanim-tab-example">
-                        <Tab eventKey="s1"  style={{height:"100vh"}} title="Augmentation & Ranking">
+                      <Tabs defaultActiveKey="s1" transition={"false"} id="noanim-tab-example">
+                        <Tab eventKey="s1" style={{ height: "100vh" }} title="Augmentation & Ranking">
                           <canvas id="showAugmentationRankingReport" className="chartjs" height="110" style={{ display: "block", width: "100 ", height: "100" }}></canvas>
                           <div className="dashboardtable">
                             <ReactTable
@@ -1937,17 +1888,17 @@ export default class Dashboard extends Component {
                               PreviousComponent={PreviousIcon}
                               NextComponent={NextIcon}
                               showPageSizeOptions={false}
-                              // style={{
-                              //   height: 260,
-                              // }}
+                            // style={{
+                            //   height: 260,
+                            // }}
                             />
                           </div>
                         </Tab>
-                        <Tab eventKey="s2" style={{height:"68vh"}} title="Augmentation">
+                        <Tab eventKey="s2" style={{ height: "68vh" }} title="Augmentation">
                           <canvas id="showAugmentationReport" className="chartjs" height="110" style={{ display: "block", width: "100 ", height: "100" }}></canvas>
 
                         </Tab>
-                        <Tab eventKey="s3" style={{height:"68vh"}} title="Revolving" >
+                        <Tab eventKey="s3" style={{ height: "68vh" }} title="Revolving" >
                           <canvas id="showRankingReport" className="chartjs" height="110" style={{ display: "block", width: "100 ", height: "100" }}></canvas>
 
                         </Tab>
@@ -1996,10 +1947,10 @@ export default class Dashboard extends Component {
                     </div>
                   </div>
                   <div className="row">
-                    <div className="col-lg-12 center" style={{ display: "block",width:"50%",}} >
+                    <div className="col-lg-12 center" style={{ display: "block", width: "50%", }} >
 
 
-                      <div style={{ paddingTop: "10px" ,paddingLeft:"10%",float:"left"}}>
+                      <div style={{ paddingTop: "10px", paddingLeft: "10%", paddingBottom: "15px", float: "left" }}>
                         <DatePicker
                           selected={this.state.fromDate}
                           onChange={(date) => this.setStartDate(date)}
@@ -2007,7 +1958,7 @@ export default class Dashboard extends Component {
                           showYearDropdown
                           selectsStart
                           style={{
-                           
+
                           }}
                           dropdownMode="select"
                           popperPlacement="auto"
@@ -2017,7 +1968,7 @@ export default class Dashboard extends Component {
                         />
                       </div>
 
-                      <div style={{  paddingTop: "50px",float:"left",width:"50%", paddingTop: "10px" }}>
+                      <div style={{ paddingTop: "50px", float: "left", width: "50%", paddingTop: "10px" }}>
                         <DatePicker
                           selected={this.state.toDate}
                           onChange={(date) => this.setEndDate(date)}
@@ -2025,7 +1976,7 @@ export default class Dashboard extends Component {
                           showYearDropdown
                           selectsEnd
                           style={{
-                           
+
                           }}
                           dropdownMode="select"
                           popperPlacement="bottom"
