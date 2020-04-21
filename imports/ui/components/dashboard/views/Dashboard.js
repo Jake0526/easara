@@ -74,9 +74,15 @@ export default class Dashboard extends Component {
 
   componentDidMount() {
     $('body').addClass('sidebar-mini');
-    console.log(this.props.state.application)
+    let propsBasis = (this.props)
+    let chartUpdateData = this.props.state.applications
     let chartData = this.state.data.state.applicantsProfiles
     let chartApplicationData = this.state.data.state.application
+
+    if (chartUpdateData.length != chartApplicationData.length) {
+      propsBasis.selectApplicationALL()
+    }
+
     let chartSettings = this.state.data.state.settings
     console.log(chartSettings[chartSettings.length - 1])
     let baseGroup = chartSettings[chartSettings.length - 1].id ? chartSettings[chartSettings.length - 1].id : ""
@@ -87,7 +93,6 @@ export default class Dashboard extends Component {
     console.log(baseGroup)
     //groupname Basis
     chartApplicationData.forEach(element1 => {
-      console.log(element1)
       if (element1.groupings_id == baseGroup) {
         chartData.forEach(element2 => {
           if (element1.profile_code == element2.code) {
@@ -102,7 +107,6 @@ export default class Dashboard extends Component {
       }
 
     })
-    console.log(historyApplications)
     this.setState({
       baseGroupDataNOTCHANGED: baseGroupName,
       baseGroupData: baseGroup,
@@ -124,6 +128,11 @@ export default class Dashboard extends Component {
 
     let chartData = nextProps.state.applicantsProfiles
     let chartApplicationData = nextProps.state.application
+    let chartUpdateData = this.props.state.applications
+    if (chartUpdateData.length != chartApplicationData.length) {
+      propsBasis.selectApplicationALL()
+    }
+
     let chartSettings = nextProps.state.settings
     let baseGroup = chartSettings[chartSettings.length - 1].id
     let baseData = []
@@ -145,7 +154,6 @@ export default class Dashboard extends Component {
       }
 
     })
-    console.log(historyApplications)
     this.setState({
       baseGroupDataNOTCHANGED: baseGroupName,
       data: nextProps,
@@ -306,7 +314,6 @@ export default class Dashboard extends Component {
       }
     })
     let unique = [...new Set(uniqueDays)]
-    console.log(countNewData)
     //Get first 5 (last) days
     let first5days = []
     for (let i = unique.length - 1, j = 1; ; i--, j++) {
@@ -322,9 +329,6 @@ export default class Dashboard extends Component {
     }
     let resultUnique = (first5days.reverse())
 
-
-
-    console.log(resultUnique)
     // //For PreExisting DATA
     // for (let i = 0; i < resultUnique.length; i++) {
     //   data.forEach(element => {
