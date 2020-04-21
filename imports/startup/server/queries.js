@@ -70,8 +70,6 @@ Meteor.method(
   }
 );
 
-
-
 Meteor.method(
   "select-settings",
   function () {
@@ -167,17 +165,43 @@ Meteor.method(
 );
 
 Meteor.method(
+  "check-existing-application",
+  function (code) {
+    check(code, String);
+    var fut = new Future();
+    let checker = `Select profile_code FROM applications
+      WHERE groupings_id = (SELECT id FROM settings ORDER BY id DESC LIMIT 1) AND profile_code = '${code}'`;
+    easara(checker, function (err, result) {
+      if (err) {
+        fut.return("bad");
+      } else {
+        if (result.length != 0) {
+          fut.return("exist");
+        } else {
+          fut.return("success");
+        }
+      }
+    });
+    return fut.wait();
+  },
+  {
+    url: "check-existing-application",
+    httpMethod: "post",
+    getArgsFromRequest: function (request) {
+      var content = request.body;
+      return [content.code];
+    },
+  }
+);
+Meteor.method(
   "insert-application",
   function (code) {
     check(code, String);
 
-    var sql = `
-    INSERT INTO applications (profile_code, groupings_id) VALUES ('${code}', (SELECT id FROM settings ORDER BY id DESC LIMIT 1));`;
+    var sql = `INSERT INTO applications (profile_code, groupings_id) VALUES ('${code}', (SELECT id FROM settings ORDER BY id DESC LIMIT 1));`;
     var fut = new Future();
-    console.log(sql);
     easara(sql, function (err, result) {
       if (err) {
-        console.log(err);
         fut.return("bad");
       } else {
         fut.return("success");
