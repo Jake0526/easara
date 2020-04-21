@@ -95,10 +95,17 @@ export default class ApplicantProfile extends Component {
         width: 1000,
         columns: [
           {
+            id: "id",
             Header: "#",
-            accessor: "id",
-            minWidth: 10,
+            Cell: (d) => d.index + 1,
+            width: 35,
+            style: { whiteSpace: "unset" },
             className: "center",
+          },
+          {
+            Header: "Last Name",
+            accessor: "last_name",
+            minWidth: 50,
             headerClassName: "wordwrap",
             style: { whiteSpace: "unset" },
           },
@@ -110,8 +117,23 @@ export default class ApplicantProfile extends Component {
             style: { whiteSpace: "unset" },
           },
           {
-            Header: "Last Name",
-            accessor: "last_name",
+            Header: "Ext",
+            accessor: "name_ext",
+            minWidth: 12,
+            headerClassName: "wordwrap",
+            style: { whiteSpace: "unset" },
+            className: "center",
+          },
+          {
+            Header: "Middle Name",
+            accessor: "middle_name",
+            minWidth: 50,
+            headerClassName: "wordwrap",
+            style: { whiteSpace: "unset" },
+          },
+          {
+            Header: "Maiden Name",
+            accessor: "maiden_name",
             minWidth: 50,
             headerClassName: "wordwrap",
             style: { whiteSpace: "unset" },
@@ -162,42 +184,6 @@ export default class ApplicantProfile extends Component {
             headerClassName: "wordwrap",
             style: { whiteSpace: "unset" },
             className: "center",
-          },
-          {
-            Header: "Created At",
-            id: "created_at",
-            accessor: (d) => {
-              return new Date(d.created_at).toLocaleString("en-US", {
-                year: "numeric",
-                month: "short",
-                day: "2-digit",
-                hour: "2-digit",
-                hour12: true,
-                minute: "2-digit",
-              });
-            },
-            minWidth: 55,
-            className: "center",
-            headerClassName: "wordwrap",
-            style: { whiteSpace: "unset" },
-          },
-          {
-            Header: "Updated At",
-            id: "updated_at",
-            accessor: (d) => {
-              return new Date(d.updated_at).toLocaleString("en-US", {
-                year: "numeric",
-                month: "short",
-                day: "2-digit",
-                hour: "2-digit",
-                hour12: true,
-                minute: "2-digit",
-              });
-            },
-            minWidth: 55,
-            className: "center",
-            headerClassName: "wordwrap",
-            style: { whiteSpace: "unset" },
           },
         ],
       },

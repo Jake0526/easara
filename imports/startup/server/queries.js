@@ -17,7 +17,7 @@ JsonRoutes.setResponseHeaders({
 Meteor.method(
   "select-profiles",
   function () {
-    var sql = `SELECT * FROM applicant_profiles`;
+    var sql = `SELECT * FROM applicant_profiles ORDER BY id DESC`;
     var fut = new Future();
     easara(sql, function (err, result) {
       if (err) throw err;
@@ -34,7 +34,7 @@ Meteor.method(
 Meteor.method(
   "select-applications",
   function () {
-    var sql = `Select ap.id, ap.first_name, ap.last_name, s.groupings, ap.contact_number,
+    var sql = `Select ap.id, ap.first_name, ap.last_name, ap.name_ext, ap.maiden_name, ap.middle_name, s.groupings, ap.contact_number,
      ap.birth_date, ap.address, s.date_from, s.date_to, a.date_applied
     FROM applicant_profiles ap
     INNER JOIN applications a ON ap.code = a.profile_code 
