@@ -1,5 +1,6 @@
 import { Meteor } from "meteor/meteor";
 import React, { Component } from "react";
+import ReactTable from "react-table";
 import Swal from "sweetalert2";
 import {
   Button,
@@ -25,6 +26,8 @@ export default class ApplicantProfileModal extends Component {
     super(props);
     this.state = {
       data: props,
+      applicationHistory: props.applicationHistory,
+      code: "",
       lastName: "",
       firstName: "",
       middleName: "",
@@ -88,6 +91,8 @@ export default class ApplicantProfileModal extends Component {
 
       //UPDATE
       update: false,
+      key: 1,
+      applicationHistory: [],
     };
 
     this.errors = [];
@@ -96,6 +101,11 @@ export default class ApplicantProfileModal extends Component {
   componentWillReceiveProps(nextProps) {
     this.setState({
       data: nextProps,
+      applicationHistory:
+        nextProps.applicationHistory.length != 0
+          ? nextProps.applicationHistory
+          : [],
+      code: nextProps.updateData != null ? nextProps.updateData.code : "",
       lastName:
         nextProps.updateData != null ? nextProps.updateData.last_name : "",
       firstName:
@@ -149,6 +159,8 @@ export default class ApplicantProfileModal extends Component {
 
     if (nextProps.updateData === null) {
       this.setState({
+        code:
+          nextProps.lookUpData.length !== 0 ? nextProps.lookUpData.code : "",
         employeeNumber:
           nextProps.lookUpData.length !== 0
             ? nextProps.lookUpData.employeeNumber
@@ -220,6 +232,12 @@ export default class ApplicantProfileModal extends Component {
         birthDate: value.toString(),
       });
     }
+  };
+
+  handleKeyChange = (key) => {
+    this.setState({
+      key,
+    });
   };
 
   getValidationState = (id) => {
@@ -780,6 +798,7 @@ export default class ApplicantProfileModal extends Component {
       toggleApplicationModal,
     } = this.state.data;
     const {
+      code,
       firstName,
       lastName,
       middleName,
@@ -803,16 +822,60 @@ export default class ApplicantProfileModal extends Component {
       //UPDATE
       update,
       applicantProfileId,
+      key,
+      applicationHistory,
     } = this.state;
     let personelLegend = existingPersonnel
       ? "ID Number - " + employeeNumber
       : "";
     let legend = personelLegend;
+    let reactTablePageSize = Math.floor(window.innerHeight - 628) * 0.0232;
+    let columns = [
+      {
+        id: "id",
+        Header: "#",
+        Cell: (d) => d.index + 1,
+        width: 35,
+        style: { whiteSpace: "unset" },
+        className: "center",
+      },
+      {
+        Header: "Groupings",
+        accessor: "groupings",
+        minWidth: 35,
+        headerClassName: "wordwrap",
+        style: { whiteSpace: "unset" },
+        className: "center",
+      },
+      {
+        Header: "Date of Application",
+        id: "date_applied",
+        accessor: (d) => {
+          return new Date(d.date_applied).toLocaleString("en-US", {
+            year: "numeric",
+            month: "short",
+            day: "2-digit",
+            hour: "2-digit",
+            hour12: true,
+            minute: "2-digit",
+          });
+        },
+        minWidth: 50,
+        className: "right",
+        headerClassName: "wordwrap",
+        style: { whiteSpace: "unset" },
+        className: "center",
+      },
+    ];
     return (
       <Modal bsSize="large" role="document" show={show}>
         <Modal.Header>
           <Modal.Title id="contained-modal-title-lg">
-            {update ? "Update Information" : "Application Form"}
+            {update
+              ? key == 1
+                ? "Update Information"
+                : "Application History"
+              : "Application Form"}
             {update ? null : (
               <Button
                 bsStyle="primary"
@@ -826,7 +889,11 @@ export default class ApplicantProfileModal extends Component {
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Tabs defaultActiveKey={1} id="applicant_profile_tab">
+          <Tabs
+            defaultActiveKey={1}
+            onSelect={this.handleKeyChange}
+            id="applicant_profile_tab"
+          >
             <Tab eventKey={1} title="Profile">
               <GridForm>
                 <Fieldset legend={legend} style={{ fontSize: "16px" }}>
@@ -1057,7 +1124,22 @@ export default class ApplicantProfileModal extends Component {
                 </Fieldset>
               </GridForm>
             </Tab>
-            {update ? <Tab eventKey={2} title="History"></Tab> : null}
+            {update ? (
+              <Tab eventKey={2} title="History">
+                <ReactTable
+                  className="-striped -highlight"
+                  data={applicationHistory}
+                  columns={columns}
+                  defaultPageSize={reactTablePageSize}
+                  PreviousComponent={PreviousIcon}
+                  NextComponent={NextIcon}
+                  showPageSizeOptions={false}
+                  style={{
+                    height: window.innerHeight - 582,
+                  }}
+                />
+              </Tab>
+            ) : null}
           </Tabs>
         </Modal.Body>
         <Modal.Footer>
@@ -1072,20 +1154,38 @@ export default class ApplicantProfileModal extends Component {
                 {"Create Profile and Submit Application"}
               </Button>
             )}
+            {update ? (
+              key == 1 ? (
+                <Button
+                  disabled={this.errors.length > 0 ? true : false}
+                  bsStyle="success"
+                  style={{ marginLeft: "0px" }}
+                  onClick={
+                    update
+                      ? () => this.updateInformation(applicantProfileId)
+                      : () => this.insertNewApplicant()
+                  }
+                >
+                  <i className="fa fa-check" aria-hidden="true"></i>{" "}
+                  {update ? "Update" : "Create Profile"}
+                </Button>
+              ) : null
+            ) : (
+              <Button
+                disabled={this.errors.length > 0 ? true : false}
+                bsStyle="success"
+                style={{ marginLeft: "0px" }}
+                onClick={
+                  update
+                    ? () => this.updateInformation(applicantProfileId)
+                    : () => this.insertNewApplicant()
+                }
+              >
+                <i className="fa fa-check" aria-hidden="true"></i>{" "}
+                {update ? "Update" : "Create Profile"}
+              </Button>
+            )}
 
-            <Button
-              disabled={this.errors.length > 0 ? true : false}
-              bsStyle="success"
-              style={{ marginLeft: "0px" }}
-              onClick={
-                update
-                  ? () => this.updateInformation(applicantProfileId)
-                  : () => this.insertNewApplicant()
-              }
-            >
-              <i className="fa fa-check" aria-hidden="true"></i>{" "}
-              {update ? "Update" : "Create Profile"}
-            </Button>
             <Button onClick={() => toggleApplicationModal("close")}>
               Close
             </Button>

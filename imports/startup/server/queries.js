@@ -87,6 +87,28 @@ Meteor.method(
   }
 );
 
+Meteor.method(
+  "select-application-history",
+  function (code) {
+    check(code, String);
+    var sql = `SELECT s.groupings, a.date_applied FROM applications a INNER JOIN settings s ON a.groupings_id = s.id WHERE a.profile_code = '${code}'`;
+    var fut = new Future();
+    easara(sql, function (err, result) {
+      if (err) throw err;
+      fut.return(result);
+    });
+    return fut.wait();
+  },
+  {
+    url: "select-application-history",
+    httpMethod: "post",
+    getArgsFromRequest: function (request) {
+      var content = request.body;
+      return [content.code];
+    },
+  }
+);
+
 // Meteor.method(
 //   "select-ranking",
 //   function () {

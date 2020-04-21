@@ -19,6 +19,7 @@ export default class ApplicantProfile extends Component {
     this.users = [];
     this.state = {
       data: props,
+      applicationHistory: [],
       lookUpData: [],
       showApplicationModal: false,
       showAutoSuggestProfileModal: false,
@@ -49,12 +50,23 @@ export default class ApplicantProfile extends Component {
     }
   };
 
-  updateInformation = (data) => {
+  applicationHistory = (data) => {
+    Meteor.call("select-application-history", data.code, (error, result) => {
+      if (!error) {
+        this.setState({
+          applicationHistory: result,
+        });
+      }
+    });
     this.setState({
       updateData: data,
       showApplicationModal: true,
       update: true,
     });
+  };
+
+  updateInformation = (data) => {
+    this.applicationHistory(data);
   };
 
   toggleAutoSuggestProfileModal = (value = "default", lookUpData = []) => {
@@ -73,6 +85,7 @@ export default class ApplicantProfile extends Component {
   render() {
     const {
       data,
+      applicationHistory,
       showAutoSuggestProfileModal,
       showApplicationModal,
       lookUpData,
@@ -245,6 +258,7 @@ export default class ApplicantProfile extends Component {
           value={""}
         />
         <ApplicantProfileModal
+          applicationHistory={applicationHistory}
           lookUpData={lookUpData}
           show={showApplicationModal}
           toggleApplicationModal={this.toggleApplicationModal}

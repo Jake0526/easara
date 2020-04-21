@@ -199,13 +199,6 @@ export default class Application extends Component {
                     style={{
                       height: window.innerHeight - 202,
                     }}
-                    getTrProps={(state, rowInfo) => {
-                      return {
-                        onClick: (e) => {
-                          this.updateInformation(rowInfo.row._original);
-                        },
-                      };
-                    }}
                   />
                 </div>
               </div>
