@@ -87,17 +87,17 @@ export default class Dashboard extends Component {
     let chartSettings = this.state.data.state.settings
     console.log(chartSettings[chartSettings.length - 1])
     let baseGroup = ""
-    let baseGroupName =""
-    let activeGroup= ""
-    chartSettings.forEach(element=>{
-      if(element.is_active == 1){
-        baseGroup=element.id
-        baseGroupName=element.groupings
+    let baseGroupName = ""
+    let activeGroup = ""
+    chartSettings.forEach(element => {
+      if (element.is_active == 1) {
+        baseGroup = element.id
+        baseGroupName = element.groupings
       }
     })
 
 
- 
+
 
     let baseData = []
     let historyApplications = []
@@ -147,12 +147,12 @@ export default class Dashboard extends Component {
     let chartSettings = nextProps.state.settings
     let baseData = []
     let baseGroup = ""
-    let baseGroupName =""
-    let activeGroup= ""
-    chartSettings.forEach(element=>{
-      if(element.is_active == 1){
-        baseGroup=element.id
-        baseGroupName=element.groupings
+    let baseGroupName = ""
+    let activeGroup = ""
+    chartSettings.forEach(element => {
+      if (element.is_active == 1) {
+        baseGroup = element.id
+        baseGroupName = element.groupings
       }
     })
     let historyApplications = []
@@ -1090,7 +1090,7 @@ export default class Dashboard extends Component {
           data: finalCountRevolving,
           backgroundColor: color,
           borderColor: color,
-          pointStyle:'line'
+          pointStyle: 'line'
         },
         {
           type: 'bar',
@@ -1099,7 +1099,7 @@ export default class Dashboard extends Component {
           data: numberOfRevolving,
           backgroundColor: colorSecond,
           borderColor: colorSecond,
-          pointStyle:'rect'
+          pointStyle: 'rect'
         }
       ]
     }
@@ -1126,7 +1126,7 @@ export default class Dashboard extends Component {
         labels: {
           defaultFontSize: 14,
           fontColor: 'black',
-          usePointStyle:true
+          usePointStyle: true
           //fontColor: 'rgb(255, 99, 132)'
         }
       },
@@ -1623,16 +1623,22 @@ export default class Dashboard extends Component {
       fromDate: date,
     })
     let dateData = this.state.data.state.applicantsProfiles
+    let application = this.state.data.state.application
     let dateDataResult = []
 
-    dateData.forEach(element => {
-      if ((moment(date).startOf('day').diff(moment(element.created_at).startOf('day'), 'days') <= 0)
-        && (moment(this.state.toDate).startOf('day').diff(moment(element.created_at).startOf('day'), 'days') >= 0)) {
-        dateDataResult.push(element)
-      }
-      else {
-      }
+    application.forEach(element2 => {
+      dateData.forEach(element => {
+        if (element.code == element2.profile_code) {
+          if ((moment(date).startOf('day').diff(moment(element2.created_at).startOf('day'), 'days') <= 0)
+            && (moment(this.state.toDate).startOf('day').diff(moment(element2.created_at).startOf('day'), 'days') >= 0)) {
+            dateDataResult.push(element)
+          }
+        }
+        else {
+        }
+      })
     })
+   
     // let updateStatus = "yes"
     //updates the graph of employee's information graph report
 
@@ -1653,17 +1659,24 @@ export default class Dashboard extends Component {
       updateData: "yes"
     })
 
-    let dateData = this.state.data.state.applicantsProfiles
-    let dateDataResult = []
 
-    dateData.forEach(element => {
-      if ((moment(this.state.fromDate).startOf('day').diff(moment(element.created_at).startOf('day'), 'days') <= 0)
-        && (moment(date).startOf('day').diff(moment(element.created_at).startOf('day'), 'days') >= 0)) {
-        dateDataResult.push(element)
-      }
-      else {
-      }
+    let dateData = this.state.data.state.applicantsProfiles
+    let application = this.state.data.state.application
+    let dateDataResult = []
+    application.forEach(element2 => {
+
+      dateData.forEach(element => {
+        if (element2.profile_code == element.code) {
+          if ((moment(this.state.fromDate).startOf('day').diff(moment(element2.created_at).startOf('day'), 'days') <= 0)
+            && (moment(date).startOf('day').diff(moment(element2.created_at).startOf('day'), 'days') >= 0)) {
+            dateDataResult.push(element)
+          }
+          else {
+          }
+        }
+      })
     })
+    console.log(dateDataResult)
     // let updateStatus = "yes"
     //updates the graph of employee's information graph report
 
