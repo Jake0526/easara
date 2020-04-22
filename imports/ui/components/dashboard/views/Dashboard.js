@@ -137,9 +137,12 @@ export default class Dashboard extends Component {
     console.log(nextProps)
     console.log(prevProps)
 
+    let propsBasis = (this.props)
+
     let chartData = nextProps.state.applicantsProfiles
     let chartApplicationData = nextProps.state.application
     let chartUpdateData = this.props.state.applications
+    
     if (chartUpdateData.length != chartApplicationData.length) {
       propsBasis.selectApplicationALL()
     }
