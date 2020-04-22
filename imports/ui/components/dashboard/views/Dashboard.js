@@ -86,8 +86,18 @@ export default class Dashboard extends Component {
 
     let chartSettings = this.state.data.state.settings
     console.log(chartSettings[chartSettings.length - 1])
-    let baseGroup = chartSettings[chartSettings.length - 1].id ? chartSettings[chartSettings.length - 1].id : ""
-    let baseGroupName = chartSettings[chartSettings.length - 1].groupings ? chartSettings[chartSettings.length - 1].groupings : ""
+    let baseGroup = ""
+    let baseGroupName =""
+    let activeGroup= ""
+    chartSettings.forEach(element=>{
+      if(element.is_active == 1){
+        baseGroup=element.id
+        baseGroupName=element.groupings
+      }
+    })
+
+
+ 
 
     let baseData = []
     let historyApplications = []
@@ -135,9 +145,16 @@ export default class Dashboard extends Component {
     }
 
     let chartSettings = nextProps.state.settings
-    let baseGroup = chartSettings[chartSettings.length - 1].id
     let baseData = []
-    let baseGroupName = chartSettings[chartSettings.length - 1].groupings ? chartSettings[chartSettings.length - 1].groupings : ""
+    let baseGroup = ""
+    let baseGroupName =""
+    let activeGroup= ""
+    chartSettings.forEach(element=>{
+      if(element.is_active == 1){
+        baseGroup=element.id
+        baseGroupName=element.groupings
+      }
+    })
     let historyApplications = []
 
     chartApplicationData.forEach(element1 => {
@@ -753,13 +770,6 @@ export default class Dashboard extends Component {
     }
 
     //CHECKING IF REVOLVING AND AUGMENTATION MONTHS HAS A VALUE OF NONE AND MUST BE REFILL
-
-    // let sortfinallabelRevolving = finallabelRevolving.sort()
-    // let sortfinallabelAugmentation = finallabelAugmentation.sort()
-
-    // console.log(sortfinalBaseId)
-    // console.log(sortfinallabelRevolving)
-    // console.log(sortfinallabelAugmentation)
     for (let i = 0; i < finalBaseId.length; i++) {
       if (finalBaseId[i] != finallabelRevolving[i]) {
         finalCountRevolving.splice(i, 0, 0)
@@ -814,7 +824,6 @@ export default class Dashboard extends Component {
 
       labels: finalBaseGroup,
       datasets: [
-
         {
           type: 'line',
           label: 'Augmentation Filtered',
@@ -874,8 +883,8 @@ export default class Dashboard extends Component {
         position: 'right',
 
         labels: {
-          // defaultFontSize: 14,
-          // fontColor: 'black',
+          defaultFontSize: 14,
+          fontColor: 'black',
           usePointStyle: true,
 
           //fontColor: 'rgb(255, 99, 132)'
@@ -932,7 +941,7 @@ export default class Dashboard extends Component {
           chart.update()
         }
         else {
-          var myChartLine = new Chart(ctx, {
+          var myChartLineARR = new Chart(ctx, {
             type: type,
             data: dataChart,
             options: options
@@ -941,10 +950,10 @@ export default class Dashboard extends Component {
           Chart.defaults.global.tooltips.titleFontSize = 12
           Chart.defaults.global.tooltips.titleFontColor = '#fff'
           this.setState({
-            showAugmentationRankingReport: myChartLine
+            showAugmentationRankingReport: myChartLineARR
           })
-          $(window).bind("resize", function () { myChartLine.resize() });
-          myChartLine.update()
+          $(window).bind("resize", function () { myChartLineARR.resize() });
+          myChartLineARR.update()
         }
 
       }
