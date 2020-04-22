@@ -16,14 +16,14 @@ export default class FakeRoute extends Component {
       isLogin: null,
       isLoad: false,
       permissions: [],
-      permissions: [],
       settings: [],
+      activeSettings: []
     };
   }
 
   componentDidMount() {
     HTTP.post(
-      'http://111.125.114.29:13000/v2/graphql',
+      '/graphqlv2',
       {
         headers: {
           "Content-Type": "application/json",
@@ -139,10 +139,11 @@ export default class FakeRoute extends Component {
     //Queries
     this.selectApplicantsProfile();
     this.selectApplicationALL()
-   // this.getRanking();
+    this.getRanking();
     this.getSettings();
     this.getAllCompleteProfile();
     this.selectApplications();
+    this.getActiveSettings();
   }
 
   selectApplicantsProfile = () => {
@@ -191,6 +192,16 @@ export default class FakeRoute extends Component {
     });
   };
 
+  getActiveSettings = () => {
+    Meteor.call("active-settings", (error, result) => {
+      if (!error) {
+        this.setState({
+          activeSettings: result,
+        });
+      }
+    });
+  };
+
   getSettings = () => {
     Meteor.call("select-settings", (error, result) => {
       if (!error) {
@@ -203,7 +214,7 @@ export default class FakeRoute extends Component {
 
   getAllCompleteProfile = () => {
     HTTP.post(
-      "http://localhost:3000/v2/graphql",
+      "/graphqlv2",
       {
         headers: {
           "Content-Type": "application/json",

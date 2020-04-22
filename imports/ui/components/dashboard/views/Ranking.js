@@ -35,12 +35,14 @@ export default class Ranking extends Component {
 
   generateNewRanking = () => {
     let applicants = this.state.data.state.applicantsProfiles;
+    let activeSettings = this.state.data.state.activeSettings;
     let prioApplicants = [];
     let lessPrioApplicants = [];
     let rankedApplicants = [];
 
     let recursionLoop = () => {
       if (this.state.rankingStatus < rankedApplicants.length) {
+
         Meteor.call(
           "insert-rank",
           rankedApplicants[this.state.rankingStatus],
@@ -93,23 +95,65 @@ export default class Ranking extends Component {
       });
     } else {
       let rankNum = 1;
+      let remainingRevolvingSlot = activeSettings[0].number_of_revolving;
+      let remainingAugmentationSlot = activeSettings[0].number_of_augmentation;
+
+      console.log(applicants);
       for (let x = 0; x < applicants.length; x += 1) {
-        if (applicants[x].existing) {
-          lessPrioApplicants.push({
-            applicantProfileId: applicants[x].id,
-            rankNo: rankNum,
-          });
+        console.log(applicants[x]);
+
+        if (applicants[x].employee_number != "") {
+          if(remainingRevolvingSlot > 0) {
+            lessPrioApplicants.push({
+              applicationId: applicants[x].id,
+              rankNo: rankNum,
+              groupingsID: applicants[x].groupings_id,
+              category: "Revolving"
+            });
+
+            remainingRevolvingSlot-=1;
+          }else {
+            if(remainingAugmentationSlot > 0) {
+              lessPrioApplicants.push({
+                applicationId: applicants[x].id,
+                rankNo: rankNum,
+                groupingsID: applicants[x].groupings_id,
+                category: "Augmentation"
+              });
+
+              remainingAugmentationSlot-=1;
+            }
+          }
         } else {
-          prioApplicants.push({
-            applicantProfileId: applicants[x].id,
-            rankNo: rankNum,
-          });
+          if(remainingRevolvingSlot > 0) {
+            prioApplicants.push({
+              applicationId: applicants[x].id,
+              rankNo: rankNum,
+              groupingsID: applicants[x].groupings_id,
+              category: "Revolving"
+            });
+
+            remainingRevolvingSlot-=1;
+          }else {
+            if(remainingAugmentationSlot > 0) {
+              prioApplicants.push({
+                applicationId: applicants[x].id,
+                rankNo: rankNum,
+                groupingsID: applicants[x].groupings_id,
+                category: "Augmentation"
+              });
+
+              remainingAugmentationSlot-=1;
+            }
+          }
         }
 
         rankNum++;
         if (x == applicants.length - 1) {
           rankedApplicants = prioApplicants;
-          rankedApplicants.concat(lessPrioApplicants);
+          rankedApplicants = rankedApplicants.concat(lessPrioApplicants);
+
+          console.log(rankedApplicants);
 
           this.setState({
             rankingLength: rankedApplicants.length,
@@ -121,13 +165,7 @@ export default class Ranking extends Component {
             show: true,
           });
 
-          Meteor.call("truncate-rank", (error, result) => {
-            if (!error) {
-              if (result === "success") {
-                recursionLoop();
-              }
-            }
-          });
+          recursionLoop();
         }
       }
     }
@@ -149,8 +187,8 @@ export default class Ranking extends Component {
         columns: [
           {
             Header: "Rank",
-            accessor: "rank_no",
-            minWidth: 9,
+            accessor: "ranking",
+            minWidth: 15,
             className: "center",
             headerClassName: "wordwrap",
             style: { whiteSpace: "unset" },
@@ -178,14 +216,14 @@ export default class Ranking extends Component {
           },
           {
             Header: "Category",
-            accessor: "middle_name",
+            accessor: "category",
             minWidth: 50,
             headerClassName: "wordwrap",
             style: { whiteSpace: "unset" },
           },
           {
             Header: "Remarks",
-            accessor: "",
+            accessor: "remarks",
             minWidth: 120,
             headerClassName: "wordwrap",
             style: { whiteSpace: "unset" },

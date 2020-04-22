@@ -17,7 +17,21 @@ JsonRoutes.setResponseHeaders({
 Meteor.method(
   "select-profiles",
   function () {
-    var sql = `SELECT * FROM applicant_profiles ORDER BY id DESC`;
+    var sql = `
+    SELECT 
+      applications.id AS 'id',
+      applicant_profiles.employee_number AS 'employee_number',
+      applicant_profiles.first_name AS 'first_name',
+      applicant_profiles.last_name AS 'last_name',
+        applications.groupings_id AS 'groupings_id'
+    FROM
+      applications
+    INNER JOIN
+      applicant_profiles ON applicant_profiles.code = applications.profile_code
+    INNER JOIN
+      settings ON settings.id = applications.groupings_id
+    WHERE
+      settings.is_active = 1;`;
     var fut = new Future();
     easara(sql, function (err, result) {
       if (err) throw err;
@@ -88,6 +102,28 @@ Meteor.method(
 );
 
 Meteor.method(
+  "active-settings",
+  function () {
+    var sql = `SELECT * FROM settings WHERE is_active = 1`;
+
+    var fut = new Future();
+    easara(sql, function (err, result) {
+      if (err) throw err;
+      fut.return(result);
+    });
+    return fut.wait();
+  },
+  {
+    url: "active-settings",
+    httpMethod: "post",
+    getArgsFromRequest: function (request) {
+      var content = request.body;
+      return [];
+    },
+  }
+);
+
+Meteor.method(
   "select-application-history",
   function (code) {
     check(code, String);
@@ -109,31 +145,43 @@ Meteor.method(
   }
 );
 
-// Meteor.method(
-//   "select-ranking",
-//   function () {
-//     var sql = `
-//       SELECT
-//           *
-//       FROM
-//           applicants_ranking
-//       INNER JOIN
-//         applicants_profile on applicants_profile.id = applicants_ranking.applicant_profile_id
-//     `;
+Meteor.method(
+  "select-ranking",
+  function () {
+    var sql = `
+    SELECT 
+      applications.id AS 'id',
+      applications.ranking AS 'ranking',
+      applicant_profiles.employee_number AS 'employee_number',
+      applicant_profiles.first_name AS 'first_name',
+      applicant_profiles.last_name AS 'last_name',
+      applicant_profiles.middle_name AS 'middle_name',
+      applications.category AS 'category',
+      applications.remarks AS 'remarks',
+      applications.groupings_id AS 'groupings_id'
+    FROM
+      applications
+    INNER JOIN
+      applicant_profiles ON applicant_profiles.code = applications.profile_code
+    INNER JOIN
+      settings ON settings.id = applications.groupings_id
+    WHERE
+      settings.is_active = 1;
+    `;
 
-//     var fut = new Future();
+    var fut = new Future();
 
-//     easara(sql, function (err, result) {
-//       if (err) throw err;
-//       fut.return(result);
-//     });
-//     return fut.wait();
-//   },
-//   {
-//     url: "select-ranking",
-//     httpMethod: "post",
-//   }
-// );
+    easara(sql, function (err, result) {
+      if (err) throw err;
+      fut.return(result);
+    });
+    return fut.wait();
+  },
+  {
+    url: "select-ranking",
+    httpMethod: "post",
+  }
+);
 
 Meteor.method(
   "insert-new-applicant",
@@ -420,38 +468,37 @@ Meteor.method(
   }
 );
 
-// Meteor.method(
-//   "insert-rank",
-//   function (rankData) {
-//     console.log(rankData);
+Meteor.method(
+  "insert-rank",
+  function (rankData) {
 
-//     var sql = `
-//       INSERT INTO applications
-//       (
-//         applicant_profile_id,
-//         rank_no
-//       )
-//       VALUES(
-//         ${rankData.applicantProfileId},
-//         ${rankData.rankNo}
-//       );`;
-//     var fut = new Future();
-
-//     easara(sql, function (err, result) {
-//       if (err) throw err;
-//       fut.return("success");
-//     });
-//     return fut.wait();
-//   },
-//   {
-//     url: "insert-rank",
-//     httpMethod: "post",
-//     getArgsFromRequest: function (request) {
-//       var content = request.body;
-//       return [content.rankData];
-//     },
-//   }
-// );
+    var sql = `
+      UPDATE 
+        applications
+      SET 
+        ranking = '${rankData.rankNo}',
+        category = '${rankData.category}'
+      WHERE
+        id = ${rankData.applicationId}
+          AND
+        groupings_id = ${rankData.groupingsID};`;
+    
+    var fut = new Future();
+    easara(sql, (err, result) => {
+      if (err) throw err;
+      fut.return("success");
+    });
+    return fut.wait();
+  },
+  {
+    url: "insert-rank",
+    httpMethod: "post",
+    getArgsFromRequest: function (request) {
+      var content = request.body;
+      return [content.rankData];
+    },
+  }
+);
 
 // Meteor.method(
 //   "truncate-rank",
