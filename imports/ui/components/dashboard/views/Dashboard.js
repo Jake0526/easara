@@ -1568,7 +1568,6 @@ export default class Dashboard extends Component {
     // groupEmployeeInformation
     //let getId = document.getElementById('groupEmployeeInformation');
     // let a = getId.options[getId.selectedIndex]
-    // console.log(a)
     let groupDataSelected = e.target.value
 
     if (groupDataSelected) {
