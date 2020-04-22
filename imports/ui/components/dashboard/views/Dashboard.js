@@ -85,7 +85,6 @@ export default class Dashboard extends Component {
     }
 
     let chartSettings = this.state.data.state.settings
-    console.log(chartSettings[chartSettings.length - 1])
     let baseGroup = ""
     let baseGroupName = ""
     let activeGroup = ""
@@ -95,9 +94,6 @@ export default class Dashboard extends Component {
         baseGroupName = element.groupings
       }
     })
-
-
-
 
     let baseData = []
     let historyApplications = []
@@ -120,7 +116,6 @@ export default class Dashboard extends Component {
     })
     this.setState({
       baseGroupDataNOTCHANGED: baseGroupName,
-      baseGroupData: baseGroup,
       baseGroupDidMount: historyApplications,
       baseGroupData: baseGroupName,
 
@@ -134,15 +129,15 @@ export default class Dashboard extends Component {
   }
 
   componentWillReceiveProps(nextProps, prevProps) {
-    console.log(nextProps)
-    console.log(prevProps)
-
+    // console.log(nextProps)
+    // console.log(prevProps)
+    console.log("will receive")
     let propsBasis = (this.props)
 
     let chartData = nextProps.state.applicantsProfiles
     let chartApplicationData = nextProps.state.application
     let chartUpdateData = this.props.state.applications
-    
+
     if (chartUpdateData.length != chartApplicationData.length) {
       propsBasis.selectApplicationALL()
     }
@@ -317,7 +312,7 @@ export default class Dashboard extends Component {
     let countNewData = []
     let applicantsProfilesData = this.state.data.state.applicantsProfiles
 
-    console.log(data)
+ 
     data.forEach(element => {
       if (element.groupings_id == baseGroup) {
         uniqueDays.push(moment(element.created_at).format("MMMM DD,YYYY"))
@@ -1679,7 +1674,6 @@ export default class Dashboard extends Component {
         }
       })
     })
-    console.log(dateDataResult)
     // let updateStatus = "yes"
     //updates the graph of employee's information graph report
 
