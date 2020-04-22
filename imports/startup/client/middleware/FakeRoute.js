@@ -23,7 +23,7 @@ export default class FakeRoute extends Component {
 
   componentDidMount() {
     HTTP.post(
-      'http://111.125.114.29:13000/v2/graphql',
+      'http://localhost:3200/v2/graphql',
       {
         headers: {
           "Content-Type": "application/json",

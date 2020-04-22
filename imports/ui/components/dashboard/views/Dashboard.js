@@ -84,13 +84,11 @@ export default class Dashboard extends Component {
     }
 
     let chartSettings = this.state.data.state.settings
-    console.log(chartSettings[chartSettings.length - 1])
     let baseGroup = chartSettings[chartSettings.length - 1].id ? chartSettings[chartSettings.length - 1].id : ""
     let baseGroupName = chartSettings[chartSettings.length - 1].groupings ? chartSettings[chartSettings.length - 1].groupings : ""
 
     let baseData = []
     let historyApplications = []
-    console.log(baseGroup)
     //groupname Basis
     chartApplicationData.forEach(element1 => {
       if (element1.groupings_id == baseGroup) {
@@ -123,8 +121,6 @@ export default class Dashboard extends Component {
   }
 
   componentWillReceiveProps(nextProps, prevProps) {
-    console.log(nextProps)
-    console.log(prevProps)
 
     let chartData = nextProps.state.applicantsProfiles
     let chartApplicationData = nextProps.state.application
@@ -295,8 +291,6 @@ export default class Dashboard extends Component {
     let countExistingData = []
     let countNewData = []
     let applicantsProfilesData = this.state.data.state.applicantsProfiles
-
-    console.log(data)
     data.forEach(element => {
       if (element.groupings_id == baseGroup) {
         uniqueDays.push(moment(element.created_at).format("MMMM DD,YYYY"))
@@ -650,6 +644,11 @@ export default class Dashboard extends Component {
     let yearFilteredThisFunction = ""
     let defaultYear = ""
     let settings_data = this.state.data.state.settings
+
+    let numberOfRevolving = []
+    let numberOfAugmentation = []
+
+
     if (load != "yes") {
       // settings_data = this.state.data.state.settings
 
@@ -657,6 +656,7 @@ export default class Dashboard extends Component {
       settings_data.forEach(element => {
         if (moment(new Date()).format("YYYY") == moment(element.created_at).format("YYYY")) {
           yearThisFunction.push(moment(element.created_at).format("YYYY"))
+        
         }
         settingstYearData.push(moment(element.created_at).format("YYYY"))
       })
@@ -677,6 +677,7 @@ export default class Dashboard extends Component {
       yearFilteredThisFunction = yearselected
     }
 
+    //need to review
     let summaryApplication = []
     data.forEach(element => {
       if ((element.groupings_id !== null) && (element.groupings_id !== "")) {
@@ -686,14 +687,18 @@ export default class Dashboard extends Component {
       }
 
     });
+
     let finalGroup = []
-    summaryApplication.forEach(element1 => {
+   
+    data.forEach(element1 => {
       settings_data.forEach(element2 => {
-        if (element1 == element2.id) {
+        if (element1.groupings_id == element2.id) {
           finalGroup.push(element2.groupings)
+        
         }
       })
     })
+   
     let filteredGroup = [...new Set(finalGroup)]
     let filteredApplication = [...new Set(summaryApplication)]
     let countFilteredRevolving = []
