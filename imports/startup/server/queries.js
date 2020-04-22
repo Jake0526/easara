@@ -304,7 +304,11 @@ Meteor.method(
       data.groupingName
     }', '${moment(data.dateFrom).format("YYYY-MM-DD")}', '${moment(
       data.dateTo
-    ).format("YYYY-MM-DD")}');`;
+    ).format("YYYY-MM-DD")}');
+    SET SQL_SAFE_UPDATES = 0;
+    UPDATE settings SET is_active = "0";
+    SET SQL_SAFE_UPDATES = 1;
+    UPDATE settings SET is_active = "1" WHERE id = last_insert_id();`;
     var fut = new Future();
     console.log(sql);
     easara(sql, function (err, result) {
