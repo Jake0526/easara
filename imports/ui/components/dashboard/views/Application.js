@@ -65,10 +65,17 @@ export default class Application extends Component {
         width: 1000,
         columns: [
           {
+            id: "id",
             Header: "#",
-            accessor: "id",
-            minWidth: 10,
+            Cell: (d) => d.index + 1,
+            width: 35,
+            style: { whiteSpace: "unset" },
             className: "center",
+          },
+          {
+            Header: "Last Name",
+            accessor: "last_name",
+            minWidth: 40,
             headerClassName: "wordwrap",
             style: { whiteSpace: "unset" },
           },
@@ -80,16 +87,31 @@ export default class Application extends Component {
             style: { whiteSpace: "unset" },
           },
           {
-            Header: "Last Name",
-            accessor: "last_name",
-            minWidth: 40,
+            Header: "Ext",
+            accessor: "name_ext",
+            minWidth: 12,
+            headerClassName: "wordwrap",
+            style: { whiteSpace: "unset" },
+            className: "center",
+          },
+          {
+            Header: "Middle Name",
+            accessor: "middle_name",
+            minWidth: 50,
+            headerClassName: "wordwrap",
+            style: { whiteSpace: "unset" },
+          },
+          {
+            Header: "Maiden Name",
+            accessor: "maiden_name",
+            minWidth: 50,
             headerClassName: "wordwrap",
             style: { whiteSpace: "unset" },
           },
           {
             Header: "Groupings",
             accessor: "groupings",
-            minWidth: 50,
+            minWidth: 35,
             headerClassName: "wordwrap",
             style: { whiteSpace: "unset" },
             className: "center",
@@ -97,7 +119,7 @@ export default class Application extends Component {
           {
             Header: "Contact Number",
             accessor: "contact_number",
-            minWidth: 65,
+            minWidth: 40,
             className: "right",
             headerClassName: "wordwrap",
             style: { whiteSpace: "unset" },
@@ -176,13 +198,6 @@ export default class Application extends Component {
                     showPageSizeOptions={false}
                     style={{
                       height: window.innerHeight - 202,
-                    }}
-                    getTrProps={(state, rowInfo) => {
-                      return {
-                        onClick: (e) => {
-                          this.updateInformation(rowInfo.row._original);
-                        },
-                      };
                     }}
                   />
                 </div>

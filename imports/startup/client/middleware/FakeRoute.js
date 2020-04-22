@@ -143,7 +143,6 @@ export default class FakeRoute extends Component {
     this.getSettings();
     this.getAllCompleteProfile();
     this.selectApplications();
-    this.selectApplications()
   }
 
   selectApplicantsProfile = () => {
@@ -158,6 +157,7 @@ export default class FakeRoute extends Component {
       }
     });
   };
+
   selectApplicationALL = () => {
     Meteor.call("select-applications-all", (error, result) => {
       if (!error) {

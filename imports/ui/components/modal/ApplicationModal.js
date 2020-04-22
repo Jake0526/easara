@@ -381,15 +381,50 @@ export default class ApplicantProfileModal extends Component {
       confirmButtonText: "Continue",
     }).then((result) => {
       if (result.value) {
-        Meteor.call("insert-application", code, (error, result) => {
+        Meteor.call("check-existing-application", code, (error, result) => {
           if (!error) {
             if (result === "success") {
-              this.updateInformation();
-            } else {
+              Meteor.call("insert-application", code, (error, result) => {
+                if (!error) {
+                  if (result === "success") {
+                    this.updateInformation();
+                  } else {
+                    Swal.fire({
+                      position: "center",
+                      icon: "error",
+                      title: "Submission failed. Please try again later.",
+                      showConfirmButton: false,
+                      showClass: {
+                        popup: "animated fadeIn",
+                      },
+                      hideClass: {
+                        popup: "animated fadeOut faster",
+                      },
+                      timer: 2500,
+                    });
+                  }
+                } else {
+                  Swal.fire({
+                    position: "center",
+                    icon: "error",
+                    text: "Submission failed. Please try again",
+                    showConfirmButton: false,
+                    showClass: {
+                      popup: "animated fadeIn",
+                    },
+                    hideClass: {
+                      popup: "animated fadeOut faster",
+                    },
+                    timer: 2500,
+                  });
+                }
+              });
+            } else if (result === "exist") {
               Swal.fire({
                 position: "center",
                 icon: "error",
-                title: "Submission failed. Please try again",
+                title:
+                  "Submission failed. Application with the same profile and grouping already exist.",
                 showConfirmButton: false,
                 showClass: {
                   popup: "animated fadeIn",

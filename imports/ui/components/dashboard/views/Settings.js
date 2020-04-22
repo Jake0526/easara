@@ -348,6 +348,17 @@ export default class Settings extends Component {
             style: { whiteSpace: "unset" },
           },
           {
+            Header: "In use",
+            id: "is_active",
+            minWidth: 15,
+            accessor: (d) => {
+              return d.is_active == "1" ? "Yes" : "";
+            },
+            headerClassName: "wordwrap",
+            style: { whiteSpace: "unset", color: "green" },
+            className: "center",
+          },
+          {
             Header: "Date From",
             id: "date_from",
             accessor: (d) => {
@@ -378,28 +389,10 @@ export default class Settings extends Component {
             className: "center",
           },
           {
-            Header: "Created At",
+            Header: "Date Created",
             id: "created_at",
             accessor: (d) => {
               return new Date(d.created_at).toLocaleString("en-US", {
-                year: "numeric",
-                month: "short",
-                day: "2-digit",
-                hour: "2-digit",
-                hour12: true,
-                minute: "2-digit",
-              });
-            },
-            minWidth: 55,
-            className: "center",
-            headerClassName: "wordwrap",
-            style: { whiteSpace: "unset" },
-          },
-          {
-            Header: "Updated At",
-            id: "updated_at",
-            accessor: (d) => {
-              return new Date(d.updated_at).toLocaleString("en-US", {
                 year: "numeric",
                 month: "short",
                 day: "2-digit",

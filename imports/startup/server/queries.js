@@ -17,7 +17,7 @@ JsonRoutes.setResponseHeaders({
 Meteor.method(
   "select-profiles",
   function () {
-    var sql = `SELECT * FROM applicant_profiles`;
+    var sql = `SELECT * FROM applicant_profiles ORDER BY id DESC`;
     var fut = new Future();
     easara(sql, function (err, result) {
       if (err) throw err;
@@ -34,7 +34,7 @@ Meteor.method(
 Meteor.method(
   "select-applications",
   function () {
-    var sql = `Select ap.id, ap.first_name, ap.last_name, s.groupings, ap.contact_number,
+    var sql = `Select ap.id, ap.first_name, ap.last_name, ap.name_ext, ap.maiden_name, ap.middle_name, s.groupings, ap.contact_number,
      ap.birth_date, ap.address, s.date_from, s.date_to, a.date_applied
     FROM applicant_profiles ap
     INNER JOIN applications a ON ap.code = a.profile_code 
@@ -70,8 +70,6 @@ Meteor.method(
   }
 );
 
-
-
 Meteor.method(
   "select-settings",
   function () {
@@ -86,6 +84,28 @@ Meteor.method(
   {
     url: "select-settings",
     httpMethod: "post",
+  }
+);
+
+Meteor.method(
+  "select-application-history",
+  function (code) {
+    check(code, String);
+    var sql = `SELECT s.groupings, a.date_applied FROM applications a INNER JOIN settings s ON a.groupings_id = s.id WHERE a.profile_code = '${code}'`;
+    var fut = new Future();
+    easara(sql, function (err, result) {
+      if (err) throw err;
+      fut.return(result);
+    });
+    return fut.wait();
+  },
+  {
+    url: "select-application-history",
+    httpMethod: "post",
+    getArgsFromRequest: function (request) {
+      var content = request.body;
+      return [content.code];
+    },
   }
 );
 
@@ -167,17 +187,43 @@ Meteor.method(
 );
 
 Meteor.method(
+  "check-existing-application",
+  function (code) {
+    check(code, String);
+    var fut = new Future();
+    let checker = `Select profile_code FROM applications
+      WHERE groupings_id = (SELECT id FROM settings ORDER BY id DESC LIMIT 1) AND profile_code = '${code}'`;
+    easara(checker, function (err, result) {
+      if (err) {
+        fut.return("bad");
+      } else {
+        if (result.length != 0) {
+          fut.return("exist");
+        } else {
+          fut.return("success");
+        }
+      }
+    });
+    return fut.wait();
+  },
+  {
+    url: "check-existing-application",
+    httpMethod: "post",
+    getArgsFromRequest: function (request) {
+      var content = request.body;
+      return [content.code];
+    },
+  }
+);
+Meteor.method(
   "insert-application",
   function (code) {
     check(code, String);
 
-    var sql = `
-    INSERT INTO applications (profile_code, groupings_id) VALUES ('${code}', (SELECT id FROM settings ORDER BY id DESC LIMIT 1));`;
+    var sql = `INSERT INTO applications (profile_code, groupings_id) VALUES ('${code}', (SELECT id FROM settings ORDER BY id DESC LIMIT 1));`;
     var fut = new Future();
-    console.log(sql);
     easara(sql, function (err, result) {
       if (err) {
-        console.log(err);
         fut.return("bad");
       } else {
         fut.return("success");
@@ -258,7 +304,11 @@ Meteor.method(
       data.groupingName
     }', '${moment(data.dateFrom).format("YYYY-MM-DD")}', '${moment(
       data.dateTo
-    ).format("YYYY-MM-DD")}');`;
+    ).format("YYYY-MM-DD")}');
+    SET SQL_SAFE_UPDATES = 0;
+    UPDATE settings SET is_active = "0";
+    SET SQL_SAFE_UPDATES = 1;
+    UPDATE settings SET is_active = "1" WHERE id = last_insert_id();`;
     var fut = new Future();
     console.log(sql);
     easara(sql, function (err, result) {
