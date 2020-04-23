@@ -12,13 +12,13 @@ export default class FakeRoute extends Component {
       applicantsProfiles: [],
       applicantsProfilesALL: [],
       applicantsRanking: [],
-      application:[],
+      application: [],
       introspect: {},
       isLogin: null,
       isLoad: false,
       permissions: [],
       settings: [],
-      activeSettings: []
+      activeSettings: [],
     };
   }
 
@@ -31,8 +31,7 @@ export default class FakeRoute extends Component {
         //   Accept: "application/json",
         // },
         data: {
-          query:
-            `{
+          query: `{
               completeProfileForActivePlantillaNonPlantillaByEmpno(employeeNumber: "501444") {
                           employeeNumber
                           employee {
@@ -136,11 +135,15 @@ export default class FakeRoute extends Component {
         });
       }
     );
-    console.log("queries will run")
+    console.log("queries will run");
     //Queries
     this.selectApplicantsProfile();
+<<<<<<< HEAD
+    this.selectApplicationALL();
+=======
     this.selectApplicantsProfileALL();
     this.selectApplicationALL()
+>>>>>>> 1f24e9e8f5c4db4a9454523c78dc33775ee22385
     this.getRanking();
     this.getSettings();
     this.getAllCompleteProfile();
@@ -154,9 +157,8 @@ export default class FakeRoute extends Component {
         this.setState({
           applicantsProfiles: result,
         });
-      }
-      else{
-        console.log(error)
+      } else {
+        console.log(error);
       }
     });
   };
@@ -182,9 +184,8 @@ export default class FakeRoute extends Component {
         this.setState({
           application: result,
         });
-      }
-      else{
-        console.log(error)
+      } else {
+        console.log(error);
       }
     });
   };
@@ -231,7 +232,15 @@ export default class FakeRoute extends Component {
 
   getAllCompleteProfile = () => {
     HTTP.post(
+<<<<<<< HEAD
       "/graphqlv2",
+=======
+<<<<<<< HEAD
+      "http://111.125.114.29:13000/v2/graphql",
+=======
+      "/http://localhost:3200/v2/graphql",
+>>>>>>> 1f24e9e8f5c4db4a9454523c78dc33775ee22385
+>>>>>>> 966f8cd77ada5796bde03d871674e455b93147ea
       {
         headers: {
           "Content-Type": "application/json",
@@ -239,21 +248,23 @@ export default class FakeRoute extends Component {
         },
         data: {
           query: `{
-              profile {
+            profileNonPlantilla {
                   employeeNumber
                   firstName
                   middleName
                   lastName
                   maidenName
                   suffixName
-              }
-            }`,
+                  dateFrom
+                  dateTo
+            }
+          }`,
         },
       },
       (err, res) => {
         let result = JSON.parse(res.content);
         this.setState({
-          existingPersonnelInformation: result.data.profile,
+          existingPersonnelInformation: result.data.profileNonPlantilla,
         });
       }
     );

@@ -21,9 +21,18 @@ Meteor.method(
     SELECT 
       applications.id AS 'id',
       applicant_profiles.employee_number AS 'employee_number',
+      applicant_profiles.code AS 'code',
       applicant_profiles.first_name AS 'first_name',
       applicant_profiles.last_name AS 'last_name',
-        applications.groupings_id AS 'groupings_id'
+      applicant_profiles.middle_name AS 'middle_name',
+      applicant_profiles.name_ext AS 'name_ext',
+      applicant_profiles.maiden_name AS 'maiden_name',
+      applicant_profiles.address AS 'address',
+      applicant_profiles.political_district AS 'political_district',
+      applicant_profiles.congressional_district AS 'congressional_district',
+      applicant_profiles.contact_number AS 'contact_number',
+      applicant_profiles.birth_date AS 'birth_date',
+      applications.groupings_id AS 'groupings_id'
     FROM
       applications
     INNER JOIN
@@ -223,23 +232,38 @@ Meteor.method(
     var sql = `
       INSERT INTO applicant_profiles
       (code, first_name, last_name, middle_name, maiden_name, name_ext, address, contact_number, political_district, congressional_district,
-        birth_date, employee_number)
+        birth_date, employee_number, date_from, date_to)
       VALUES ('${code}','${addslashes(applicantData.firstName)}', '${addslashes(
       applicantData.lastName
     )}', '${addslashes(applicantData.middleName)}',
-        '${addslashes(applicantData.maidenName)}', '${addslashes(
+          '${addslashes(applicantData.maidenName)}', '${addslashes(
       applicantData.nameExtension
     )}', '${addslashes(applicantData.address)}',
-        '${addslashes(applicantData.cellNumber)}', '${addslashes(
+          '${addslashes(applicantData.cellNumber)}', '${addslashes(
       applicantData.politicalDistrict
     )}', '${addslashes(applicantData.congressionalDistrict)}', 
-        '${moment(applicantData.birthDate).format("YYYY-MM-DD HH:mm:ss")}',
-      '${addslashes(
-        applicantData.employeeNumber === "000000"
-          ? ""
-          : applicantData.employeeNumber
-      )}');`;
+          '${moment(applicantData.birthDate).format("YYYY-MM-DD HH:mm:ss")}',
+        ${
+          applicantData.employeeNumber == "000000"
+            ? null
+            : "'" + addslashes(applicantData.employeeNumber) + "'"
+        }, 
+        ${
+          applicantData.dateFrom != null
+            ? "'" +
+              moment(applicantData.dateFrom).format("YYYY-MM-DD HH:mm:ss") +
+              "'"
+            : null
+        }, 
+        ${
+          applicantData.dateTo != null
+            ? "'" +
+              moment(applicantData.dateTo).format("YYYY-MM-DD HH:mm:ss") +
+              "'"
+            : null
+        });`;
     var fut = new Future();
+
     easara(sql, function (err, result) {
       if (err) {
         fut.return("bad");
@@ -329,7 +353,7 @@ Meteor.method(
     var sql = `
       INSERT INTO applicant_profiles
       (code, first_name, last_name, middle_name, maiden_name, name_ext, address, contact_number, political_district, congressional_district,
-        birth_date, employee_number)
+        birth_date, employee_number, date_from, date_to)
       VALUES ('${code}','${addslashes(applicantData.firstName)}', '${addslashes(
       applicantData.lastName
     )}', '${addslashes(applicantData.middleName)}',
@@ -340,11 +364,25 @@ Meteor.method(
       applicantData.politicalDistrict
     )}', '${addslashes(applicantData.congressionalDistrict)}', 
         '${moment(applicantData.birthDate).format("YYYY-MM-DD HH:mm:ss")}',
-      '${addslashes(
-        applicantData.employeeNumber === "000000"
-          ? ""
-          : applicantData.employeeNumber
-      )}');
+      ${
+        applicantData.employeeNumber == "000000"
+          ? null
+          : "'" + addslashes(applicantData.employeeNumber) + "'"
+      }, 
+      ${
+        applicantData.dateFrom != null
+          ? "'" +
+            moment(applicantData.dateFrom).format("YYYY-MM-DD HH:mm:ss") +
+            "'"
+          : null
+      }, 
+      ${
+        applicantData.dateTo != null
+          ? "'" +
+            moment(applicantData.dateTo).format("YYYY-MM-DD HH:mm:ss") +
+            "'"
+          : null
+      });
       INSERT INTO applications (profile_code, groupings_id) VALUES ('${code}', (SELECT id FROM settings ORDER BY id DESC LIMIT 1));`;
     var fut = new Future();
     easara(sql, function (err, result) {
@@ -496,7 +534,6 @@ Meteor.method(
 Meteor.method(
   "insert-rank",
   function (rankData) {
-
     var sql = `
       UPDATE 
         applications
@@ -507,7 +544,7 @@ Meteor.method(
         id = ${rankData.applicationId}
           AND
         groupings_id = ${rankData.groupingsID};`;
-    
+
     var fut = new Future();
     easara(sql, (err, result) => {
       if (err) throw err;
