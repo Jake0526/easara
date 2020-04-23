@@ -72,13 +72,6 @@ Meteor.method(
   }
 );
 
-
-
-
-
-
-
-
 Meteor.method(
   "select-applications",
   function () {
