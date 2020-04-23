@@ -19,12 +19,13 @@ export default class FakeRoute extends Component {
       permissions: [],
       settings: [],
       activeSettings: [],
+      activeApplications: []
     };
   }
 
   componentDidMount() {
     HTTP.post(
-      'http://111.125.114.29:13000/v2/graphql',
+      '/graphqlv2',
       {
         // headers: {
         //   "Content-Type": "application/json",
@@ -138,8 +139,8 @@ export default class FakeRoute extends Component {
     console.log("queries will run");
     //Queries
     this.selectApplicantsProfile();
+    this.selectApplicationALL();
     this.selectApplicantsProfileALL();
-    this.selectApplicationALL()
     this.getRanking();
     this.getSettings();
     this.getAllCompleteProfile();
@@ -150,9 +151,9 @@ export default class FakeRoute extends Component {
   selectApplicantsProfile = () => {
     Meteor.call("select-profiles", (error, result) => {
       if (!error) {
-        // this.setState({
-        //   applicantsProfiles: result,
-        // });
+        this.setState({
+          activeApplications: result,
+        });
       } else {
         console.log(error);
       }
@@ -227,7 +228,7 @@ export default class FakeRoute extends Component {
 
   getAllCompleteProfile = () => {
     HTTP.post(
-      "http://111.125.114.29:13000/v2/graphql",
+      "/graphqlv2",
       {
         headers: {
           "Content-Type": "application/json",

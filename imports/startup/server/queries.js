@@ -32,7 +32,8 @@ Meteor.method(
       applicant_profiles.congressional_district AS 'congressional_district',
       applicant_profiles.contact_number AS 'contact_number',
       applicant_profiles.birth_date AS 'birth_date',
-      applications.groupings_id AS 'groupings_id'
+      applications.groupings_id AS 'groupings_id',
+      applicant_profiles.date_to AS 'date_to'
     FROM
       applications
     INNER JOIN

@@ -34,9 +34,11 @@ export default class Ranking extends Component {
   }
 
   generateNewRanking = () => {
-    let applicants = this.state.data.state.applicantsProfiles;
+    let applicants = this.state.data.state.activeApplications;
     let activeSettings = this.state.data.state.activeSettings;
     let prioApplicants = [];
+    let lessPrioApplicants3months = [];
+    let lessPrioApplicantsLess3months = [];
     let lessPrioApplicants = [];
     let rankedApplicants = [];
 
@@ -98,33 +100,20 @@ export default class Ranking extends Component {
       let remainingRevolvingSlot = activeSettings[0].number_of_revolving;
       let remainingAugmentationSlot = activeSettings[0].number_of_augmentation;
 
-      console.log(applicants);
+
+      //Rank the priority and separate the ramaining less priority
       for (let x = 0; x < applicants.length; x += 1) {
-        console.log(applicants[x]);
 
-        if (applicants[x].employee_number != "") {
-          if(remainingRevolvingSlot > 0) {
-            lessPrioApplicants.push({
-              applicationId: applicants[x].id,
-              rankNo: rankNum,
-              groupingsID: applicants[x].groupings_id,
-              category: "Revolving"
-            });
+        let dateDiff = 0;
 
-            remainingRevolvingSlot-=1;
-          }else {
-            if(remainingAugmentationSlot > 0) {
-              lessPrioApplicants.push({
-                applicationId: applicants[x].id,
-                rankNo: rankNum,
-                groupingsID: applicants[x].groupings_id,
-                category: "Augmentation"
-              });
+        if(applicants[x].date_to) {
+          let dateTo = moment(applicants[x].date_to);
+          let todayDate = moment(new Date());
 
-              remainingAugmentationSlot-=1;
-            }
-          }
-        } else {
+          dateDiff = todayDate.diff(dateTo, 'days');
+        }
+
+        if (applicants[x].employee_number == "") {
           if(remainingRevolvingSlot > 0) {
             prioApplicants.push({
               applicationId: applicants[x].id,
@@ -146,12 +135,49 @@ export default class Ranking extends Component {
               remainingAugmentationSlot-=1;
             }
           }
+        } else {
+          if(remainingRevolvingSlot > 0) {
+            if (dateDiff > 3) {
+              lessPrioApplicants3months.push({
+                applicationId: applicants[x].id,
+                rankNo: rankNum,
+                groupingsID: applicants[x].groupings_id,
+                category: "Revolving"
+              });
+            }else {
+              lessPrioApplicantsLess3months.push({
+                applicationId: applicants[x].id,
+                rankNo: rankNum,
+                groupingsID: applicants[x].groupings_id,
+                category: "Revolving"
+              });
+            }
+
+            remainingRevolvingSlot-=1;
+          }else {
+            if (dateDiff > 3) {
+              lessPrioApplicants3months.push({
+                applicationId: applicants[x].id,
+                rankNo: rankNum,
+                groupingsID: applicants[x].groupings_id,
+                category: "Augmentation"
+              });
+            }else {
+              lessPrioApplicantsLess3months.push({
+                applicationId: applicants[x].id,
+                rankNo: rankNum,
+                groupingsID: applicants[x].groupings_id,
+                category: "Augmentation"
+              });
+            }
+          }
         }
 
         rankNum++;
         if (x == applicants.length - 1) {
           rankedApplicants = prioApplicants;
-          rankedApplicants = rankedApplicants.concat(lessPrioApplicants);
+          rankedApplicants = rankedApplicants.concat(lessPrioApplicants3months);
+          rankedApplicants = rankedApplicants.concat(lessPrioApplicantsLess3months);
 
           console.log(rankedApplicants);
 
