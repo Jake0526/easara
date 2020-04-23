@@ -929,8 +929,8 @@ export default class Dashboard extends Component {
     }
     else {
       if ((Array.isArray(data) && data.length)) {
-        this.showAugmentationReport(filteredGroup, finallabelAugmentation, finalCountAugmentation, randomColorResult[1], numberOfAugmentation, randomColorResult[3])
-        this.showRankingReport(filteredGroup, finallabelRevolving, finalCountRevolving, randomColorResult[0], numberOfRevolving, randomColorResult[2])
+        this.showAugmentationReport(filteredGroup, finallabelAugmentation, finalCountAugmentation, randomColorResult[1], numberOfAugmentation, randomColorResult[3],finalBaseGroup)
+        this.showRankingReport(filteredGroup, finallabelRevolving, finalCountRevolving, randomColorResult[0], numberOfRevolving, randomColorResult[2],finalBaseGroup)
 
 
         let chart = this.state.showAugmentationRankingReport
@@ -970,11 +970,12 @@ export default class Dashboard extends Component {
     finalCountAugmentation,
     color,
     numberOfAugmentation,
-    colorSecond) => {
+    colorSecond,
+    finalBaseGroup) => {
     var ctx = document.getElementById('showAugmentationReport').getContext('2d');
     let dataChart = {
 
-      labels: filteredApplication,
+      labels: finalBaseGroup,
       datasets: [
         {
           type: 'line',
@@ -1076,10 +1077,11 @@ export default class Dashboard extends Component {
     finalCountRevolving,
     color,
     numberOfRevolving,
-    colorSecond) => {
+    colorSecond,
+    finalBaseGroup) => {
     var ctx = document.getElementById('showRankingReport').getContext('2d');
     let dataChart = {
-      labels: filteredApplication,
+      labels: finalBaseGroup,
       datasets: [
         {
           type: 'line',
@@ -2008,7 +2010,7 @@ export default class Dashboard extends Component {
                       </select>
                       {/* <h3 className="box-title"></h3> */}
                       <Tabs defaultActiveKey="s1" transition={"false"} id="noanim-tab-example">
-                        <Tab eventKey="s1" style={{ height: "100vh" }} title="Augmentation & Ranking">
+                        <Tab eventKey="s1" style={{ height: "100%" }} title="Augmentation & Ranking">
                           <canvas id="showAugmentationRankingReport" className="chartjs" height="110" style={{ display: "block", width: "100 ", height: "100" }}></canvas>
                           <div className="dashboardtable">
                             <ReactTable
