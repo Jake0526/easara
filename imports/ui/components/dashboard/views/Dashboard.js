@@ -314,7 +314,7 @@ export default class Dashboard extends Component {
     let countNewData = []
     let applicantsProfilesData = this.state.data.state.applicantsProfilesALL
     console.log(applicantsProfilesData)
- 
+
     data.forEach(element => {
       if (element.groupings_id == baseGroup) {
         uniqueDays.push(moment(element.created_at).format("MMMM DD,YYYY"))
@@ -695,17 +695,6 @@ export default class Dashboard extends Component {
       yearFilteredThisFunction = yearselected
     }
 
-
-    // data.forEach(element => {
-    //   if ((element.groupings_id !== null) && (element.groupings_id !== "")) {
-    //     if (moment(element.created_at).format("YYYY") == yearFilteredThisFunction) {
-
-    //       summaryApplication.push(element.groupings_id)
-    //     }
-    //   }
-
-    // });
-
     let summaryApplication = []
     let numberOfRevolving = []
     let numberOfAugmentation = []
@@ -739,7 +728,7 @@ export default class Dashboard extends Component {
       }
     })
 
-
+    console.log(summaryApplication)
     let filteredGroup = [...new Set(finalGroup)]
     let filteredApplication = [...new Set(summaryApplication)]
     let countFilteredRevolving = []
@@ -750,11 +739,13 @@ export default class Dashboard extends Component {
           countFilteredRevolving[element.groupings_id] = (countFilteredRevolving[element.groupings_id] || 0) + 1
         }
         else if (filteredApplication[i] == element.groupings_id && element.category == "Augmentation") {
-          countFilteredAugmentation[element.groupings_id] = (countFilteredRevolving[element.groupings_id] || 0) + 1
+          countFilteredAugmentation[element.groupings_id] = (countFilteredAugmentation[element.groupings_id] || 0) + 1
         }
       })
     }
 
+    console.log(data)
+    console.log(countFilteredAugmentation)
     let finalCountRevolving = []
     let finallabelRevolving = []
     for (let [key, value] of Object.entries(countFilteredRevolving)) {
@@ -780,6 +771,9 @@ export default class Dashboard extends Component {
         finallabelAugmentation.splice(i, 0, finalBaseId[i])
       }
     }
+
+
+    console.log(finalCountAugmentation)
 
     //THE FILERED APPLICATION RESULT SHOULD BE ADDED TO DROP DOWN SELECT ATTRIBUTE
 
@@ -931,8 +925,8 @@ export default class Dashboard extends Component {
     }
     else {
       if ((Array.isArray(data) && data.length)) {
-        this.showAugmentationReport(filteredGroup, finallabelAugmentation, finalCountAugmentation, randomColorResult[1], numberOfAugmentation, randomColorResult[3],finalBaseGroup)
-        this.showRankingReport(filteredGroup, finallabelRevolving, finalCountRevolving, randomColorResult[0], numberOfRevolving, randomColorResult[2],finalBaseGroup)
+        this.showAugmentationReport(filteredGroup, finallabelAugmentation, finalCountAugmentation, randomColorResult[1], numberOfAugmentation, randomColorResult[3], finalBaseGroup)
+        this.showRankingReport(filteredGroup, finallabelRevolving, finalCountRevolving, randomColorResult[0], numberOfRevolving, randomColorResult[2], finalBaseGroup)
 
 
         let chart = this.state.showAugmentationRankingReport
@@ -1640,7 +1634,7 @@ export default class Dashboard extends Component {
         }
       })
     })
-   
+
     // let updateStatus = "yes"
     //updates the graph of employee's information graph report
 

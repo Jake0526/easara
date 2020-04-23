@@ -26,10 +26,10 @@ export default class FakeRoute extends Component {
     HTTP.post(
       'http://localhost:3200/v2/graphql',
       {
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
+        // headers: {
+        //   "Content-Type": "application/json",
+        //   Accept: "application/json",
+        // },
         data: {
           query:
             `{
@@ -231,7 +231,7 @@ export default class FakeRoute extends Component {
 
   getAllCompleteProfile = () => {
     HTTP.post(
-      "/graphql",
+      "/http://localhost:3200/v2/graphql",
       {
         headers: {
           "Content-Type": "application/json",
