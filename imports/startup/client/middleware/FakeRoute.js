@@ -10,14 +10,15 @@ export default class FakeRoute extends Component {
       existingPersonnelInformation: [],
       employeeInformation: {},
       applicantsProfiles: [],
+      applicantsProfilesALL: [],
       applicantsRanking: [],
       application:[],
       introspect: {},
       isLogin: null,
       isLoad: false,
       permissions: [],
-      permissions: [],
       settings: [],
+      activeSettings: []
     };
   }
 
@@ -138,11 +139,13 @@ export default class FakeRoute extends Component {
     console.log("queries will run")
     //Queries
     this.selectApplicantsProfile();
+    this.selectApplicantsProfileALL();
     this.selectApplicationALL()
-   // this.getRanking();
+    this.getRanking();
     this.getSettings();
     this.getAllCompleteProfile();
     this.selectApplications();
+    this.getActiveSettings();
   }
 
   selectApplicantsProfile = () => {
@@ -157,6 +160,21 @@ export default class FakeRoute extends Component {
       }
     });
   };
+
+  selectApplicantsProfileALL = () => {
+    Meteor.call("select-profiles-ALL", (error, result) => {
+      if (!error) {
+        this.setState({
+          applicantsProfilesALL: result,
+        });
+      }
+      else{
+        console.log(error)
+      }
+    });
+  };
+
+  
 
   selectApplicationALL = () => {
     Meteor.call("select-applications-all", (error, result) => {
@@ -191,6 +209,16 @@ export default class FakeRoute extends Component {
     });
   };
 
+  getActiveSettings = () => {
+    Meteor.call("active-settings", (error, result) => {
+      if (!error) {
+        this.setState({
+          activeSettings: result,
+        });
+      }
+    });
+  };
+
   getSettings = () => {
     Meteor.call("select-settings", (error, result) => {
       if (!error) {
@@ -203,7 +231,7 @@ export default class FakeRoute extends Component {
 
   getAllCompleteProfile = () => {
     HTTP.post(
-      "http://localhost:3000/v2/graphql",
+      "/http://localhost:3200/v2/graphql",
       {
         headers: {
           "Content-Type": "application/json",

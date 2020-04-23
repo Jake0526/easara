@@ -77,7 +77,7 @@ export default class Dashboard extends Component {
     console.log("run")
     let propsBasis = (this.props)
     let chartUpdateData = this.props.state.applications
-    let chartData = this.state.data.state.applicantsProfiles
+    let chartData = this.state.data.state.applicantsProfilesALL
     let chartApplicationData = this.state.data.state.application
 
     if (chartUpdateData.length != chartApplicationData.length) {
@@ -134,7 +134,7 @@ export default class Dashboard extends Component {
     console.log("will receive")
     let propsBasis = (this.props)
 
-    let chartData = nextProps.state.applicantsProfiles
+    let chartData = nextProps.state.applicantsProfilesALL
     let chartApplicationData = nextProps.state.application
     let chartUpdateData = this.props.state.applications
 
@@ -174,7 +174,7 @@ export default class Dashboard extends Component {
       baseGroupDataNOTCHANGED: baseGroupName,
       data: nextProps,
       dataPrevious: prevProps,
-      applicantsProfiles: nextProps,
+      applicantsProfilesALL: nextProps,
       baseGroupData: baseGroupName,
       baseGroupDidMount: historyApplications
     });
@@ -302,6 +302,8 @@ export default class Dashboard extends Component {
   }
   showMainDashboardReport = (data, baseGroup) => {
 
+    console.log(data)
+    console.log(baseGroup)
     let daysDataDashboard = []
     daysDataDashboard.length = 0
 
@@ -310,8 +312,8 @@ export default class Dashboard extends Component {
     let countUniqueData = []
     let countExistingData = []
     let countNewData = []
-    let applicantsProfilesData = this.state.data.state.applicantsProfiles
-
+    let applicantsProfilesData = this.state.data.state.applicantsProfilesALL
+    console.log(applicantsProfilesData)
  
     data.forEach(element => {
       if (element.groupings_id == baseGroup) {
@@ -658,7 +660,7 @@ export default class Dashboard extends Component {
   }
 
   showAugmentationRankingReport = (data, yearselected, load) => {
-    let profilesData = this.state.data.state.applicantsProfiles
+    let profilesData = this.state.data.state.applicantsProfilesALL
     let application_data = data
     let settingstYearData = []
     let yearThisFunction = []
@@ -1622,7 +1624,7 @@ export default class Dashboard extends Component {
     this.setState({
       fromDate: date,
     })
-    let dateData = this.state.data.state.applicantsProfiles
+    let dateData = this.state.data.state.applicantsProfilesALL
     let application = this.state.data.state.application
     let dateDataResult = []
 
@@ -1660,7 +1662,7 @@ export default class Dashboard extends Component {
     })
 
 
-    let dateData = this.state.data.state.applicantsProfiles
+    let dateData = this.state.data.state.applicantsProfilesALL
     let application = this.state.data.state.application
     let dateDataResult = []
     application.forEach(element2 => {
@@ -1708,7 +1710,7 @@ export default class Dashboard extends Component {
   }
 
   groupProcessGraph = (groupDataSelected) => {
-    let dateData = this.state.data.state.applicantsProfiles
+    let dateData = this.state.data.state.applicantsProfilesALL
     let groupData = this.state.data.state.application
     let settingsData = this.state.data.state.settings
     let groupDataBasis = ""
