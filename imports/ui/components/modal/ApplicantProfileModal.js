@@ -88,6 +88,8 @@ export default class ApplicantProfileModal extends Component {
       existingPersonnel: false,
       applicantProfileId: "",
       beginDate: "",
+      dateFrom: null,
+      dateTo: null,
 
       //UPDATE
       update: false,
@@ -185,6 +187,12 @@ export default class ApplicantProfileModal extends Component {
           nextProps.lookUpData.length !== 0
             ? nextProps.lookUpData.suffixName
             : "",
+        dateFrom:
+          nextProps.lookUpData.length !== 0
+            ? nextProps.lookUpData.dateFrom
+            : null,
+        dateTo:
+          nextProps.lookUpData.length !== 0 ? nextProps.lookUpData.dateTo : null,
         existingPersonnel: nextProps.lookUpData.length !== 0 ? true : false,
       });
     }
@@ -343,6 +351,8 @@ export default class ApplicantProfileModal extends Component {
           birthDate,
           employeeNumber,
           beginDate,
+          dateFrom,
+          dateTo,
         } = this.state;
         let data = {
           firstName,
@@ -357,6 +367,8 @@ export default class ApplicantProfileModal extends Component {
           birthDate,
           employeeNumber,
           beginDate,
+          dateFrom,
+          dateTo,
         };
         Meteor.call("insert-new-applicant", data, (error, result) => {
           if (!error) {
