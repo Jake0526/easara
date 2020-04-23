@@ -10,6 +10,7 @@ export default class FakeRoute extends Component {
       existingPersonnelInformation: [],
       employeeInformation: {},
       applicantsProfiles: [],
+      applicantsProfilesALL: [],
       applicantsRanking: [],
       application: [],
       introspect: {},
@@ -23,12 +24,12 @@ export default class FakeRoute extends Component {
 
   componentDidMount() {
     HTTP.post(
-      "/graphqlv2",
+      'http://localhost:3200/v2/graphql',
       {
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
+        // headers: {
+        //   "Content-Type": "application/json",
+        //   Accept: "application/json",
+        // },
         data: {
           query: `{
               completeProfileForActivePlantillaNonPlantillaByEmpno(employeeNumber: "501444") {
@@ -137,7 +138,12 @@ export default class FakeRoute extends Component {
     console.log("queries will run");
     //Queries
     this.selectApplicantsProfile();
+<<<<<<< HEAD
     this.selectApplicationALL();
+=======
+    this.selectApplicantsProfileALL();
+    this.selectApplicationALL()
+>>>>>>> 1f24e9e8f5c4db4a9454523c78dc33775ee22385
     this.getRanking();
     this.getSettings();
     this.getAllCompleteProfile();
@@ -156,6 +162,21 @@ export default class FakeRoute extends Component {
       }
     });
   };
+
+  selectApplicantsProfileALL = () => {
+    Meteor.call("select-profiles-ALL", (error, result) => {
+      if (!error) {
+        this.setState({
+          applicantsProfilesALL: result,
+        });
+      }
+      else{
+        console.log(error)
+      }
+    });
+  };
+
+  
 
   selectApplicationALL = () => {
     Meteor.call("select-applications-all", (error, result) => {
@@ -211,7 +232,11 @@ export default class FakeRoute extends Component {
 
   getAllCompleteProfile = () => {
     HTTP.post(
+<<<<<<< HEAD
       "http://111.125.114.29:13000/v2/graphql",
+=======
+      "/http://localhost:3200/v2/graphql",
+>>>>>>> 1f24e9e8f5c4db4a9454523c78dc33775ee22385
       {
         headers: {
           "Content-Type": "application/json",

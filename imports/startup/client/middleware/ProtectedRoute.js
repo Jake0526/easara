@@ -10,6 +10,7 @@ export default class ProtectedRoute extends Component {
       employeeInformation: {},
       applicantsProfiles: [],
       applicantsRanking: [],
+      application:[],
       introspect: {},
       isLogin: null,
       isLoad: false,
@@ -169,6 +170,7 @@ export default class ProtectedRoute extends Component {
     //Queries
     this.fetchReligions();
     this.selectApplicantsProfile();
+    this.selectApplicationALL()
     this.getRanking();
   }
 
@@ -224,6 +226,19 @@ export default class ProtectedRoute extends Component {
         this.setState({
           applicantsRanking: result,
         });
+      }
+    });
+  };
+
+  selectApplicationALL = () => {
+    Meteor.call("select-applications-all", (error, result) => {
+      if (!error) {
+        this.setState({
+          application: result,
+        });
+      }
+      else{
+        console.log(error)
       }
     });
   };

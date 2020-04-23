@@ -11,7 +11,7 @@ import {
 } from "react-bootstrap";
 import PreviousIcon from '../../react-table-custom-component/PreviousComponent';
 import NextIcon from '../../react-table-custom-component/NextComponent';
-import { element } from 'prop-types';
+import { element, number } from 'prop-types';
 
 var converter = require('number-to-words');
 var Chart = require('chart.js');
@@ -74,9 +74,10 @@ export default class Dashboard extends Component {
 
   componentDidMount() {
     $('body').addClass('sidebar-mini');
+    console.log("run")
     let propsBasis = (this.props)
     let chartUpdateData = this.props.state.applications
-    let chartData = this.state.data.state.applicantsProfiles
+    let chartData = this.state.data.state.applicantsProfilesALL
     let chartApplicationData = this.state.data.state.application
 
     if (chartUpdateData.length != chartApplicationData.length) {
@@ -84,13 +85,18 @@ export default class Dashboard extends Component {
     }
 
     let chartSettings = this.state.data.state.settings
-    console.log(chartSettings[chartSettings.length - 1])
-    let baseGroup = chartSettings[chartSettings.length - 1].id ? chartSettings[chartSettings.length - 1].id : ""
-    let baseGroupName = chartSettings[chartSettings.length - 1].groupings ? chartSettings[chartSettings.length - 1].groupings : ""
+    let baseGroup = ""
+    let baseGroupName = ""
+    let activeGroup = ""
+    chartSettings.forEach(element => {
+      if (element.is_active == 1) {
+        baseGroup = element.id
+        baseGroupName = element.groupings
+      }
+    })
 
     let baseData = []
     let historyApplications = []
-    console.log(baseGroup)
     //groupname Basis
     chartApplicationData.forEach(element1 => {
       if (element1.groupings_id == baseGroup) {
@@ -109,7 +115,6 @@ export default class Dashboard extends Component {
     })
     this.setState({
       baseGroupDataNOTCHANGED: baseGroupName,
-      baseGroupData: baseGroup,
       baseGroupDidMount: historyApplications,
       baseGroupData: baseGroupName,
 
@@ -123,20 +128,30 @@ export default class Dashboard extends Component {
   }
 
   componentWillReceiveProps(nextProps, prevProps) {
-    console.log(nextProps)
-    console.log(prevProps)
+    // console.log(nextProps)
+    // console.log(prevProps)
+    console.log("will receive")
+    let propsBasis = (this.props)
 
-    let chartData = nextProps.state.applicantsProfiles
+    let chartData = nextProps.state.applicantsProfilesALL
     let chartApplicationData = nextProps.state.application
     let chartUpdateData = this.props.state.applications
+
     if (chartUpdateData.length != chartApplicationData.length) {
       propsBasis.selectApplicationALL()
     }
 
     let chartSettings = nextProps.state.settings
-    let baseGroup = chartSettings[chartSettings.length - 1].id
     let baseData = []
-    let baseGroupName = chartSettings[chartSettings.length - 1].groupings ? chartSettings[chartSettings.length - 1].groupings : ""
+    let baseGroup = ""
+    let baseGroupName = ""
+    let activeGroup = ""
+    chartSettings.forEach(element => {
+      if (element.is_active == 1) {
+        baseGroup = element.id
+        baseGroupName = element.groupings
+      }
+    })
     let historyApplications = []
 
     chartApplicationData.forEach(element1 => {
@@ -158,7 +173,7 @@ export default class Dashboard extends Component {
       baseGroupDataNOTCHANGED: baseGroupName,
       data: nextProps,
       dataPrevious: prevProps,
-      applicantsProfiles: nextProps,
+      applicantsProfilesALL: nextProps,
       baseGroupData: baseGroupName,
       baseGroupDidMount: historyApplications
     });
@@ -285,7 +300,6 @@ export default class Dashboard extends Component {
     }
   }
   showMainDashboardReport = (data, baseGroup) => {
-
     let daysDataDashboard = []
     daysDataDashboard.length = 0
 
@@ -294,9 +308,8 @@ export default class Dashboard extends Component {
     let countUniqueData = []
     let countExistingData = []
     let countNewData = []
-    let applicantsProfilesData = this.state.data.state.applicantsProfiles
+    let applicantsProfilesData = this.state.data.state.applicantsProfilesALL
 
-    console.log(data)
     data.forEach(element => {
       if (element.groupings_id == baseGroup) {
         uniqueDays.push(moment(element.created_at).format("MMMM DD,YYYY"))
@@ -642,7 +655,7 @@ export default class Dashboard extends Component {
   }
 
   showAugmentationRankingReport = (data, yearselected, load) => {
-    let profilesData = this.state.data.state.applicantsProfiles
+    let profilesData = this.state.data.state.applicantsProfilesALL
     let application_data = data
     let settingstYearData = []
     let yearThisFunction = []
@@ -678,22 +691,38 @@ export default class Dashboard extends Component {
     }
 
     let summaryApplication = []
-    data.forEach(element => {
-      if ((element.groupings_id !== null) && (element.groupings_id !== "")) {
-        if (moment(element.created_at).format("YYYY") == yearFilteredThisFunction) {
-          summaryApplication.push(element.groupings_id)
-        }
-      }
-
-    });
+    let numberOfRevolving = []
+    let numberOfAugmentation = []
     let finalGroup = []
-    summaryApplication.forEach(element1 => {
-      settings_data.forEach(element2 => {
-        if (element1 == element2.id) {
-          finalGroup.push(element2.groupings)
+
+    let finalBaseId = []
+    let finalBaseGroup = []
+    settings_data.forEach(element1 => {
+
+      if (moment(element1.created_at).format("YYYY") == yearFilteredThisFunction) {
+        if ((element1.number_of_revolving == "") || (element1.number_of_revolving == null)) {
+          numberOfRevolving.push(0)
         }
-      })
+        else {
+          numberOfRevolving.push(parseInt(element1.number_of_revolving))
+        }
+        if ((element1.number_of_augmentation == "") || (element1.number_of_augmentation == null)) {
+          numberOfAugmentation.push(0)
+        }
+        else {
+          numberOfAugmentation.push(parseInt(element1.number_of_augmentation))
+        }
+        finalBaseGroup.push(element1.groupings)
+        finalBaseId.push((element1.id))
+        data.forEach(element2 => {
+          if (element1.id == element2.groupings_id) {
+            finalGroup.push(element1.groupings)
+            summaryApplication.push(element1.id)
+          }
+        })
+      }
     })
+
     let filteredGroup = [...new Set(finalGroup)]
     let filteredApplication = [...new Set(summaryApplication)]
     let countFilteredRevolving = []
@@ -704,7 +733,7 @@ export default class Dashboard extends Component {
           countFilteredRevolving[element.groupings_id] = (countFilteredRevolving[element.groupings_id] || 0) + 1
         }
         else if (filteredApplication[i] == element.groupings_id && element.category == "Augmentation") {
-          countFilteredAugmentation[element.groupings_id] = (countFilteredRevolving[element.groupings_id] || 0) + 1
+          countFilteredAugmentation[element.groupings_id] = (countFilteredAugmentation[element.groupings_id] || 0) + 1
         }
       })
     }
@@ -724,15 +753,14 @@ export default class Dashboard extends Component {
     }
 
     //CHECKING IF REVOLVING AND AUGMENTATION MONTHS HAS A VALUE OF NONE AND MUST BE REFILL
-
-    for (let i = 0; i < filteredApplication.length; i++) {
-      if (filteredApplication[i] != finallabelRevolving[i]) {
+    for (let i = 0; i < finalBaseId.length; i++) {
+      if (finalBaseId[i] != finallabelRevolving[i]) {
         finalCountRevolving.splice(i, 0, 0)
-        finallabelRevolving.splice(i, 0, filteredApplication[i])
+        finallabelRevolving.splice(i, 0, finalBaseId[i])
       }
-      if (filteredApplication[i] != finallabelAugmentation[i]) {
+      if (finalBaseId[i] != finallabelAugmentation[i]) {
         finalCountAugmentation.splice(i, 0, 0)
-        finallabelAugmentation.splice(i, 0, filteredApplication[i])
+        finallabelAugmentation.splice(i, 0, finalBaseId[i])
       }
     }
 
@@ -740,7 +768,7 @@ export default class Dashboard extends Component {
 
     let randomColorResult = []
     let floatStaticRankingAugmentation = 0.00
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < 4; i++) {
       floatStaticRankingAugmentation += 0.235
       var decider = d3.interpolateRainbow(floatStaticRankingAugmentation)
       randomColorResult.push(decider)
@@ -777,21 +805,51 @@ export default class Dashboard extends Component {
     var ctx = document.getElementById('showAugmentationRankingReport').getContext('2d');
     let dataChart = {
 
-      labels: filteredGroup,
+      labels: finalBaseGroup,
       datasets: [
         {
-          label: 'Total Augmentation Filtered',
+          type: 'line',
+          label: 'Augmentation Filtered',
           fill: false,
           data: finalCountAugmentation,
           backgroundColor: randomColorResult[1],
-          borderColor: randomColorResult[1]
-        }, {
-          label: 'Total Revolving Filtered',
+          borderColor: randomColorResult[1],
+          pointStyle: 'line',
+          order: 1
+
+        },
+        {
+          type: 'line',
+          label: 'Revolving Filtered',
           fill: false,
           data: finalCountRevolving,
           backgroundColor: randomColorResult[0],
-          borderColor: randomColorResult[0]
+          borderColor: randomColorResult[0],
+          pointStyle: 'line',
+          order: 2
+        }, {
+          type: 'bar',
+          label: 'Number of Augmentation',
+          data: numberOfAugmentation,
+          fill: false,
+          backgroundColor: randomColorResult[3],
+          borderColor: randomColorResult[3],
+          pointStyle: 'rect',
+          order: 3
+
         },
+        {
+          type: 'bar',
+          label: 'Number of Revolving',
+          data: numberOfRevolving,
+          fill: false,
+          backgroundColor: randomColorResult[2],
+          borderColor: randomColorResult[2],
+          pointStyle: 'rect',
+          order: 4
+
+        },
+
       ]
     }
     let options = {
@@ -800,12 +858,38 @@ export default class Dashboard extends Component {
       tooltips: {
         mode: 'index',
       },
-      hover: {
-        mode: 'index'
+      // hover: {
+      //   mode: 'index'
+      // },
+      legend: {
+        display: true,
+        position: 'right',
+
+        labels: {
+          defaultFontSize: 14,
+          fontColor: 'black',
+          usePointStyle: true,
+
+          //fontColor: 'rgb(255, 99, 132)'
+        }
       },
 
       scales: {
+        xAxes: [{
+          stacked: true,
+          display: true,
+          gridLines: {
+            display: false,
+          },
+
+        }],
+
+
         yAxes: [{
+          stacked: true,
+          gridLines: {
+            display: true,
+          },
           ticks: {
             beginAtZero: true,
             precision: 0,
@@ -814,24 +898,15 @@ export default class Dashboard extends Component {
           }
         }]
       },
-      legend: {
-        display: true,
-        position: 'top',
-        onClick: (e) => e.stopPropagation(),
-        labels: {
-          defaultFontSize: 14,
-          fontColor: 'black'
-          //fontColor: 'rgb(255, 99, 132)'
-        }
-      },
+
       title: {
         display: true,
-        text: 'Yearly Statistics Report'
+        text: 'Augmentation and Revolving Yearly Statistics Report'
       },
       responsive: true,
 
     }
-    let type = 'line'
+    let type = 'bar'
     if (this.state.data !== this.state.dataPrevious) {
       console.log("state data is not equal to data previous")
       //NEEDS TO BE OBSERVED IF IT CAUSES BUG ...
@@ -839,8 +914,8 @@ export default class Dashboard extends Component {
     }
     else {
       if ((Array.isArray(data) && data.length)) {
-        this.showAugmentationReport(filteredGroup, finallabelAugmentation, finalCountAugmentation, randomColorResult[1])
-        this.showRankingReport(filteredGroup, finallabelRevolving, finalCountRevolving, randomColorResult[0])
+        this.showAugmentationReport(filteredGroup, finallabelAugmentation, finalCountAugmentation, randomColorResult[1], numberOfAugmentation, randomColorResult[3], finalBaseGroup)
+        this.showRankingReport(filteredGroup, finallabelRevolving, finalCountRevolving, randomColorResult[0], numberOfRevolving, randomColorResult[2], finalBaseGroup)
 
 
         let chart = this.state.showAugmentationRankingReport
@@ -849,7 +924,7 @@ export default class Dashboard extends Component {
           chart.update()
         }
         else {
-          var myChartLine = new Chart(ctx, {
+          var myChartLineARR = new Chart(ctx, {
             type: type,
             data: dataChart,
             options: options
@@ -858,10 +933,10 @@ export default class Dashboard extends Component {
           Chart.defaults.global.tooltips.titleFontSize = 12
           Chart.defaults.global.tooltips.titleFontColor = '#fff'
           this.setState({
-            showAugmentationRankingReport: myChartLine
+            showAugmentationRankingReport: myChartLineARR
           })
-          $(window).bind("resize", function () { myChartLine.resize() });
-          myChartLine.update()
+          $(window).bind("resize", function () { myChartLineARR.resize() });
+          myChartLineARR.update()
         }
 
       }
@@ -875,25 +950,35 @@ export default class Dashboard extends Component {
     }
   }
 
-  showAugmentationReport = (filteredApplication, filteredAugmentationlabel, finalCountAugmentation, color) => {
-    let randomColorResult = []
-    let floatStaticAugmentation = 0.00
-    for (let i = 0; i < 3; i++) {
-      floatStaticAugmentation += 0.289
-      var decider = d3.interpolateRainbow(floatStaticAugmentation)
-      randomColorResult.push(decider)
-    }
+  showAugmentationReport = (filteredApplication,
+    filteredAugmentationlabel,
+    finalCountAugmentation,
+    color,
+    numberOfAugmentation,
+    colorSecond,
+    finalBaseGroup) => {
     var ctx = document.getElementById('showAugmentationReport').getContext('2d');
     let dataChart = {
 
-      labels: filteredApplication,
+      labels: finalBaseGroup,
       datasets: [
         {
+          type: 'line',
           label: 'Total Augmentation Filtered',
           fill: false,
           data: finalCountAugmentation,
           backgroundColor: color,
-          borderColor: color
+          borderColor: color,
+          pointStyle: 'line',
+        },
+        {
+          type: 'bar',
+          label: 'Number of Augmentation',
+          fill: false,
+          data: numberOfAugmentation,
+          backgroundColor: colorSecond,
+          borderColor: colorSecond,
+          pointStyle: 'rect',
         }
       ]
     }
@@ -917,10 +1002,10 @@ export default class Dashboard extends Component {
       },
       legend: {
         display: true,
-        onClick: (e) => e.stopPropagation(),
         labels: {
           defaultFontSize: 14,
-          fontColor: 'black'
+          fontColor: 'black',
+          usePointStyle: true,
           //fontColor: 'rgb(255, 99, 132)'
         }
       },
@@ -931,7 +1016,7 @@ export default class Dashboard extends Component {
       responsive: true,
 
     }
-    let type = 'line'
+    let type = 'bar'
 
     if (this.state.data !== this.state.dataPrevious) {
       console.log("state data is not equal to data previous")
@@ -972,17 +1057,34 @@ export default class Dashboard extends Component {
     }
   }
 
-  showRankingReport = (filteredApplication, filteredRevolvinglabel, finalCountRevolving, color) => {
+  showRankingReport = (filteredApplication,
+    filteredRevolvinglabel,
+    finalCountRevolving,
+    color,
+    numberOfRevolving,
+    colorSecond,
+    finalBaseGroup) => {
     var ctx = document.getElementById('showRankingReport').getContext('2d');
     let dataChart = {
-      labels: filteredApplication,
+      labels: finalBaseGroup,
       datasets: [
         {
+          type: 'line',
           label: 'Total Revolving Filtered',
           fill: false,
           data: finalCountRevolving,
           backgroundColor: color,
           borderColor: color,
+          pointStyle: 'line'
+        },
+        {
+          type: 'bar',
+          label: 'Number of Revolving',
+          fill: false,
+          data: numberOfRevolving,
+          backgroundColor: colorSecond,
+          borderColor: colorSecond,
+          pointStyle: 'rect'
         }
       ]
     }
@@ -1006,10 +1108,10 @@ export default class Dashboard extends Component {
       },
       legend: {
         display: true,
-        onClick: (e) => e.stopPropagation(),
         labels: {
           defaultFontSize: 14,
-          fontColor: 'black'
+          fontColor: 'black',
+          usePointStyle: true
           //fontColor: 'rgb(255, 99, 132)'
         }
       },
@@ -1019,7 +1121,7 @@ export default class Dashboard extends Component {
       },
       responsive: true,
     }
-    let type = 'line'
+    let type = 'bar'
 
     if (this.state.data !== this.state.dataPrevious) {
       console.log("state data is not equal to data previous")
@@ -1505,17 +1607,23 @@ export default class Dashboard extends Component {
     this.setState({
       fromDate: date,
     })
-    let dateData = this.state.data.state.applicantsProfiles
+    let dateData = this.state.data.state.applicantsProfilesALL
+    let application = this.state.data.state.application
     let dateDataResult = []
 
-    dateData.forEach(element => {
-      if ((moment(date).startOf('day').diff(moment(element.created_at).startOf('day'), 'days') <= 0)
-        && (moment(this.state.toDate).startOf('day').diff(moment(element.created_at).startOf('day'), 'days') >= 0)) {
-        dateDataResult.push(element)
-      }
-      else {
-      }
+    application.forEach(element2 => {
+      dateData.forEach(element => {
+        if (element.code == element2.profile_code) {
+          if ((moment(date).startOf('day').diff(moment(element2.created_at).startOf('day'), 'days') <= 0)
+            && (moment(this.state.toDate).startOf('day').diff(moment(element2.created_at).startOf('day'), 'days') >= 0)) {
+            dateDataResult.push(element)
+          }
+        }
+        else {
+        }
+      })
     })
+
     // let updateStatus = "yes"
     //updates the graph of employee's information graph report
 
@@ -1536,16 +1644,22 @@ export default class Dashboard extends Component {
       updateData: "yes"
     })
 
-    let dateData = this.state.data.state.applicantsProfiles
-    let dateDataResult = []
 
-    dateData.forEach(element => {
-      if ((moment(this.state.fromDate).startOf('day').diff(moment(element.created_at).startOf('day'), 'days') <= 0)
-        && (moment(date).startOf('day').diff(moment(element.created_at).startOf('day'), 'days') >= 0)) {
-        dateDataResult.push(element)
-      }
-      else {
-      }
+    let dateData = this.state.data.state.applicantsProfilesALL
+    let application = this.state.data.state.application
+    let dateDataResult = []
+    application.forEach(element2 => {
+
+      dateData.forEach(element => {
+        if (element2.profile_code == element.code) {
+          if ((moment(this.state.fromDate).startOf('day').diff(moment(element2.created_at).startOf('day'), 'days') <= 0)
+            && (moment(date).startOf('day').diff(moment(element2.created_at).startOf('day'), 'days') >= 0)) {
+            dateDataResult.push(element)
+          }
+          else {
+          }
+        }
+      })
     })
     // let updateStatus = "yes"
     //updates the graph of employee's information graph report
@@ -1579,7 +1693,7 @@ export default class Dashboard extends Component {
   }
 
   groupProcessGraph = (groupDataSelected) => {
-    let dateData = this.state.data.state.applicantsProfiles
+    let dateData = this.state.data.state.applicantsProfilesALL
     let groupData = this.state.data.state.application
     let settingsData = this.state.data.state.settings
     let groupDataBasis = ""
@@ -1881,7 +1995,7 @@ export default class Dashboard extends Component {
                       </select>
                       {/* <h3 className="box-title"></h3> */}
                       <Tabs defaultActiveKey="s1" transition={"false"} id="noanim-tab-example">
-                        <Tab eventKey="s1" style={{ height: "100vh" }} title="Augmentation & Ranking">
+                        <Tab eventKey="s1" style={{ height: "100%" }} title="Augmentation & Ranking">
                           <canvas id="showAugmentationRankingReport" className="chartjs" height="110" style={{ display: "block", width: "100 ", height: "100" }}></canvas>
                           <div className="dashboardtable">
                             <ReactTable
