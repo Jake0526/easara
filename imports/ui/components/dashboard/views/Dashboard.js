@@ -97,7 +97,6 @@ export default class Dashboard extends Component {
 
     let baseData = []
     let historyApplications = []
-    console.log(baseGroup)
     //groupname Basis
     chartApplicationData.forEach(element1 => {
       if (element1.groupings_id == baseGroup) {
@@ -301,9 +300,6 @@ export default class Dashboard extends Component {
     }
   }
   showMainDashboardReport = (data, baseGroup) => {
-
-    console.log(data)
-    console.log(baseGroup)
     let daysDataDashboard = []
     daysDataDashboard.length = 0
 
@@ -313,7 +309,6 @@ export default class Dashboard extends Component {
     let countExistingData = []
     let countNewData = []
     let applicantsProfilesData = this.state.data.state.applicantsProfilesALL
-    console.log(applicantsProfilesData)
 
     data.forEach(element => {
       if (element.groupings_id == baseGroup) {
@@ -728,7 +723,6 @@ export default class Dashboard extends Component {
       }
     })
 
-    console.log(summaryApplication)
     let filteredGroup = [...new Set(finalGroup)]
     let filteredApplication = [...new Set(summaryApplication)]
     let countFilteredRevolving = []
@@ -744,8 +738,6 @@ export default class Dashboard extends Component {
       })
     }
 
-    console.log(data)
-    console.log(countFilteredAugmentation)
     let finalCountRevolving = []
     let finallabelRevolving = []
     for (let [key, value] of Object.entries(countFilteredRevolving)) {
@@ -771,9 +763,6 @@ export default class Dashboard extends Component {
         finallabelAugmentation.splice(i, 0, finalBaseId[i])
       }
     }
-
-
-    console.log(finalCountAugmentation)
 
     //THE FILERED APPLICATION RESULT SHOULD BE ADDED TO DROP DOWN SELECT ATTRIBUTE
 
