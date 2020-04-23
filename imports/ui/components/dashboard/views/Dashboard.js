@@ -61,7 +61,7 @@ export default class Dashboard extends Component {
       groupRecord: [],
       dateRangeRecord: [],
       yearFiltered: [],
-      yearDefaultLast: [],
+      yearDefaultLast: "",
       yearSelected: "",
       yeargraphSelected: "",
       onLoad: 0,
@@ -128,8 +128,8 @@ export default class Dashboard extends Component {
   }
 
   componentWillReceiveProps(nextProps, prevProps) {
-    // console.log(nextProps)
-    // console.log(prevProps)
+    console.log(nextProps)
+    console.log(prevProps)
     console.log("will receive")
     let propsBasis = (this.props)
 
@@ -410,7 +410,8 @@ export default class Dashboard extends Component {
     let incrementalValue0 = []
     let total0 = preExistingData
     let total1 = preExistingData
-
+    console.log(finalvalue0)
+    console.log(finalvalue1)
     for (let i = 0; i < finalvalue0.length; i++) {
       total0 += finalvalue0[i]
       total1 += finalvalue1[i]
@@ -447,11 +448,11 @@ export default class Dashboard extends Component {
       labels: resultUnique,
       datasets: [
         {
-          label: 'Newly Applicant',
+          label: 'Total New Applicants',
           data: incrementalValue0,
           backgroundColor: randomColorResult[0]
         }, {
-          label: 'Existing',
+          label: 'Total Existing Employees',
           data: incrementalValue1,
           backgroundColor: randomColorResult[1]
         }
@@ -697,6 +698,7 @@ export default class Dashboard extends Component {
 
     let finalBaseId = []
     let finalBaseGroup = []
+    let yearSettingsData = []
     settings_data.forEach(element1 => {
 
       if (moment(element1.created_at).format("YYYY") == yearFilteredThisFunction) {
@@ -714,6 +716,7 @@ export default class Dashboard extends Component {
         }
         finalBaseGroup.push(element1.groupings)
         finalBaseId.push((element1.id))
+        yearSettingsData.push(element1)
         data.forEach(element2 => {
           if (element1.id == element2.groupings_id) {
             finalGroup.push(element1.groupings)
@@ -776,22 +779,27 @@ export default class Dashboard extends Component {
 
     //SUMMARY DATA FOR THE REACTABLE FOR GROUPINGS 
     let tempReactData = []
-    for (let i = 0; i < filteredApplication.length; i++) {
+    for (let i = 0; i < finalBaseGroup.length; i++) {
 
       let objData2 = {
-        group: filteredGroup[i],
-        name: "Augmentation",
-        data: finalCountAugmentation[i]
+        group: finalBaseGroup[i],
+        date_fromGroup: yearSettingsData[i].date_from,
+        date_toGroup: yearSettingsData[i].date_to,
+        max_slotAugmentation: numberOfAugmentation[i],
+        dataAugmentation: finalCountAugmentation[i],
+        max_slotRevolving: numberOfRevolving[i],
+        dataRevolving: finalCountRevolving[i],
       }
       tempReactData.push(objData2)
 
-      let objData1 = {
-        group: filteredGroup[i],
-        name: "Revolving",
-        data: finalCountRevolving[i],
+      // let objData1 = {
+      //   group: finalBaseGroup[i],
+      //   type: "Revolving",
+      //   max_slot: numberOfRevolving[i],
+      //   data: finalCountRevolving[i],
 
-      }
-      tempReactData.push(objData1)
+      // }
+      // tempReactData.push(objData1)
     }
 
     let lastFilteredData = filteredApplication[filteredApplication.length - 1]
@@ -909,6 +917,8 @@ export default class Dashboard extends Component {
     let type = 'bar'
     if (this.state.data !== this.state.dataPrevious) {
       console.log("state data is not equal to data previous")
+      // console.log(this.state.data)
+      // console.log(this.state.dataPrevious)
       //NEEDS TO BE OBSERVED IF IT CAUSES BUG ...
       //this.createChart(ctx, dataChart, type, options)
     }
@@ -1569,7 +1579,7 @@ export default class Dashboard extends Component {
       }
     }
 
-    this.buildOptions(this.state.yearDefaultLast)
+    // this.buildOptions(this.state.yearDefaultLast)
     //this.groupSelectedYear.bind(this)
 
     // this.setState({
@@ -1675,7 +1685,7 @@ export default class Dashboard extends Component {
   groupSelected = (e) => {
 
     // groupEmployeeInformation
-    //let getId = document.getElementById('groupEmployeeInformation');
+    //let getId = document.getElementById('groupEmployeeInformation')
     // let a = getId.options[getId.selectedIndex]
     // console.log(a)
     let groupDataSelected = e.target.value
@@ -1714,7 +1724,7 @@ export default class Dashboard extends Component {
         })
       }
     })
-
+    console.log(groupDataResult)
     //GRAPH SHOULD UPDATE THIS
     this.setState({
       updateData: "yes"
@@ -1811,19 +1821,62 @@ export default class Dashboard extends Component {
           style: { whiteSpace: 'unset' },
           accessor: "group",
         }, {
-          Header: 'Type',
+          Header: 'Date From',
           minWidth: 25,
+          id: 'date_fromGroup',
           className: 'center',
           headerClassName: 'wordwrap',
           style: { whiteSpace: 'unset' },
-          accessor: "name",
+          accessor: (d) => {
+            return new Date(d.date_fromGroup).toLocaleString("en-US", {
+              year: "numeric",
+              month: "short",
+              day: "2-digit",
+            });
+          },
         }, {
-          Header: 'Data',
+          Header: 'Date To',
+          minWidth: 25,
+          id: 'date_toGroup',
+          className: 'center',
+          headerClassName: 'wordwrap',
+          style: { whiteSpace: 'unset' },
+          accessor: (d) => {
+            return new Date(d.date_toGroup).toLocaleString("en-US", {
+              year: "numeric",
+              month: "short",
+              day: "2-digit",
+            });
+          }
+
+        }, {
+          Header: 'Maximum Augmentation slot',
           minWidth: 25,
           className: 'center',
           headerClassName: 'wordwrap',
           style: { whiteSpace: 'unset' },
-          accessor: "data",
+          accessor: "max_slotAugmentation",
+        }, {
+          Header: 'Maximum Revolving Slot',
+          minWidth: 25,
+          className: 'center',
+          headerClassName: 'wordwrap',
+          style: { whiteSpace: 'unset' },
+          accessor: "max_slotRevolving",
+        }, {
+          Header: 'Augmentation Filtered',
+          minWidth: 25,
+          className: 'center',
+          headerClassName: 'wordwrap',
+          style: { whiteSpace: 'unset' },
+          accessor: "dataAugmentation",
+        }, {
+          Header: 'Revolving Filtered',
+          minWidth: 25,
+          className: 'center',
+          headerClassName: 'wordwrap',
+          style: { whiteSpace: 'unset' },
+          accessor: "dataRevolving",
         },
         ],
         // minWidth: 50,
@@ -1988,6 +2041,7 @@ export default class Dashboard extends Component {
                       <select className="form-control"
                         id="augmentationRankingYear"
                         style={{ width: "auto", float: "right" }}
+                        type="select-multiple"
                         value={this.state.yeargraphSelected}
                         onChange={this.augmentationRakingYear.bind(this)}
                       >
@@ -2042,23 +2096,27 @@ export default class Dashboard extends Component {
 
                         </p>
                         <div className="pull-right">
-                          <select className="form-control"
-                            id="groupEmployeeInformation"
-                            style={{ width: "auto", float: "right" }}
-                            value={this.state.selectDefaultValue}
-                            onChange={this.groupSelected.bind(this)}
-                          >
-                            {this.buildOptions()}
-                          </select>
+                          <form>
+                            <select className="form-control"
+                              id="groupEmployeeInformation"
+                              style={{ width: "auto", float: "right" }}
+                              type="select-multiple"
+                              value={this.state.baseGroupData}
+                              onChange={this.groupSelected.bind(this)}
+                            >
+                              {this.buildOptions()}
+                            </select>
 
-                          <select className="form-control"
-                            id="groupYearSelect"
-                            style={{ width: "auto" }}
-                            value={this.state.yearDefaultLast}
-                            onChange={this.groupSelectedYear.bind(this)}
-                          >
-                            {this.buildYearOptions(this.state.yearDefaultLast)}
-                          </select>
+                            <select className="form-control"
+                              id="groupYearSelect"
+                              style={{ width: "auto" }}
+                              type="select-multiple"
+                              value={this.state.yearDefaultLast}
+                              onChange={this.groupSelectedYear.bind(this)}
+                            >
+                              {this.buildYearOptions(this.state.yearDefaultLast)}
+                            </select>
+                          </form>
                         </div>
                       </h3>
 
