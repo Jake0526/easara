@@ -138,12 +138,8 @@ export default class FakeRoute extends Component {
     console.log("queries will run");
     //Queries
     this.selectApplicantsProfile();
-<<<<<<< HEAD
-    this.selectApplicationALL();
-=======
     this.selectApplicantsProfileALL();
     this.selectApplicationALL()
->>>>>>> 1f24e9e8f5c4db4a9454523c78dc33775ee22385
     this.getRanking();
     this.getSettings();
     this.getAllCompleteProfile();
@@ -231,16 +227,8 @@ export default class FakeRoute extends Component {
   };
 
   getAllCompleteProfile = () => {
-    HTTP.post(
-<<<<<<< HEAD
-      "/graphqlv2",
-=======
-<<<<<<< HEAD
-      "http://111.125.114.29:13000/v2/graphql",
-=======
-      "/http://localhost:3200/v2/graphql",
->>>>>>> 1f24e9e8f5c4db4a9454523c78dc33775ee22385
->>>>>>> 966f8cd77ada5796bde03d871674e455b93147ea
+    HTTP.post("/http://localhost:3200/v2/graphql",
+
       {
         headers: {
           "Content-Type": "application/json",
