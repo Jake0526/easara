@@ -128,8 +128,6 @@ export default class Dashboard extends Component {
   }
 
   componentWillReceiveProps(nextProps, prevProps) {
-    console.log(nextProps)
-    console.log(prevProps)
     console.log("will receive")
     let propsBasis = (this.props)
 
@@ -333,7 +331,6 @@ export default class Dashboard extends Component {
     })
     let unique = [...new Set(uniqueDays)]
     //Get first 5 (last) days
-    console.log(unique)
     let first5days = []
     for (let i = unique.length - 1, j = 1; i>=0 ; i--, j++) {
       if (unique[i] == undefined) {
@@ -347,7 +344,6 @@ export default class Dashboard extends Component {
       // }
     }
     let resultUnique = (first5days.reverse())
-    console.log(resultUnique)
     // //For PreExisting DATA
     // for (let i = 0; i < resultUnique.length; i++) {
     //   data.forEach(element => {
@@ -416,8 +412,8 @@ export default class Dashboard extends Component {
     let incrementalValue0 = []
     let total0 = preExistingData
     let total1 = preExistingData
-    console.log(finalvalue0)
-    console.log(finalvalue1)
+    // console.log(finalvalue0)
+    // console.log(finalvalue1)
     for (let i = 0; i < finalvalue0.length; i++) {
       total0 += finalvalue0[i]
       total1 += finalvalue1[i]
@@ -503,7 +499,6 @@ export default class Dashboard extends Component {
 
     }
     let type = 'bar'
-    console.log(dataChart)
     if (this.state.data !== this.state.dataPrevious) {
       let chart = this.state.showMainDashBoardReport
       if (chart != "") {
@@ -1795,7 +1790,7 @@ export default class Dashboard extends Component {
         })
       }
     })
-    console.log(groupDataResult)
+    // console.log(groupDataResult)
     //GRAPH SHOULD UPDATE THIS
     this.setState({
       updateData: "yes"
