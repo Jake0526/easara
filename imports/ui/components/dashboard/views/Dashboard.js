@@ -454,11 +454,11 @@ export default class Dashboard extends Component {
       datasets: [
         {
           label: 'Total New Applicants',
-          data: incrementalValue0,
+          data: finalvalue0,
           backgroundColor: randomColorResult[0]
         }, {
           label: 'Total Existing Employees',
-          data: incrementalValue1,
+          data: finalvalue1,
           backgroundColor: randomColorResult[1]
         }
       ]
@@ -496,21 +496,54 @@ export default class Dashboard extends Component {
       },
       title: {
         display: true,
-        text: `Live Test Incremental 5 days Graph`
+        text: `Live Test 5 days Unique Graph`
       },
       responsive: true,
 
     }
     let type = 'bar'
-
+    console.log(dataChart)
     if (this.state.data !== this.state.dataPrevious) {
+      let chart = this.state.showMainDashBoardReport
+      if (chart != "") {
+
+        chart.data =dataChart
+        chart.update()
+      }
     }
     else {
       if ((Array.isArray(data) && data.length)) {
-        this.destroyChart(ctx, dataChart, type, options)
-        this.createChart(ctx, dataChart, type, options)
+        // this.destroyChart(ctx, dataChart, type, options)
+        // this.createChart(ctx, dataChart, type, options)
+        let chart = this.state.showMainDashBoardReport
+        if (chart != "") {
+
+          chart.data = dataChart 
+          chart.update()
+        }
+        else {
+          var myChartMaindashBoard = new Chart(ctx, {
+            type: type,
+            data: dataChart,
+            options: options
+          });
+          Chart.defaults.global.defaultFontSize = 16
+          Chart.defaults.global.tooltips.titleFontSize = 12
+          Chart.defaults.global.tooltips.titleFontColor = '#fff'
+          this.setState({
+            showMainDashBoardReport: myChartMaindashBoard
+          })
+          $(window).bind("resize", function () { myChartMaindashBoard.resize() });
+          myChartMaindashBoard.update()
+        }
       }
       else {
+        let chart = this.state.showMainDashBoardReport
+        if (chart != "") {
+
+          chart.data = dataChart
+          chart.update()
+        }
       }
     }
   }
@@ -783,7 +816,7 @@ export default class Dashboard extends Component {
     let randomColorResult = []
     let floatStaticRankingAugmentation = 0.00
     for (let i = 0; i < 4; i++) {
-      floatStaticRankingAugmentation += 0.235
+      floatStaticRankingAugmentation += 0.25
       var decider = d3.interpolateRainbow(floatStaticRankingAugmentation)
       randomColorResult.push(decider)
     }
@@ -853,7 +886,7 @@ export default class Dashboard extends Component {
           backgroundColor: randomColorResult[3],
           borderColor: randomColorResult[3],
           pointStyle: 'rect',
-          order: 3
+          order: 4
 
         },
         {
@@ -864,7 +897,7 @@ export default class Dashboard extends Component {
           backgroundColor: randomColorResult[2],
           borderColor: randomColorResult[2],
           pointStyle: 'rect',
-          order: 4
+          order: 3
 
         },
 
@@ -876,9 +909,9 @@ export default class Dashboard extends Component {
       tooltips: {
         mode: 'index',
       },
-      // hover: {
-      //   mode: 'index'
-      // },
+      hover: {
+        mode: 'index'
+      },
       legend: {
         display: true,
         position: 'right',
