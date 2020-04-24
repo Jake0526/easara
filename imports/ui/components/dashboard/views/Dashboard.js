@@ -333,20 +333,21 @@ export default class Dashboard extends Component {
     })
     let unique = [...new Set(uniqueDays)]
     //Get first 5 (last) days
+    console.log(unique)
     let first5days = []
-    for (let i = unique.length - 1, j = 1; ; i--, j++) {
+    for (let i = unique.length - 1, j = 1; i>=0 ; i--, j++) {
       if (unique[i] == undefined) {
       }
       else {
         first5days.push(unique[i])
       }
 
-      if (j == 5) {
-        break
-      }
+      // if (j == 5) {
+      //   break
+      // }
     }
     let resultUnique = (first5days.reverse())
-
+    console.log(resultUnique)
     // //For PreExisting DATA
     // for (let i = 0; i < resultUnique.length; i++) {
     //   data.forEach(element => {
@@ -496,7 +497,7 @@ export default class Dashboard extends Component {
       },
       title: {
         display: true,
-        text: `Live Test 5 days Unique Graph`
+        text: `Live Test Unique Graph`
       },
       responsive: true,
 
