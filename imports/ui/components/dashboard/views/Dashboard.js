@@ -264,6 +264,11 @@ export default class Dashboard extends Component {
     }
     let type = 'pie'
     if (this.state.data !== this.state.dataPrevious) {
+      let chart = this.state.showApplication
+      if (chart != "") {
+        chart.data.datasets[0].data = [currentlyEmployed, notEmployed]
+        chart.update()
+      }
 
     }
     else {
@@ -618,6 +623,12 @@ export default class Dashboard extends Component {
     let type = 'horizontalBar'
 
     if (this.state.data !== this.state.dataPrevious) {
+      let chart = this.state.showAgeParticipation
+      if (chart != "") {
+
+        chart.data.datasets[0].data = defaultdata
+        chart.update()
+      }
     }
     else {
       if ((Array.isArray(data) && data.length)) {
@@ -823,8 +834,7 @@ export default class Dashboard extends Component {
           backgroundColor: randomColorResult[1],
           borderColor: randomColorResult[1],
           pointStyle: 'line',
-          order: 1
-
+          order: 2
         },
         {
           type: 'line',
@@ -834,7 +844,7 @@ export default class Dashboard extends Component {
           backgroundColor: randomColorResult[0],
           borderColor: randomColorResult[0],
           pointStyle: 'line',
-          order: 2
+          order: 1
         }, {
           type: 'bar',
           label: 'Number of Augmentation',
@@ -920,7 +930,12 @@ export default class Dashboard extends Component {
       // console.log(this.state.data)
       // console.log(this.state.dataPrevious)
       //NEEDS TO BE OBSERVED IF IT CAUSES BUG ...
-      //this.createChart(ctx, dataChart, type, options)
+      //this.createChart(ctx, dataChart, type, options
+      let chart = this.state.showAugmentationRankingReport
+      if (chart != "") {
+        chart.data = dataChart
+        chart.update()
+      }
     }
     else {
       if ((Array.isArray(data) && data.length)) {
@@ -1032,6 +1047,11 @@ export default class Dashboard extends Component {
       console.log("state data is not equal to data previous")
       //NEEDS TO BE OBSERVED IF IT CAUSES BUG ...
       //this.createChart(ctx, dataChart, type, options)
+      let chart = this.state.showAugmentationReport
+      if (chart != "") {
+        chart.data = dataChart
+        chart.update()
+      }
     }
     else {
       if ((Array.isArray(finalCountAugmentation) && finalCountAugmentation.length)) {
@@ -1137,6 +1157,11 @@ export default class Dashboard extends Component {
       console.log("state data is not equal to data previous")
       //NEEDS TO BE OBSERVED IF IT CAUSES BUG ...
       // this.createChart(ctx, dataChart, type, options)
+      let chart = this.state.showRankingReport
+      if (chart != "") {
+        chart.data = dataChart
+        chart.update()
+      }
     }
     else {
       if ((Array.isArray(finalCountRevolving) && finalCountRevolving.length)) {
@@ -1310,6 +1335,12 @@ export default class Dashboard extends Component {
     }
     let type = 'bar'
     if (this.state.data !== this.state.dataPrevious) {
+      let chart = this.state.showCongressionalDistrict
+      if (chart != "") {
+
+        chart.data.datasets[0].data = [congressional1, congressional2, congressional3]
+        chart.update()
+      }
 
     }
     else {
@@ -1488,6 +1519,12 @@ export default class Dashboard extends Component {
     let type = 'bar'
 
     if (this.state.data !== this.state.dataPrevious) {
+      let chart = this.state.showPoliticalDistrict
+      if (chart != "") {
+
+        chart.data.datasets = finalData
+        chart.update()
+      }
     }
     else {
       if ((Array.isArray(data) && data.length)) {
