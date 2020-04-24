@@ -894,7 +894,7 @@ export default class Dashboard extends Component {
 
       scales: {
         xAxes: [{
-          stacked: true,
+          // stacked: true,
           display: true,
           gridLines: {
             display: false,
@@ -904,7 +904,7 @@ export default class Dashboard extends Component {
 
 
         yAxes: [{
-          stacked: true,
+          // stacked: true,
           gridLines: {
             display: true,
           },
