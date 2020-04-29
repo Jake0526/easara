@@ -128,8 +128,6 @@ export default class Dashboard extends Component {
   }
 
   componentWillReceiveProps(nextProps, prevProps) {
-    console.log(nextProps)
-    console.log(prevProps)
     console.log("will receive")
     let propsBasis = (this.props)
 
@@ -264,6 +262,11 @@ export default class Dashboard extends Component {
     }
     let type = 'pie'
     if (this.state.data !== this.state.dataPrevious) {
+      let chart = this.state.showApplication
+      if (chart != "") {
+        chart.data.datasets[0].data = [currentlyEmployed, notEmployed]
+        chart.update()
+      }
 
     }
     else {
@@ -329,19 +332,18 @@ export default class Dashboard extends Component {
     let unique = [...new Set(uniqueDays)]
     //Get first 5 (last) days
     let first5days = []
-    for (let i = unique.length - 1, j = 1; ; i--, j++) {
+    for (let i = unique.length - 1, j = 1; i>=0 ; i--, j++) {
       if (unique[i] == undefined) {
       }
       else {
         first5days.push(unique[i])
       }
 
-      if (j == 5) {
-        break
-      }
+      // if (j == 5) {
+      //   break
+      // }
     }
     let resultUnique = (first5days.reverse())
-
     // //For PreExisting DATA
     // for (let i = 0; i < resultUnique.length; i++) {
     //   data.forEach(element => {
@@ -410,8 +412,8 @@ export default class Dashboard extends Component {
     let incrementalValue0 = []
     let total0 = preExistingData
     let total1 = preExistingData
-    console.log(finalvalue0)
-    console.log(finalvalue1)
+    // console.log(finalvalue0)
+    // console.log(finalvalue1)
     for (let i = 0; i < finalvalue0.length; i++) {
       total0 += finalvalue0[i]
       total1 += finalvalue1[i]
@@ -449,11 +451,11 @@ export default class Dashboard extends Component {
       datasets: [
         {
           label: 'Total New Applicants',
-          data: incrementalValue0,
+          data: finalvalue0,
           backgroundColor: randomColorResult[0]
         }, {
           label: 'Total Existing Employees',
-          data: incrementalValue1,
+          data: finalvalue1,
           backgroundColor: randomColorResult[1]
         }
       ]
@@ -491,21 +493,53 @@ export default class Dashboard extends Component {
       },
       title: {
         display: true,
-        text: `Live Test Incremental 5 days Graph`
+        text: `Live Test Unique Graph`
       },
       responsive: true,
 
     }
     let type = 'bar'
-
     if (this.state.data !== this.state.dataPrevious) {
+      let chart = this.state.showMainDashBoardReport
+      if (chart != "") {
+
+        chart.data =dataChart
+        chart.update()
+      }
     }
     else {
       if ((Array.isArray(data) && data.length)) {
-        this.destroyChart(ctx, dataChart, type, options)
-        this.createChart(ctx, dataChart, type, options)
+        // this.destroyChart(ctx, dataChart, type, options)
+        // this.createChart(ctx, dataChart, type, options)
+        let chart = this.state.showMainDashBoardReport
+        if (chart != "") {
+
+          chart.data = dataChart 
+          chart.update()
+        }
+        else {
+          var myChartMaindashBoard = new Chart(ctx, {
+            type: type,
+            data: dataChart,
+            options: options
+          });
+          Chart.defaults.global.defaultFontSize = 16
+          Chart.defaults.global.tooltips.titleFontSize = 12
+          Chart.defaults.global.tooltips.titleFontColor = '#fff'
+          this.setState({
+            showMainDashBoardReport: myChartMaindashBoard
+          })
+          $(window).bind("resize", function () { myChartMaindashBoard.resize() });
+          myChartMaindashBoard.update()
+        }
       }
       else {
+        let chart = this.state.showMainDashBoardReport
+        if (chart != "") {
+
+          chart.data = dataChart
+          chart.update()
+        }
       }
     }
   }
@@ -618,6 +652,12 @@ export default class Dashboard extends Component {
     let type = 'horizontalBar'
 
     if (this.state.data !== this.state.dataPrevious) {
+      let chart = this.state.showAgeParticipation
+      if (chart != "") {
+
+        chart.data.datasets[0].data = defaultdata
+        chart.update()
+      }
     }
     else {
       if ((Array.isArray(data) && data.length)) {
@@ -772,7 +812,7 @@ export default class Dashboard extends Component {
     let randomColorResult = []
     let floatStaticRankingAugmentation = 0.00
     for (let i = 0; i < 4; i++) {
-      floatStaticRankingAugmentation += 0.235
+      floatStaticRankingAugmentation += 0.25
       var decider = d3.interpolateRainbow(floatStaticRankingAugmentation)
       randomColorResult.push(decider)
     }
@@ -823,8 +863,7 @@ export default class Dashboard extends Component {
           backgroundColor: randomColorResult[1],
           borderColor: randomColorResult[1],
           pointStyle: 'line',
-          order: 1
-
+          order: 2
         },
         {
           type: 'line',
@@ -834,7 +873,7 @@ export default class Dashboard extends Component {
           backgroundColor: randomColorResult[0],
           borderColor: randomColorResult[0],
           pointStyle: 'line',
-          order: 2
+          order: 1
         }, {
           type: 'bar',
           label: 'Number of Augmentation',
@@ -843,7 +882,7 @@ export default class Dashboard extends Component {
           backgroundColor: randomColorResult[3],
           borderColor: randomColorResult[3],
           pointStyle: 'rect',
-          order: 3
+          order: 4
 
         },
         {
@@ -854,7 +893,7 @@ export default class Dashboard extends Component {
           backgroundColor: randomColorResult[2],
           borderColor: randomColorResult[2],
           pointStyle: 'rect',
-          order: 4
+          order: 3
 
         },
 
@@ -866,9 +905,9 @@ export default class Dashboard extends Component {
       tooltips: {
         mode: 'index',
       },
-      // hover: {
-      //   mode: 'index'
-      // },
+      hover: {
+        mode: 'index'
+      },
       legend: {
         display: true,
         position: 'right',
@@ -884,7 +923,7 @@ export default class Dashboard extends Component {
 
       scales: {
         xAxes: [{
-          stacked: true,
+          // stacked: true,
           display: true,
           gridLines: {
             display: false,
@@ -894,7 +933,7 @@ export default class Dashboard extends Component {
 
 
         yAxes: [{
-          stacked: true,
+          // stacked: true,
           gridLines: {
             display: true,
           },
@@ -920,7 +959,12 @@ export default class Dashboard extends Component {
       // console.log(this.state.data)
       // console.log(this.state.dataPrevious)
       //NEEDS TO BE OBSERVED IF IT CAUSES BUG ...
-      //this.createChart(ctx, dataChart, type, options)
+      //this.createChart(ctx, dataChart, type, options
+      let chart = this.state.showAugmentationRankingReport
+      if (chart != "") {
+        chart.data = dataChart
+        chart.update()
+      }
     }
     else {
       if ((Array.isArray(data) && data.length)) {
@@ -1032,6 +1076,11 @@ export default class Dashboard extends Component {
       console.log("state data is not equal to data previous")
       //NEEDS TO BE OBSERVED IF IT CAUSES BUG ...
       //this.createChart(ctx, dataChart, type, options)
+      let chart = this.state.showAugmentationReport
+      if (chart != "") {
+        chart.data = dataChart
+        chart.update()
+      }
     }
     else {
       if ((Array.isArray(finalCountAugmentation) && finalCountAugmentation.length)) {
@@ -1137,6 +1186,11 @@ export default class Dashboard extends Component {
       console.log("state data is not equal to data previous")
       //NEEDS TO BE OBSERVED IF IT CAUSES BUG ...
       // this.createChart(ctx, dataChart, type, options)
+      let chart = this.state.showRankingReport
+      if (chart != "") {
+        chart.data = dataChart
+        chart.update()
+      }
     }
     else {
       if ((Array.isArray(finalCountRevolving) && finalCountRevolving.length)) {
@@ -1310,6 +1364,12 @@ export default class Dashboard extends Component {
     }
     let type = 'bar'
     if (this.state.data !== this.state.dataPrevious) {
+      let chart = this.state.showCongressionalDistrict
+      if (chart != "") {
+
+        chart.data.datasets[0].data = [congressional1, congressional2, congressional3]
+        chart.update()
+      }
 
     }
     else {
@@ -1488,6 +1548,12 @@ export default class Dashboard extends Component {
     let type = 'bar'
 
     if (this.state.data !== this.state.dataPrevious) {
+      let chart = this.state.showPoliticalDistrict
+      if (chart != "") {
+
+        chart.data.datasets = finalData
+        chart.update()
+      }
     }
     else {
       if ((Array.isArray(data) && data.length)) {
@@ -1724,7 +1790,7 @@ export default class Dashboard extends Component {
         })
       }
     })
-    console.log(groupDataResult)
+    // console.log(groupDataResult)
     //GRAPH SHOULD UPDATE THIS
     this.setState({
       updateData: "yes"

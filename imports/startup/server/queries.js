@@ -32,7 +32,8 @@ Meteor.method(
       applicant_profiles.congressional_district AS 'congressional_district',
       applicant_profiles.contact_number AS 'contact_number',
       applicant_profiles.birth_date AS 'birth_date',
-      applications.groupings_id AS 'groupings_id'
+      applications.groupings_id AS 'groupings_id',
+      applicant_profiles.date_to AS 'date_to'
     FROM
       applications
     INNER JOIN
@@ -485,6 +486,43 @@ Meteor.method(
     getArgsFromRequest: function (request) {
       var content = request.body;
       return [content.applicantData];
+    },
+  }
+);
+
+Meteor.method(
+  "remove-ranking",
+  function (data) {
+    check(data, Object);
+
+    console.log(data);
+
+    var sql = `
+    UPDATE 
+      applications 
+    SET 
+      ranking=0
+    WHERE
+      groupings_id = '${data.groupingsID}';`;
+
+    var fut = new Future();
+
+    easara(sql, function (err, result) {
+      if (err) {
+        console.log(err);
+        fut.return("bad");
+      } else {
+        fut.return("success");
+      }
+    });
+    return fut.wait();
+  },
+  {
+    url: "remove-ranking",
+    httpMethod: "post",
+    getArgsFromRequest: function (request) {
+      var content = request.body;
+      return [content.data];
     },
   }
 );

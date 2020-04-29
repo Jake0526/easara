@@ -34,15 +34,16 @@ export default class Ranking extends Component {
   }
 
   generateNewRanking = () => {
-    let applicants = this.state.data.state.applicantsProfiles;
+    let applicants = this.state.data.state.activeApplications;
     let activeSettings = this.state.data.state.activeSettings;
     let prioApplicants = [];
+    let lessPrioApplicants3months = [];
+    let lessPrioApplicantsLess3months = [];
     let lessPrioApplicants = [];
     let rankedApplicants = [];
 
     let recursionLoop = () => {
       if (this.state.rankingStatus < rankedApplicants.length) {
-
         Meteor.call(
           "insert-rank",
           rankedApplicants[this.state.rankingStatus],
@@ -75,6 +76,10 @@ export default class Ranking extends Component {
 
         this.props.getRanking();
 
+        this.setState({
+          rankingStatus: 0,
+        });
+
         $("#modal-loading").modal("hide");
       }
     };
@@ -98,66 +103,73 @@ export default class Ranking extends Component {
       let remainingRevolvingSlot = activeSettings[0].number_of_revolving;
       let remainingAugmentationSlot = activeSettings[0].number_of_augmentation;
 
-      console.log(applicants);
+      //Rank the priority and separate the ramaining less priority
       for (let x = 0; x < applicants.length; x += 1) {
-        console.log(applicants[x]);
+        
+        let dateDiff = 0;
 
-        if (applicants[x].employee_number != "") {
-          if(remainingRevolvingSlot > 0) {
-            lessPrioApplicants.push({
-              applicationId: applicants[x].id,
-              rankNo: rankNum,
-              groupingsID: applicants[x].groupings_id,
-              category: "Revolving"
-            });
+        if(applicants[x].date_to) {
+          let dateTo = moment(applicants[x].date_to);
+          let todayDate = moment(new Date());
 
-            remainingRevolvingSlot-=1;
-          }else {
-            if(remainingAugmentationSlot > 0) {
-              lessPrioApplicants.push({
-                applicationId: applicants[x].id,
-                rankNo: rankNum,
-                groupingsID: applicants[x].groupings_id,
-                category: "Augmentation"
-              });
+          dateDiff = (todayDate.diff(dateTo, 'days')/30);
+        }
 
-              remainingAugmentationSlot-=1;
-            }
-          }
+        if (!applicants[x].employee_number) {
+          prioApplicants.push({
+            applicationId: applicants[x].id,
+            rankNo: "",
+            groupingsID: applicants[x].groupings_id,
+            category: ""
+          });
         } else {
-          if(remainingRevolvingSlot > 0) {
-            prioApplicants.push({
+
+          if (dateDiff > 3) {
+            lessPrioApplicants3months.push({
               applicationId: applicants[x].id,
-              rankNo: rankNum,
+              rankNo: "",
               groupingsID: applicants[x].groupings_id,
-              category: "Revolving"
+              category: ""
             });
-
-            remainingRevolvingSlot-=1;
           }else {
-            if(remainingAugmentationSlot > 0) {
-              prioApplicants.push({
-                applicationId: applicants[x].id,
-                rankNo: rankNum,
-                groupingsID: applicants[x].groupings_id,
-                category: "Augmentation"
-              });
-
-              remainingAugmentationSlot-=1;
-            }
+            lessPrioApplicantsLess3months.push({
+              applicationId: applicants[x].id,
+              rankNo: "",
+              groupingsID: applicants[x].groupings_id,
+              category: ""
+            });
           }
         }
 
         rankNum++;
         if (x == applicants.length - 1) {
           rankedApplicants = prioApplicants;
-          rankedApplicants = rankedApplicants.concat(lessPrioApplicants);
-
-          console.log(rankedApplicants);
+          rankedApplicants = rankedApplicants.concat(lessPrioApplicants3months);
+          rankedApplicants = rankedApplicants.concat(lessPrioApplicantsLess3months);
 
           this.setState({
             rankingLength: rankedApplicants.length,
           });
+
+          for (let x = 0; x < rankedApplicants.length; x += 1) {
+            rankedApplicants[x].rankNo = x+1;
+
+            if(remainingRevolvingSlot > 0) {
+              rankedApplicants[x].category = "Revolving";
+
+              remainingRevolvingSlot-=1;
+            }else {
+              if(remainingAugmentationSlot > 0) {
+                rankedApplicants[x].category = "Augmentation";
+
+                remainingAugmentationSlot-=1;
+              }else {
+                rankedApplicants[x].category = "";
+              }
+            }
+          }
+
+          console.log(rankedApplicants);
 
           $("#modal-loading").modal({
             backdrop: "static",
@@ -165,12 +177,24 @@ export default class Ranking extends Component {
             show: true,
           });
 
-          recursionLoop();
+          Meteor.call(
+            "remove-ranking",
+            {
+              'groupingsID': activeSettings[0].id
+            },
+            (error, result) => {
+              if (!error) {
+                if (result === "success") {
+                  recursionLoop();
+                }
+              }
+            }
+          );
         }
       }
     }
   };
-
+  
   render() {
     const contentMinHeight = {
       minHeight: `${window.innerHeight - 101}px`,
@@ -258,6 +282,12 @@ export default class Ranking extends Component {
                     style={{
                       height: window.innerHeight - 202,
                     }}
+                    defaultSorted={[
+                      {
+                        id: "ranking",
+                        desc: false
+                      }
+                    ]}
                     getTrProps={(state, rowInfo) => {
                       return {
                         onClick: (e) => {
