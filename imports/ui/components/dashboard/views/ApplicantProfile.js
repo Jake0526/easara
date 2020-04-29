@@ -263,8 +263,8 @@ export default class ApplicantProfile extends Component {
           show={showApplicationModal}
           toggleApplicationModal={this.toggleApplicationModal}
           toggleAutoSuggestProfileModal={this.toggleAutoSuggestProfileModal}
-          selectApplications={data.selectApplications}
-          selectApplicantsProfile={data.selectApplicantsProfile}
+          selectApplications={data.selectApplicationALL}
+          selectApplicantsProfile={data.selectApplicantsProfileALL}
           religionOptions={religionOptions}
           updateData={updateData}
           update={update}

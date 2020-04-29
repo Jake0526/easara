@@ -14,11 +14,15 @@ import {
 } from "react-bootstrap";
 import Swal from "sweetalert2";
 import ReactTable from "react-table";
+import Switch from "react-switch";
+
 export default class Settings extends Component {
   constructor(props) {
     super(props);
     this.state = {
       data: props,
+      augmentation: 0,
+      revolving: 0,
       updateData: [],
       groupingName: "",
       dateFrom: new Date(),
@@ -56,6 +60,20 @@ export default class Settings extends Component {
             date_to: value,
           },
         }));
+      } else if (id === "augmentation") {
+        this.setState((prevState) => ({
+          updateData: {
+            ...prevState.updateData,
+            augmentation: value,
+          },
+        }));
+      } else if (id === "revolving") {
+        this.setState((prevState) => ({
+          updateData: {
+            ...prevState.updateData,
+            revolving: value,
+          },
+        }));
       }
     } else {
       if (id === "groupingName") {
@@ -70,14 +88,39 @@ export default class Settings extends Component {
         this.setState({
           dateTo: value,
         });
+      } else if (id === "augmentation") {
+        this.setState({
+          augmentation: value,
+        });
+      } else if (id === "revolving") {
+        this.setState({
+          revolving: value,
+        });
       }
     }
   };
 
+  handleChangeCheck = (checked) => {
+    this.setState((prevState) => ({
+      updateData: {
+        ...prevState.updateData,
+        is_active: checked ? 1 : 0,
+      },
+    }));
+  };
+
   insertNewGrouping = () => {
-    const { groupingName, dateFrom, dateTo } = this.state;
+    const {
+      augmentation,
+      revolving,
+      groupingName,
+      dateFrom,
+      dateTo,
+    } = this.state;
     const { getSettings } = this.state.data;
     const data = {
+      augmentation,
+      revolving,
       groupingName,
       dateFrom,
       dateTo,
@@ -253,19 +296,55 @@ export default class Settings extends Component {
   };
 
   render() {
-    const { updateData, groupingName, dateFrom, dateTo } = this.state;
+    const {
+      augmentation,
+      revolving,
+      updateData,
+      groupingName,
+      dateFrom,
+      dateTo,
+    } = this.state;
     const { settings } = this.state.data.state;
-
     let reactTablePageSize = Math.floor(window.innerHeight - 220) * 0.0232;
     const formInstance = (
       <form>
         <this.FieldGroup
-          id="formControlsText"
+          id="groupingName"
           type="text"
           label="Grouping Name"
           value={this.update ? updateData.groupings : groupingName}
           placeholder="Enter value"
           onChange={(e) => this.handleChange(e.target.value, "groupingName")}
+        />
+        <br />
+        <this.FieldGroup
+          id="augmentation"
+          type="number"
+          label="Augmentation"
+          value={
+            this.update
+              ? updateData.augmentation
+                ? updateData.augmentation
+                : 0
+              : augmentation
+          }
+          placeholder="Enter value"
+          onChange={(e) => this.handleChange(e.target.value, "augmentation")}
+        />
+        <br />
+        <this.FieldGroup
+          id="revolving"
+          type="number"
+          label="Revolving"
+          value={
+            this.update
+              ? updateData.revolving
+                ? updateData.revolving
+                : 0
+              : revolving
+          }
+          placeholder="Enter value"
+          onChange={(e) => this.handleChange(e.target.value, "revolving")}
         />
         <br />
         <FormGroup controlId="dateFrom">
@@ -307,6 +386,18 @@ export default class Settings extends Component {
             onChange={this.changeDateTo}
           />
         </FormGroup>
+        <br />
+        {this.update ? (
+          <label className="control-label">
+            In Use:{" "}
+            <label
+              className="control-label"
+              style={{ color: updateData.is_active == 1 ? "green" : "red" }}
+            >
+              {updateData.is_active == 1 ? "Yes" : "No"}
+            </label>
+          </label>
+        ) : null}
       </form>
     );
     const contentMinHeight = {
@@ -348,15 +439,18 @@ export default class Settings extends Component {
             style: { whiteSpace: "unset" },
           },
           {
-            Header: "In use",
-            id: "is_active",
-            minWidth: 15,
-            accessor: (d) => {
-              return d.is_active == "1" ? "Yes" : "";
-            },
+            Header: "Augmentation",
+            accessor: "augmentation",
+            minWidth: 30,
             headerClassName: "wordwrap",
-            style: { whiteSpace: "unset", color: "green" },
-            className: "center",
+            style: { whiteSpace: "unset" },
+          },
+          {
+            Header: "Revolving",
+            accessor: "revolving",
+            minWidth: 30,
+            headerClassName: "wordwrap",
+            style: { whiteSpace: "unset" },
           },
           {
             Header: "Date From",
@@ -389,22 +483,15 @@ export default class Settings extends Component {
             className: "center",
           },
           {
-            Header: "Date Created",
-            id: "created_at",
+            Header: "In use",
+            id: "is_active",
+            minWidth: 15,
             accessor: (d) => {
-              return new Date(d.created_at).toLocaleString("en-US", {
-                year: "numeric",
-                month: "short",
-                day: "2-digit",
-                hour: "2-digit",
-                hour12: true,
-                minute: "2-digit",
-              });
+              return d.is_active == "1" ? "Yes" : "";
             },
-            minWidth: 55,
-            className: "center",
             headerClassName: "wordwrap",
-            style: { whiteSpace: "unset" },
+            style: { whiteSpace: "unset", color: "green" },
+            className: "center",
           },
         ],
       },
@@ -427,17 +514,26 @@ export default class Settings extends Component {
                 style={{ paddingLeft: "0px", paddingRight: "15px" }}
               >
                 <div className="box box-primary" style={boxHeight}>
-                  <div class="box-header with-border">
-                    <h4 class="box-title">
+                  <div className="box-header with-border">
+                    <h4 className="box-title">
                       {this.update
                         ? "Update Grouping #" + updateData.id
                         : "New Grouping"}
                     </h4>
+                    {this.update ? (
+                      <Switch
+                        className="pull-right"
+                        onChange={this.handleChangeCheck}
+                        checked={updateData.is_active == 1 ? true : false}
+                        height={20}
+                        width={40}
+                      />
+                    ) : null}
                   </div>
                   <div className="box-body" style={boxBodyHeight}>
                     {formInstance}
                   </div>
-                  <div class="box-footer clearfix">
+                  <div className="box-footer clearfix">
                     {this.update ? (
                       <ButtonGroup className="pull-right">
                         <Button
@@ -476,11 +572,11 @@ export default class Settings extends Component {
                 style={{ paddingLeft: "0px", paddingRight: "15px" }}
               >
                 <div className="box box-primary" style={boxHeight}>
-                  <div class="box-header with-border">
-                    <h4 class="box-title">
+                  <div className="box-header with-border">
+                    <h4 className="box-title">
                       Groupings{" "}
                       <OverlayTrigger placement="top" overlay={tooltip}>
-                        <i class="fa fa-info-circle" aria-hidden="true"></i>
+                        <i className="fa fa-info-circle" aria-hidden="true"></i>
                       </OverlayTrigger>
                     </h4>
                   </div>

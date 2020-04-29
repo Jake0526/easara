@@ -59,7 +59,7 @@ Meteor.method(
   "select-profiles-ALL",
   function () {
     var sql = `
-    SELECT * FROM applicant_profiles`;
+    SELECT * FROM applicant_profiles ORDER BY id DESC`;
     var fut = new Future();
     easara(sql, function (err, result) {
       if (err) throw err;
@@ -403,13 +403,12 @@ Meteor.method(
   "insert-grouping",
   function (data) {
     check(data, Object);
-
     var sql = `
-    INSERT INTO settings (groupings, date_from, date_to) VALUES ('${
-      data.groupingName
-    }', '${moment(data.dateFrom).format("YYYY-MM-DD")}', '${moment(
-      data.dateTo
-    ).format("YYYY-MM-DD")}');
+    INSERT INTO settings (augmentation, revolving, groupings, date_from, date_to) VALUES ('${
+      data.augmentation
+    }', '${data.revolving}','${data.groupingName}', '${moment(
+      data.dateFrom
+    ).format("YYYY-MM-DD")}', '${moment(data.dateTo).format("YYYY-MM-DD")}');
     SET SQL_SAFE_UPDATES = 0;
     UPDATE settings SET is_active = "0";
     SET SQL_SAFE_UPDATES = 1;
@@ -532,16 +531,34 @@ Meteor.method(
   "update-grouping",
   function (data) {
     check(data, Object);
-    console.log(data);
-    var sql = `UPDATE settings SET groupings='${
-      data.groupings
-    }', date_from='${moment(data.date_from).format(
-      "YYYY-MM-DD"
-    )}', date_to='${moment(data.date_to).format("YYYY-MM-DD")}' WHERE id = ${
-      data.id
-    };`;
-    var fut = new Future();
+    var sql;
+    if (data.is_active == 1) {
+      sql = `
+      SET SQL_SAFE_UPDATES = 0;
+      UPDATE settings SET is_active = "0";
+      SET SQL_SAFE_UPDATES = 1;
+      UPDATE settings SET groupings='${data.groupings}', date_from='${moment(
+        data.date_from
+      ).format("YYYY-MM-DD")}', date_to='${moment(data.date_to).format(
+        "YYYY-MM-DD"
+      )}',
+      augmentation='${data.augmentation}', revolving='${
+        data.revolving
+      }', is_active='${data.is_active}'
+      WHERE id = ${data.id};`;
+    } else {
+      sql = `UPDATE settings SET groupings='${
+        data.groupings
+      }', date_from='${moment(data.date_from).format(
+        "YYYY-MM-DD"
+      )}', date_to='${moment(data.date_to).format("YYYY-MM-DD")}',
+      augmentation='${data.augmentation}', revolving='${
+        data.revolving
+      }', is_active='${data.is_active}'
+      WHERE id = ${data.id};`;
+    }
 
+    var fut = new Future();
     easara(sql, function (err, result) {
       if (err) {
         console.log(err);
