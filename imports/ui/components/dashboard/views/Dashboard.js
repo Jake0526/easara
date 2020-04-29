@@ -742,17 +742,17 @@ export default class Dashboard extends Component {
     settings_data.forEach(element1 => {
 
       if (moment(element1.created_at).format("YYYY") == yearFilteredThisFunction) {
-        if ((element1.number_of_revolving == "") || (element1.number_of_revolving == null)) {
+        if ((element1.revolving == "") || (element1.revolving == null)) {
           numberOfRevolving.push(0)
         }
         else {
-          numberOfRevolving.push(parseInt(element1.number_of_revolving))
+          numberOfRevolving.push(parseInt(element1.revolving))
         }
-        if ((element1.number_of_augmentation == "") || (element1.number_of_augmentation == null)) {
+        if ((element1.augmentation == "") || (element1.augmentation == null)) {
           numberOfAugmentation.push(0)
         }
         else {
-          numberOfAugmentation.push(parseInt(element1.number_of_augmentation))
+          numberOfAugmentation.push(parseInt(element1.augmentation))
         }
         finalBaseGroup.push(element1.groupings)
         finalBaseId.push((element1.id))
