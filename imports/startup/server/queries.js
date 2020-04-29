@@ -59,7 +59,7 @@ Meteor.method(
   "select-profiles-ALL",
   function () {
     var sql = `
-    SELECT * FROM applicant_profiles`;
+    SELECT * FROM applicant_profiles ORDER BY id DESC`;
     var fut = new Future();
     easara(sql, function (err, result) {
       if (err) throw err;
