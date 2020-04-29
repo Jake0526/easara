@@ -492,6 +492,43 @@ Meteor.method(
 );
 
 Meteor.method(
+  "remove-ranking",
+  function (data) {
+    check(data, Object);
+
+    console.log(data);
+
+    var sql = `
+    UPDATE 
+      applications 
+    SET 
+      ranking=0
+    WHERE
+      groupings_id = '${data.groupingsID}';`;
+
+    var fut = new Future();
+
+    easara(sql, function (err, result) {
+      if (err) {
+        console.log(err);
+        fut.return("bad");
+      } else {
+        fut.return("success");
+      }
+    });
+    return fut.wait();
+  },
+  {
+    url: "remove-ranking",
+    httpMethod: "post",
+    getArgsFromRequest: function (request) {
+      var content = request.body;
+      return [content.data];
+    },
+  }
+);
+
+Meteor.method(
   "update-grouping",
   function (data) {
     check(data, Object);
