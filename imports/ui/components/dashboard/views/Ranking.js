@@ -100,8 +100,8 @@ export default class Ranking extends Component {
       });
     } else {
       let rankNum = 1;
-      let remainingRevolvingSlot = activeSettings[0].number_of_revolving;
-      let remainingAugmentationSlot = activeSettings[0].number_of_augmentation;
+      let remainingRevolvingSlot = activeSettings[0].revolving;
+      let remainingAugmentationSlot = activeSettings[0].augmentation;
 
       //Rank the priority and separate the ramaining less priority
       for (let x = 0; x < applicants.length; x += 1) {
