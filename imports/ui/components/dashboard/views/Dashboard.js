@@ -79,9 +79,10 @@ export default class Dashboard extends Component {
     let chartUpdateData = this.props.state.applications
     let chartData = this.state.data.state.applicantsProfilesALL
     let chartApplicationData = this.state.data.state.application
-
+    console.log(this.props)
     if (chartUpdateData.length != chartApplicationData.length) {
       propsBasis.selectApplicationALL()
+      propsBasis.selectApplicantsProfileALL()
     }
 
     let chartSettings = this.state.data.state.settings
@@ -130,14 +131,15 @@ export default class Dashboard extends Component {
   componentWillReceiveProps(nextProps, prevProps) {
     console.log("will receive")
     let propsBasis = (this.props)
-
+    console.log(propsBasis)
     let chartData = nextProps.state.applicantsProfilesALL
     let chartApplicationData = nextProps.state.application
     let chartUpdateData = this.props.state.applications
 
-    if (chartUpdateData.length != chartApplicationData.length) {
-      propsBasis.selectApplicationALL()
-    }
+    // if (chartUpdateData.length != chartApplicationData.length) {
+    //   propsBasis.selectApplicationALL()
+    //   propsBasis.selectApplicantsProfileALL()
+    // }
 
     let chartSettings = nextProps.state.settings
     let baseData = []
@@ -170,7 +172,7 @@ export default class Dashboard extends Component {
     this.setState({
       baseGroupDataNOTCHANGED: baseGroupName,
       data: nextProps,
-      dataPrevious: prevProps,
+      // dataPrevious: prevProps,
       applicantsProfilesALL: nextProps,
       baseGroupData: baseGroupName,
       baseGroupDidMount: historyApplications
@@ -262,11 +264,7 @@ export default class Dashboard extends Component {
     }
     let type = 'pie'
     if (this.state.data !== this.state.dataPrevious) {
-      let chart = this.state.showApplication
-      if (chart != "") {
-        chart.data.datasets[0].data = [currentlyEmployed, notEmployed]
-        chart.update()
-      }
+      
 
     }
     else {
@@ -332,7 +330,7 @@ export default class Dashboard extends Component {
     let unique = [...new Set(uniqueDays)]
     //Get first 5 (last) days
     let first5days = []
-    for (let i = unique.length - 1, j = 1; i>=0 ; i--, j++) {
+    for (let i = unique.length - 1, j = 1; i >= 0; i--, j++) {
       if (unique[i] == undefined) {
       }
       else {
@@ -500,12 +498,7 @@ export default class Dashboard extends Component {
     }
     let type = 'bar'
     if (this.state.data !== this.state.dataPrevious) {
-      let chart = this.state.showMainDashBoardReport
-      if (chart != "") {
-
-        chart.data =dataChart
-        chart.update()
-      }
+      
     }
     else {
       if ((Array.isArray(data) && data.length)) {
@@ -514,7 +507,7 @@ export default class Dashboard extends Component {
         let chart = this.state.showMainDashBoardReport
         if (chart != "") {
 
-          chart.data = dataChart 
+          chart.data = dataChart
           chart.update()
         }
         else {
@@ -652,12 +645,7 @@ export default class Dashboard extends Component {
     let type = 'horizontalBar'
 
     if (this.state.data !== this.state.dataPrevious) {
-      let chart = this.state.showAgeParticipation
-      if (chart != "") {
-
-        chart.data.datasets[0].data = defaultdata
-        chart.update()
-      }
+     
     }
     else {
       if ((Array.isArray(data) && data.length)) {
@@ -960,11 +948,7 @@ export default class Dashboard extends Component {
       // console.log(this.state.dataPrevious)
       //NEEDS TO BE OBSERVED IF IT CAUSES BUG ...
       //this.createChart(ctx, dataChart, type, options
-      let chart = this.state.showAugmentationRankingReport
-      if (chart != "") {
-        chart.data = dataChart
-        chart.update()
-      }
+     
     }
     else {
       if ((Array.isArray(data) && data.length)) {
@@ -1076,11 +1060,7 @@ export default class Dashboard extends Component {
       console.log("state data is not equal to data previous")
       //NEEDS TO BE OBSERVED IF IT CAUSES BUG ...
       //this.createChart(ctx, dataChart, type, options)
-      let chart = this.state.showAugmentationReport
-      if (chart != "") {
-        chart.data = dataChart
-        chart.update()
-      }
+    
     }
     else {
       if ((Array.isArray(finalCountAugmentation) && finalCountAugmentation.length)) {
@@ -1186,11 +1166,7 @@ export default class Dashboard extends Component {
       console.log("state data is not equal to data previous")
       //NEEDS TO BE OBSERVED IF IT CAUSES BUG ...
       // this.createChart(ctx, dataChart, type, options)
-      let chart = this.state.showRankingReport
-      if (chart != "") {
-        chart.data = dataChart
-        chart.update()
-      }
+      
     }
     else {
       if ((Array.isArray(finalCountRevolving) && finalCountRevolving.length)) {
@@ -1364,12 +1340,7 @@ export default class Dashboard extends Component {
     }
     let type = 'bar'
     if (this.state.data !== this.state.dataPrevious) {
-      let chart = this.state.showCongressionalDistrict
-      if (chart != "") {
-
-        chart.data.datasets[0].data = [congressional1, congressional2, congressional3]
-        chart.update()
-      }
+      
 
     }
     else {
@@ -1548,12 +1519,7 @@ export default class Dashboard extends Component {
     let type = 'bar'
 
     if (this.state.data !== this.state.dataPrevious) {
-      let chart = this.state.showPoliticalDistrict
-      if (chart != "") {
-
-        chart.data.datasets = finalData
-        chart.update()
-      }
+     
     }
     else {
       if ((Array.isArray(data) && data.length)) {
