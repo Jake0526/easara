@@ -79,7 +79,6 @@ export default class Dashboard extends Component {
     let chartUpdateData = this.props.state.applications
     let chartData = this.state.data.state.applicantsProfilesALL
     let chartApplicationData = this.state.data.state.application
-    console.log(this.props)
     if (chartUpdateData.length != chartApplicationData.length) {
       propsBasis.selectApplicationALL()
       propsBasis.selectApplicantsProfileALL()
@@ -131,7 +130,6 @@ export default class Dashboard extends Component {
   componentWillReceiveProps(nextProps, prevProps) {
     console.log("will receive")
     let propsBasis = (this.props)
-    console.log(propsBasis)
     let chartData = nextProps.state.applicantsProfilesALL
     let chartApplicationData = nextProps.state.application
     let chartUpdateData = this.props.state.applications
