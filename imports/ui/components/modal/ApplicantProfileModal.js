@@ -459,6 +459,8 @@ export default class ApplicantProfileModal extends Component {
           birthDate,
           employeeNumber,
           beginDate,
+          dateFrom,
+          dateTo,
         } = this.state;
         let data = {
           firstName,
@@ -473,6 +475,8 @@ export default class ApplicantProfileModal extends Component {
           birthDate,
           employeeNumber,
           beginDate,
+          dateFrom,
+          dateTo,
         };
         Meteor.call(
           "insert-new-applicant-application",

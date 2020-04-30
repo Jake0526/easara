@@ -19,13 +19,13 @@ export default class FakeRoute extends Component {
       permissions: [],
       settings: [],
       activeSettings: [],
-      activeApplications: []
+      activeApplications: [],
     };
   }
 
   componentDidMount() {
     HTTP.post(
-      'http://111.125.114.29:13000/v2/graphql',
+      "http://111.125.114.29:13000/v2/graphql",
       {
         // headers: {
         //   "Content-Type": "application/json",
@@ -167,9 +167,8 @@ export default class FakeRoute extends Component {
           applicantsProfiles: result,
           applicantsProfilesALL: result,
         });
-      }
-      else{
-        console.log(error)
+      } else {
+        console.log(error);
       }
     });
   };
