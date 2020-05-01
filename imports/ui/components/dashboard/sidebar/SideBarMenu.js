@@ -72,7 +72,7 @@ export default class SideBarMenu extends Component {
           </ul>
         </li> */}
 
-        <li className={this.page == "settings" ? "active" : ""}>
+        <li className={this.page == "ranking" ? "active" : ""}>
           <Link to="/ranking">
             <i className="fa fa-circle-o" /> <span> Generate Ranking </span>
           </Link>
