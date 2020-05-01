@@ -37,7 +37,7 @@ export default class ApplicantProfileModal extends Component {
       cellNumber: "",
       politicalDistrict: "",
       congressionalDistrict: "",
-      birthDate: new Date(),
+      birthDate: "",
 
       //POLITICAL DISTRICTS
       firstDistrict: [
@@ -132,7 +132,7 @@ export default class ApplicantProfileModal extends Component {
       birthDate:
         nextProps.updateData != null
           ? new Date(nextProps.updateData.birth_date)
-          : new Date(),
+          : "",
       update: nextProps.update,
       existingPersonnel: nextProps.updateData
         ? nextProps.updateData.employee_number
@@ -192,7 +192,9 @@ export default class ApplicantProfileModal extends Component {
             ? nextProps.lookUpData.dateFrom
             : null,
         dateTo:
-          nextProps.lookUpData.length !== 0 ? nextProps.lookUpData.dateTo : null,
+          nextProps.lookUpData.length !== 0
+            ? nextProps.lookUpData.dateTo
+            : null,
         existingPersonnel: nextProps.lookUpData.length !== 0 ? true : false,
       });
     }
@@ -250,6 +252,7 @@ export default class ApplicantProfileModal extends Component {
 
   getValidationState = (id) => {
     const {
+      birthDate,
       lastName,
       firstName,
       middleName,
@@ -312,6 +315,17 @@ export default class ApplicantProfileModal extends Component {
           return "warning";
         } else {
           return null;
+        }
+      case "birthdate":
+        if (birthDate.length === 0) {
+          this.errors.includes("birthdate") ? null : this.errors.push("birthdate");
+          return "error";
+        } else {
+          let index = this.errors.indexOf("birthdate");
+          if (index > -1) {
+            this.errors.splice(index, 1);
+          }
+          return "success";
         }
     }
   };
@@ -1084,7 +1098,10 @@ export default class ApplicantProfileModal extends Component {
 
                     <Field span={1}>
                       {/* BIRTH DATE */}
-                      <FormGroup controlId="birthDate">
+                      <FormGroup
+                        controlId="birthDate"
+                        validationState={this.getValidationState("birthdate")}
+                      >
                         <ControlLabel>9. Birth Date:</ControlLabel>
 
                         <InputGroup>
