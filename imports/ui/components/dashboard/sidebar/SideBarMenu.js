@@ -52,7 +52,7 @@ export default class SideBarMenu extends Component {
           </ul>
         </li>
 
-        <li
+        {/* <li
           className={"treeview" + ranking + rankingHistory}
           style={{ height: "auto" }}
         >
@@ -69,12 +69,13 @@ export default class SideBarMenu extends Component {
                 <i className="fa fa-circle-o" /> <span> Generate Ranking </span>
               </Link>
             </li>
-            <li className={this.page == "ranking-history" ? "active" : ""}>
-              <Link to="/ranking-history">
-                <i className="fa fa-circle-o" /> <span> Ranking History </span>
-              </Link>
-            </li>
           </ul>
+        </li> */}
+
+        <li className={this.page == "settings" ? "active" : ""}>
+          <Link to="/ranking">
+            <i className="fa fa-circle-o" /> <span> Generate Ranking </span>
+          </Link>
         </li>
 
         <li className={this.page == "settings" ? "active" : ""}>

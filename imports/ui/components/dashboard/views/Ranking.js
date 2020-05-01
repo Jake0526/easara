@@ -22,6 +22,8 @@ export default class Ranking extends Component {
       rankedApplicants: [],
       rankingStatus: 0,
       rankingLength: 0,
+      revolving: 0,
+      augmentation: 0
     };
   }
 
@@ -31,6 +33,11 @@ export default class Ranking extends Component {
 
   componentWillReceiveProps(nextProps) {
     this.setState({ data: nextProps });
+    
+    this.setState({
+      revolving: nextProps.state.activeSettings[0].revolving,
+      augmentation: nextProps.state.activeSettings[0].augmentation
+    })
   }
 
   generateNewRanking = () => {
@@ -74,6 +81,7 @@ export default class Ranking extends Component {
           timer: 2500,
         });
 
+        this.props.selectApplicationALL();
         this.props.getRanking();
 
         this.setState({
@@ -120,7 +128,8 @@ export default class Ranking extends Component {
             applicationId: applicants[x].id,
             rankNo: "",
             groupingsID: applicants[x].groupings_id,
-            category: ""
+            category: "",
+            remarks: "No Employment Record | Date Applied: " + moment(applicants[x].datetime_applied).format('LLLL')
           });
         } else {
 
@@ -129,14 +138,16 @@ export default class Ranking extends Component {
               applicationId: applicants[x].id,
               rankNo: "",
               groupingsID: applicants[x].groupings_id,
-              category: ""
+              category: "",
+              remarks: "More than three months ago | Date Applied : " + moment(applicants[x].datetime_applied).format('LLLL')
             });
           }else {
             lessPrioApplicantsLess3months.push({
               applicationId: applicants[x].id,
               rankNo: "",
               groupingsID: applicants[x].groupings_id,
-              category: ""
+              category: "",
+              remarks: "Employed Less than 3 months ago | Date Applied: " + moment(applicants[x].datetime_applied).format('LLLL')
             });
           }
         }
@@ -271,6 +282,14 @@ export default class Ranking extends Component {
             <section className="content">
               <div className="box box-primary">
                 <div className="box-body" style={{ padding: "0px" }}>
+                  <div className="alert alert-info alert-dismissible">
+                    <h4><i className="icon fa fa-info"></i> Number of Slots</h4>
+                    <ul className="margin-bottom-none padding-left-lg">
+                      <li>Revolving: {this.state.revolving}</li>
+                      <li>Augmentation: {this.state.augmentation}</li>
+                    </ul>
+                  </div>
+
                   <ReactTable
                     className="-striped -highlight"
                     data={this.state.data.state.applicantsRanking}

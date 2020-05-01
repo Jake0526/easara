@@ -33,7 +33,8 @@ Meteor.method(
       applicant_profiles.contact_number AS 'contact_number',
       applicant_profiles.birth_date AS 'birth_date',
       applications.groupings_id AS 'groupings_id',
-      applicant_profiles.date_to AS 'date_to'
+      applicant_profiles.date_to AS 'date_to',
+      applications.created_at AS 'datetime_applied'
     FROM
       applications
     INNER JOIN
@@ -41,7 +42,8 @@ Meteor.method(
     INNER JOIN
       settings ON settings.id = applications.groupings_id
     WHERE
-      settings.is_active = 1;`;
+      settings.is_active = 1
+	  ORDER BY applications.created_at ASC`;
     var fut = new Future();
     easara(sql, function (err, result) {
       if (err) throw err;
@@ -194,7 +196,9 @@ Meteor.method(
     INNER JOIN
       settings ON settings.id = applications.groupings_id
     WHERE
-      settings.is_active = 1;
+      settings.is_active = 1 AND
+      applications.ranking <> "" AND
+      applications.ranking IS NOT NULL;
     `;
 
     var fut = new Future();
@@ -587,7 +591,8 @@ Meteor.method(
         applications
       SET 
         ranking = '${rankData.rankNo}',
-        category = '${rankData.category}'
+        category = '${rankData.category}',
+        remarks = '${rankData.remarks}'
       WHERE
         id = ${rankData.applicationId}
           AND
