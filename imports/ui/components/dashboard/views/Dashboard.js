@@ -52,6 +52,8 @@ export default class Dashboard extends Component {
       progressBarRanking: 0.00,
       stackedOptions: [],
       reactTableGroupings: [],
+      reactTableAugmentationQualified: [],
+      reactTableRevolvingQualified: [],
       fromDate: new Date(),
       toDate: new Date(),
       dateCounter: 0,
@@ -70,11 +72,74 @@ export default class Dashboard extends Component {
       baseGroupDidMount: [],
 
     };
+
   }
 
   componentDidMount() {
     $('body').addClass('sidebar-mini');
-    console.log("run")
+    this.graphsLoad()
+
+  }
+
+  componentWillReceiveProps(nextProps, prevProps) {
+    let propsBasis = (this.props)
+    let chartData = nextProps.state.applicantsProfilesALL
+    let chartApplicationData = nextProps.state.application
+    let chartUpdateData = this.props.state.applications
+
+    // if (chartUpdateData.length != chartApplicationData.length) {
+    //   propsBasis.selectApplicationALL()
+    //   propsBasis.selectApplicantsProfileALL()
+    // }
+    // console.log(nextProps)
+    let chartSettings = nextProps.state.settings
+    let baseData = []
+    let baseGroup = ""
+    let baseGroupName = ""
+    let activeGroup = ""
+    chartSettings.forEach(element => {
+      if (element.is_active == 1) {
+        baseGroup = element.id
+        baseGroupName = element.groupings
+      }
+    })
+    let historyApplications = []
+
+    chartApplicationData.forEach(element1 => {
+      if (element1.groupings_id == baseGroup) {
+        chartData.forEach(element2 => {
+          if (element1.profile_code == element2.code) {
+            baseData.push(element2)
+            historyApplications.push({
+              first_name: element2.first_name,
+              last_name: element2.last_name,
+              created_at: element1.created_at
+            })
+          }
+        })
+      }
+
+    })
+    this.setState({
+      baseGroupDataNOTCHANGED: baseGroupName,
+      data: nextProps,
+      // dataPrevious: prevProps,
+      applicantsProfilesALL: nextProps,
+      baseGroupData: baseGroupName,
+      baseGroupDidMount: historyApplications
+    });
+
+
+    this.showApplication(baseData, baseGroup)
+    this.showMainDashboardReport(chartApplicationData, baseGroup)
+    this.showAugmentationRankingReport(nextProps.state.application)
+    this.showAgeParticipation(baseData)
+    this.showCongressionalDistrict(baseData)
+    this.showPoliticalDistrict(baseData)
+
+  }
+
+  graphsLoad = () => {
     let propsBasis = (this.props)
     let chartUpdateData = this.props.state.applications
     let chartData = this.state.data.state.applicantsProfilesALL
@@ -119,71 +184,12 @@ export default class Dashboard extends Component {
       baseGroupData: baseGroupName,
 
     });
-    this.showApplication(baseData)
+    this.showApplication(baseData, baseGroup)
     this.showAgeParticipation(baseData)
     this.showMainDashboardReport(chartApplicationData, baseGroup)
     this.showAugmentationRankingReport(chartApplicationData)
     this.showCongressionalDistrict(baseData)
     this.showPoliticalDistrict(baseData)
-  }
-
-  componentWillReceiveProps(nextProps, prevProps) {
-    console.log("will receive")
-    let propsBasis = (this.props)
-    let chartData = nextProps.state.applicantsProfilesALL
-    let chartApplicationData = nextProps.state.application
-    let chartUpdateData = this.props.state.applications
-
-    // if (chartUpdateData.length != chartApplicationData.length) {
-    //   propsBasis.selectApplicationALL()
-    //   propsBasis.selectApplicantsProfileALL()
-    // }
-
-    let chartSettings = nextProps.state.settings
-    let baseData = []
-    let baseGroup = ""
-    let baseGroupName = ""
-    let activeGroup = ""
-    chartSettings.forEach(element => {
-      if (element.is_active == 1) {
-        baseGroup = element.id
-        baseGroupName = element.groupings
-      }
-    })
-    let historyApplications = []
-
-    chartApplicationData.forEach(element1 => {
-      if (element1.groupings_id == baseGroup) {
-        chartData.forEach(element2 => {
-          if (element1.profile_code == element2.code) {
-            baseData.push(element2)
-            historyApplications.push({
-              first_name: element2.first_name,
-              last_name: element2.last_name,
-              created_at: element1.created_at
-            })
-          }
-        })
-      }
-
-    })
-    this.setState({
-      baseGroupDataNOTCHANGED: baseGroupName,
-      data: nextProps,
-      // dataPrevious: prevProps,
-      applicantsProfilesALL: nextProps,
-      baseGroupData: baseGroupName,
-      baseGroupDidMount: historyApplications
-    });
-
-
-    this.showApplication(baseData)
-    this.showMainDashboardReport(chartApplicationData, baseGroup)
-    this.showAugmentationRankingReport(nextProps.state.application)
-    this.showAgeParticipation(baseData)
-    this.showCongressionalDistrict(baseData)
-    this.showPoliticalDistrict(baseData)
-
   }
 
   createChart = (ctx, dataChart, typeChart, optionsChart) => {
@@ -210,20 +216,54 @@ export default class Dashboard extends Component {
 
   }
 
-  showApplication = (data, updateData) => {
+  //SHOW APPLICATION, (REVOLVING AND AUGMENTATION STATE DATA BASIS FOR REACTTABLE)
+  showApplication = (data, groupidBasis) => {
     let currentlyEmployed = 0
     let notEmployed = 0
+
     data.forEach(element => {
       element.employee_number ? currentlyEmployed += 1 : notEmployed += 1
     });
-    let dateApplication = []
-    data.forEach(element => {
-      element.created_at ? dateApplication.push(element.created_at) : ""
+
+
+    // STATE BASIS FOR APPLICATIONS
+    let basisData = this.props.state.application
+    let augmentationQualifiedData = []
+    let revolvingQualifiedData = []
+    data.forEach(element1 => {
+      basisData.forEach(element2 => {
+        if ((element1.code == element2.profile_code) && (element2.groupings_id == groupidBasis)) {
+          if (element2.category == 'Revolving') {
+            revolvingQualifiedData.push(
+              {
+                ranking: element2.ranking,
+                name: element1.first_name + " " + element1.last_name,
+                date_applied: element2.date_applied,
+                remarks: element2.remarks
+              })
+          }
+
+          else if (element2.category == 'Augmentation') {
+            augmentationQualifiedData.push(
+              {
+                ranking: element2.ranking,
+                name: element1.first_name + " " + element1.last_name,
+                date_applied: element2.date_applied,
+                remarks: element2.remarks
+              })
+
+          }
+        }
+      })
+
     });
-    //console.log(dateApplication)
+
+
     this.setState({
       newEmployee: notEmployed,
-      exisingEmployee: currentlyEmployed
+      exisingEmployee: currentlyEmployed,
+      reactTableAugmentationQualified: augmentationQualifiedData,
+      reactTableRevolvingQualified: revolvingQualifiedData,
     })
     let randomColorResultApplication = []
     randomColorResultApplication.length = 0
@@ -261,8 +301,12 @@ export default class Dashboard extends Component {
       responsive: true,
     }
     let type = 'pie'
-    if (this.state.data !== this.state.dataPrevious) {
-      
+    if (false) {
+      let chart = this.state.showApplication
+      if (chart != "") {
+        chart.data.datasets[0].data = [currentlyEmployed, notEmployed]
+        chart.update()
+      }
 
     }
     else {
@@ -495,8 +539,13 @@ export default class Dashboard extends Component {
 
     }
     let type = 'bar'
-    if (this.state.data !== this.state.dataPrevious) {
-      
+    if (false) {
+      let chart = this.state.showMainDashBoardReport
+      if (chart != "") {
+
+        chart.data = dataChart
+        chart.update()
+      }
     }
     else {
       if ((Array.isArray(data) && data.length)) {
@@ -642,8 +691,13 @@ export default class Dashboard extends Component {
     }
     let type = 'horizontalBar'
 
-    if (this.state.data !== this.state.dataPrevious) {
-     
+    if (false) {
+      let chart = this.state.showAgeParticipation
+      if (chart != "") {
+
+        chart.data.datasets[0].data = defaultdata
+        chart.update()
+      }
     }
     else {
       if ((Array.isArray(data) && data.length)) {
@@ -940,13 +994,17 @@ export default class Dashboard extends Component {
 
     }
     let type = 'bar'
-    if (this.state.data !== this.state.dataPrevious) {
+    if (false) {
       console.log("state data is not equal to data previous")
       // console.log(this.state.data)
       // console.log(this.state.dataPrevious)
       //NEEDS TO BE OBSERVED IF IT CAUSES BUG ...
       //this.createChart(ctx, dataChart, type, options
-     
+      let chart = this.state.showAugmentationRankingReport
+      if (chart != "") {
+        chart.data = dataChart
+        chart.update()
+      }
     }
     else {
       if ((Array.isArray(data) && data.length)) {
@@ -1054,11 +1112,15 @@ export default class Dashboard extends Component {
     }
     let type = 'bar'
 
-    if (this.state.data !== this.state.dataPrevious) {
+    if (false) {
       console.log("state data is not equal to data previous")
       //NEEDS TO BE OBSERVED IF IT CAUSES BUG ...
       //this.createChart(ctx, dataChart, type, options)
-    
+      let chart = this.state.showAugmentationReport
+      if (chart != "") {
+        chart.data = dataChart
+        chart.update()
+      }
     }
     else {
       if ((Array.isArray(finalCountAugmentation) && finalCountAugmentation.length)) {
@@ -1160,11 +1222,15 @@ export default class Dashboard extends Component {
     }
     let type = 'bar'
 
-    if (this.state.data !== this.state.dataPrevious) {
+    if (false) {
       console.log("state data is not equal to data previous")
       //NEEDS TO BE OBSERVED IF IT CAUSES BUG ...
       // this.createChart(ctx, dataChart, type, options)
-      
+      let chart = this.state.showRankingReport
+      if (chart != "") {
+        chart.data = dataChart
+        chart.update()
+      }
     }
     else {
       if ((Array.isArray(finalCountRevolving) && finalCountRevolving.length)) {
@@ -1337,8 +1403,13 @@ export default class Dashboard extends Component {
 
     }
     let type = 'bar'
-    if (this.state.data !== this.state.dataPrevious) {
-      
+    if (false) {
+      let chart = this.state.showCongressionalDistrict
+      if (chart != "") {
+
+        chart.data.datasets[0].data = [congressional1, congressional2, congressional3]
+        chart.update()
+      }
 
     }
     else {
@@ -1516,8 +1587,13 @@ export default class Dashboard extends Component {
     }
     let type = 'bar'
 
-    if (this.state.data !== this.state.dataPrevious) {
-     
+    if (false) {
+      let chart = this.state.showPoliticalDistrict
+      if (chart != "") {
+
+        chart.data.datasets = finalData
+        chart.update()
+      }
     }
     else {
       if ((Array.isArray(data) && data.length)) {
@@ -1739,7 +1815,6 @@ export default class Dashboard extends Component {
     let groupDataBasis = ""
     let groupDataResult = []
 
-
     settingsData.forEach(element => {
       element.groupings == groupDataSelected ?
         groupDataBasis = (element.id) : ''
@@ -1759,7 +1834,7 @@ export default class Dashboard extends Component {
     this.setState({
       updateData: "yes"
     })
-    this.showApplication(groupDataResult)
+    this.showApplication(groupDataResult, groupDataBasis)
     this.showAgeParticipation(groupDataResult)
     this.showCongressionalDistrict(groupDataResult)
     this.showPoliticalDistrict(groupDataResult)
@@ -1911,6 +1986,84 @@ export default class Dashboard extends Component {
         ],
         // minWidth: 50,
       }]
+    const revolvingReactTable = [{
+      Header: 'Revolving Qualified Summary',
+      className: 'center',
+      columns: [{
+        Header: 'Name',
+        minWidth: 25,
+        className: 'center',
+        headerClassName: 'wordwrap',
+        style: { whiteSpace: 'unset' },
+        accessor: "name",
+      }, {
+        Header: 'Date Applied',
+        minWidth: 25,
+        className: 'center',
+        headerClassName: 'wordwrap',
+        style: { whiteSpace: 'unset' },
+        Cell: c => moment(c.row._original.date_applied).format("MMMM DD, YYYY hh:mm a"),
+        accessor: "date_applied",
+      },
+      {
+        Header: 'Ranking',
+        minWidth: 15,
+        className: 'center',
+        headerClassName: 'wordwrap',
+        style: { whiteSpace: 'unset' },
+        accessor: "ranking",
+
+      },
+      {
+        Header: 'Remarks',
+        minWidth: 25,
+        className: 'center',
+        headerClassName: 'wordwrap',
+        style: { whiteSpace: 'unset' },
+        accessor: "remarks",
+      },
+      ],
+      // minWidth: 50,
+    }]
+    const augmentationReactTable = [{
+      Header: 'Augmentation Qualified Summary',
+      className: 'center',
+      columns: [{
+        Header: 'Name',
+        minWidth: 25,
+        className: 'center',
+        headerClassName: 'wordwrap',
+        style: { whiteSpace: 'unset' },
+        accessor: "name",
+      }, {
+        Header: 'Date Applied',
+        minWidth: 25,
+        className: 'center',
+        headerClassName: 'wordwrap',
+        style: { whiteSpace: 'unset' },
+        Cell: c => moment(c.row._original.date_applied).format("MMMM DD, YYYY hh:mm a"),
+        accessor: "date_applied",
+      },
+      {
+        Header: 'Ranking',
+        minWidth: 15,
+        className: 'center',
+        headerClassName: 'wordwrap',
+        style: { whiteSpace: 'unset' },
+        accessor: "ranking",
+
+      },
+      {
+        Header: 'Remarks',
+        minWidth: 25,
+        className: 'center',
+        headerClassName: 'wordwrap',
+        style: { whiteSpace: 'unset' },
+        accessor: "remarks",
+      },
+      ],
+      // minWidth: 50,
+    }]
     return (
       <div className="wrapper">
         <AppHeader middleware={this.props.state} history={this.props.history} />
@@ -2153,50 +2306,52 @@ export default class Dashboard extends Component {
                     </div>
                   </div>
                   <div className="row">
-                    <div className="col-lg-12 center" style={{ display: "block", width: "50%", }} >
+                    <div className="center">
+                      <div className="col-lg-12 " style={{ display: "block", width: "50%", textAlign: "center" }} >
 
 
-                      <div style={{ paddingTop: "10px", paddingLeft: "10%", paddingBottom: "15px", float: "left" }}>
-                        <DatePicker
-                          selected={this.state.fromDate}
-                          onChange={(date) => this.setStartDate(date)}
-                          showMonthDropdown
-                          showYearDropdown
-                          selectsStart
-                          style={{
+                        <div style={{ paddingTop: "10px", paddingBottom: "15px", float: "left" }}>
+                          <DatePicker
+                            selected={this.state.fromDate}
+                            onChange={(date) => this.setStartDate(date)}
+                            showMonthDropdown
+                            showYearDropdown
+                            selectsStart
+                            style={{
 
-                          }}
-                          dropdownMode="select"
-                          popperPlacement="auto"
-                          startDate={this.state.fromDate}
-                          endDate={this.state.toDate}
-                          dateFormat="📅 MMMM dd yyyy"
-                        />
-                      </div>
+                            }}
+                            dropdownMode="select"
+                            popperPlacement="auto"
+                            startDate={this.state.fromDate}
+                            endDate={this.state.toDate}
+                            dateFormat="📅 MMMM dd yyyy"
+                          />
+                        </div>
 
-                      <div style={{ paddingTop: "50px", float: "left", width: "50%", paddingTop: "10px" }}>
-                        <DatePicker
-                          selected={this.state.toDate}
-                          onChange={(date) => this.setEndDate(date)}
-                          showMonthDropdown
-                          showYearDropdown
-                          selectsEnd
-                          style={{
+                        <div style={{ paddingTop: "50px", float: "left", width: "50%", paddingTop: "10px" }}>
+                          <DatePicker
+                            selected={this.state.toDate}
+                            onChange={(date) => this.setEndDate(date)}
+                            showMonthDropdown
+                            showYearDropdown
+                            selectsEnd
+                            style={{
 
-                          }}
-                          dropdownMode="select"
-                          popperPlacement="bottom"
-                          startDate={this.state.toDate}
-                          endDate={this.state.toDate}
-                          dateFormat="📅 MMMM dd yyyy"
-                          minDate={this.state.fromDate}
+                            }}
+                            dropdownMode="select"
+                            popperPlacement="bottom"
+                            startDate={this.state.toDate}
+                            endDate={this.state.toDate}
+                            dateFormat="📅 MMMM dd yyyy"
+                            minDate={this.state.fromDate}
 
-                        />
+                          />
+                        </div>
                       </div>
                     </div>
                   </div>
                   <div className="row">
-                    <div className="col-sm-12 col-md-6 col-lg-6 " >
+                    <div className="col-sm-12 col-md-4 col-lg-4 " >
                       <div className="box box-primary">
                         <div className="box-header with-border"  >
                           <h4><label>Application</label></h4>
@@ -2210,7 +2365,7 @@ export default class Dashboard extends Component {
                       </div>
                     </div>
 
-                    <div className="col-sm-12 col-md-6 col-lg-6">
+                    <div className="col-sm-12 col-md-4 col-lg-4">
                       <div className="box box-primary">
                         <div className="box-header with-border">
                           <h4><label> Age Participation</label></h4>
@@ -2224,10 +2379,7 @@ export default class Dashboard extends Component {
                         </div>
                       </div>
                     </div>
-                  </div>
-
-                  <div className="row" >
-                    <div className="col-sm-12 col-md-6 col-lg-6" >
+                    <div className="col-sm-12 col-md-4 col-lg-4" >
                       <div className="box box-primary">
                         <div className="box-header with-border">
                           <h4><label> Congressional District</label> <button className="btn btn-info" onClick={this.showModalViewPoliticalDistrict}>Show More</button></h4>
@@ -2237,6 +2389,54 @@ export default class Dashboard extends Component {
                         </div>
                         <div className="box-footer">
                           <label>Total:<span style={{ color: "green" }}> {exisingEmployee + newEmployee + " " + converter.toWords(exisingEmployee + newEmployee)}</span></label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="row" >
+                    <div className="col-sm-12 col-md-6 col-lg-6" >
+
+                      <div className="box">
+                        <div className="box-body" style={{ padding: "0px" }}>
+                          <ReactTable
+                            className="-striped -highlight"
+                            data={this.state.reactTableRevolvingQualified}
+                            columns={revolvingReactTable}
+                            defaultPageSize={10}
+                            PreviousComponent={PreviousIcon}
+                            NextComponent={NextIcon}
+                            showPageSizeOptions={false}
+                          // style={{
+                          //   height: 260,
+                          // }}
+                          />
+                        </div>
+                        <div className="box-footer">
+                          <label>Total:<span style={{ color: "green" }}> {this.state.reactTableRevolvingQualified.length + " " + converter.toWords(this.state.reactTableRevolvingQualified.length)}</span></label>
+                        </div>
+                      </div>
+
+                    </div>
+
+                    <div className="col-sm-12 col-md-6 col-lg-6" >
+                      <div className="box">
+                        <div className="box-body" style={{ padding: "0px" }}>
+                          <ReactTable
+                            className="-striped -highlight"
+                            data={this.state.reactTableAugmentationQualified}
+                            columns={augmentationReactTable}
+                            defaultPageSize={10}
+                            PreviousComponent={PreviousIcon}
+                            NextComponent={NextIcon}
+                            showPageSizeOptions={false}
+                          // style={{
+                          //   height: 260,
+                          // }}
+                          />
+                        </div>
+                        <div className="box-footer">
+                          <label>Total:<span style={{ color: "green" }}> {this.state.reactTableAugmentationQualified.length + " " + converter.toWords(this.state.reactTableAugmentationQualified.length)}</span></label>
                         </div>
                       </div>
                     </div>

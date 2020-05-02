@@ -448,3 +448,6 @@ body:not(.modal-close) {
 .graph{
   display:block
 }
+.center{
+  text-align: center;
+}
