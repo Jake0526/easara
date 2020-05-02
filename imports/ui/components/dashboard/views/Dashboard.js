@@ -38,6 +38,7 @@ export default class Dashboard extends Component {
       exisingEmployee: 0,
       newEmployee: 0,
       totalEmployee: 0,
+      totalCongressional: 0,
       applicantsProfiles: [],
       colorAvailGraph: [],
       colorsAvailApplication: [],
@@ -130,7 +131,7 @@ export default class Dashboard extends Component {
     });
 
 
-    this.showApplication(baseData, baseGroup)
+    this.showApplication(baseData, [baseGroup])
     this.showMainDashboardReport(chartApplicationData, baseGroup)
     this.showAugmentationRankingReport(nextProps.state.application)
     this.showAgeParticipation(baseData)
@@ -184,7 +185,7 @@ export default class Dashboard extends Component {
       baseGroupData: baseGroupName,
 
     });
-    this.showApplication(baseData, baseGroup)
+    this.showApplication(baseData, [baseGroup])
     this.showAgeParticipation(baseData)
     this.showMainDashboardReport(chartApplicationData, baseGroup)
     this.showAugmentationRankingReport(chartApplicationData)
@@ -217,7 +218,7 @@ export default class Dashboard extends Component {
   }
 
   //SHOW APPLICATION, (REVOLVING AND AUGMENTATION STATE DATA BASIS FOR REACTTABLE)
-  showApplication = (data, groupidBasis) => {
+  showApplication = (data, groupidBasis, counterBasis) => {
     let currentlyEmployed = 0
     let notEmployed = 0
 
@@ -230,40 +231,106 @@ export default class Dashboard extends Component {
     let basisData = this.props.state.application
     let augmentationQualifiedData = []
     let revolvingQualifiedData = []
-    data.forEach(element1 => {
-      basisData.forEach(element2 => {
-        if ((element1.code == element2.profile_code) && (element2.groupings_id == groupidBasis)) {
-          if (element2.category == 'Revolving') {
+
+    let newDatatype = groupidBasis
+    if (newDatatype.length <= 1) {
+      data.forEach(element1 => {
+        basisData.forEach(element2 => {
+
+          if ((newDatatype.indexOf(element2.groupings_id) != -1)) {
+            if (element1.code == element2.profile_code) {
+              if (element2.category == 'Revolving') {
+                revolvingQualifiedData.push(
+                  {
+                    ranking: element2.ranking,
+                    name: element1.first_name + " " + element1.last_name,
+                    date_applied: element2.date_applied,
+                    remarks: element2.remarks
+                  })
+              }
+
+              else if (element2.category == 'Augmentation') {
+                augmentationQualifiedData.push(
+                  {
+                    ranking: element2.ranking,
+                    name: element1.first_name + " " + element1.last_name,
+                    date_applied: element2.date_applied,
+                    remarks: element2.remarks
+                  })
+
+              }
+            }
+          }
+        })
+
+      });
+    }
+    else {
+      let counter = 0
+      for (let i = 0; i < data.length; i++) {
+        if (data[i].code == counterBasis[i].profile_code) {
+          if (counterBasis[i].category == 'Revolving') {
             revolvingQualifiedData.push(
               {
-                ranking: element2.ranking,
-                name: element1.first_name + " " + element1.last_name,
-                date_applied: element2.date_applied,
-                remarks: element2.remarks
+                ranking: counterBasis[i].ranking,
+                name: data[i].first_name + " " + data[i].last_name,
+                date_applied: counterBasis[i].date_applied,
+                remarks: counterBasis[i].remarks
               })
+            counter += 1
           }
 
-          else if (element2.category == 'Augmentation') {
+          else if (counterBasis[i].category == 'Augmentation') {
             augmentationQualifiedData.push(
               {
-                ranking: element2.ranking,
-                name: element1.first_name + " " + element1.last_name,
-                date_applied: element2.date_applied,
-                remarks: element2.remarks
+                ranking: counterBasis[i].ranking,
+                name: data[i].first_name + " " + data[i].last_name,
+                date_applied: counterBasis[i].date_applied,
+                remarks: counterBasis[i].remarks
               })
-
+            counter += 1
           }
         }
-      })
+      }
+      // data.forEach(element1 => {
+      //   counterBasis.forEach(element2 => {
 
-    });
 
+      //     if ((element1.code == element2.profile_code)) {
+      //       if (element2.category == 'Revolving') {
+      //         revolvingQualifiedData.push(
+      //           {
+      //             ranking: element2.ranking,
+      //             name: element1.first_name + " " + element1.last_name,
+      //             date_applied: element2.date_applied,
+      //             remarks: element2.remarks
+      //           })
+      //         counter += 1
+      //       }
+
+      //       else if (element2.category == 'Augmentation') {
+      //         augmentationQualifiedData.push(
+      //           {
+      //             ranking: element2.ranking,
+      //             name: element1.first_name + " " + element1.last_name,
+      //             date_applied: element2.date_applied,
+      //             remarks: element2.remarks
+      //           })
+      //         counter += 1
+      //       }
+      //     }
+
+
+      //   })
+
+      // });
+    }
 
     this.setState({
       newEmployee: notEmployed,
       exisingEmployee: currentlyEmployed,
-      reactTableAugmentationQualified: augmentationQualifiedData,
-      reactTableRevolvingQualified: revolvingQualifiedData,
+      reactTableAugmentationQualified: [...new Set(augmentationQualifiedData)],
+      reactTableRevolvingQualified: [...new Set(revolvingQualifiedData)],
     })
     let randomColorResultApplication = []
     randomColorResultApplication.length = 0
@@ -1355,6 +1422,11 @@ export default class Dashboard extends Component {
     });
 
     /* For Coloring Selecting at least 3 */
+
+    this.setState({
+      totalCongressional: congressional1 + congressional2 + congressional3
+    })
+
     let randomColorResult = []
     let floatStaticDashboard = 1.00
     for (let i = 0; i < 3; i++) {
@@ -1726,6 +1798,8 @@ export default class Dashboard extends Component {
     let dateData = this.state.data.state.applicantsProfilesALL
     let application = this.state.data.state.application
     let dateDataResult = []
+    let dateGroupDetected = []
+    let counterBasis = []
 
     application.forEach(element2 => {
       dateData.forEach(element => {
@@ -1733,6 +1807,8 @@ export default class Dashboard extends Component {
           if ((moment(date).startOf('day').diff(moment(element2.created_at).startOf('day'), 'days') <= 0)
             && (moment(this.state.toDate).startOf('day').diff(moment(element2.created_at).startOf('day'), 'days') >= 0)) {
             dateDataResult.push(element)
+            dateGroupDetected.push(element2.groupings_id)
+            counterBasis.push(element2)
           }
         }
         else {
@@ -1746,8 +1822,8 @@ export default class Dashboard extends Component {
     this.setState({
       updateData: "yes"
     })
-
-    this.showApplication(dateDataResult)
+    let filteredId = [...new Set(dateGroupDetected)]
+    this.showApplication(dateDataResult, filteredId, counterBasis)
     this.showAgeParticipation(dateDataResult)
     this.showCongressionalDistrict(dateDataResult)
     this.showPoliticalDistrict(dateDataResult)
@@ -1764,6 +1840,8 @@ export default class Dashboard extends Component {
     let dateData = this.state.data.state.applicantsProfilesALL
     let application = this.state.data.state.application
     let dateDataResult = []
+    let dateGroupDetected = []
+    let counterBasis = []
     application.forEach(element2 => {
 
       dateData.forEach(element => {
@@ -1771,6 +1849,8 @@ export default class Dashboard extends Component {
           if ((moment(this.state.fromDate).startOf('day').diff(moment(element2.created_at).startOf('day'), 'days') <= 0)
             && (moment(date).startOf('day').diff(moment(element2.created_at).startOf('day'), 'days') >= 0)) {
             dateDataResult.push(element)
+            dateGroupDetected.push(element2.groupings_id)
+            counterBasis.push(element2)
           }
           else {
           }
@@ -1779,11 +1859,11 @@ export default class Dashboard extends Component {
     })
     // let updateStatus = "yes"
     //updates the graph of employee's information graph report
-
+    let filteredId = [...new Set(dateGroupDetected)]
     this.setState({
       updateData: "yes"
     })
-    this.showApplication(dateDataResult)
+    this.showApplication(dateDataResult, filteredId, counterBasis)
     this.showAgeParticipation(dateDataResult)
     this.showCongressionalDistrict(dateDataResult)
     this.showPoliticalDistrict(dateDataResult)
@@ -1834,7 +1914,7 @@ export default class Dashboard extends Component {
     this.setState({
       updateData: "yes"
     })
-    this.showApplication(groupDataResult, groupDataBasis)
+    this.showApplication(groupDataResult, [groupDataBasis])
     this.showAgeParticipation(groupDataResult)
     this.showCongressionalDistrict(groupDataResult)
     this.showPoliticalDistrict(groupDataResult)
@@ -1987,7 +2067,7 @@ export default class Dashboard extends Component {
         // minWidth: 50,
       }]
     const revolvingReactTable = [{
-      Header: 'Revolving Qualified Summary',
+      Header: 'Qualified for Revolving Summary',
       className: 'center',
       columns: [{
         Header: 'Name',
@@ -2026,7 +2106,7 @@ export default class Dashboard extends Component {
       // minWidth: 50,
     }]
     const augmentationReactTable = [{
-      Header: 'Augmentation Qualified Summary',
+      Header: 'Qualified for Augmentation Summary',
       className: 'center',
       columns: [{
         Header: 'Name',
@@ -2307,7 +2387,7 @@ export default class Dashboard extends Component {
                   </div>
                   <div className="row">
                     <div className="center">
-                      <div className="col-lg-12 " style={{ display: "block", width: "50%", textAlign: "center" }} >
+                      <div className="col-lg-12 " style={{ display: "block", paddingLeft:"5%", width: "50%", textAlign: "center" }} >
 
 
                         <div style={{ paddingTop: "10px", paddingBottom: "15px", float: "left" }}>
@@ -2388,7 +2468,7 @@ export default class Dashboard extends Component {
                           <canvas id="showCongressionalDistrict" className="chartjs" style={{ display: "block", width: "100", height: "100" }}></canvas>
                         </div>
                         <div className="box-footer">
-                          <label>Total:<span style={{ color: "green" }}> {exisingEmployee + newEmployee + " " + converter.toWords(exisingEmployee + newEmployee)}</span></label>
+                          <label>Total:<span style={{ color: "green" }}> {this.state.totalCongressional + " " + converter.toWords(this.state.totalCongressional)}</span></label>
                         </div>
                       </div>
                     </div>
