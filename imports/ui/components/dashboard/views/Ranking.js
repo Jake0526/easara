@@ -180,8 +180,6 @@ export default class Ranking extends Component {
             }
           }
 
-          console.log(rankedApplicants);
-
           $("#modal-loading").modal({
             backdrop: "static",
             keyboard: false,

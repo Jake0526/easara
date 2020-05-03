@@ -418,7 +418,6 @@ Meteor.method(
     SET SQL_SAFE_UPDATES = 1;
     UPDATE settings SET is_active = "1" WHERE id = last_insert_id();`;
     var fut = new Future();
-    console.log(sql);
     easara(sql, function (err, result) {
       if (err) {
         console.log(err);
@@ -498,9 +497,6 @@ Meteor.method(
   "remove-ranking",
   function (data) {
     check(data, Object);
-
-    console.log(data);
-
     var sql = `
     UPDATE 
       applications 

@@ -5,9 +5,6 @@ export default class Header extends Component {
   constructor(props) {
     super(props);
 
-    console.log(this.props.user);
-    console.log(this.props.history);
-
     this.logout = this.logout.bind(this);
     this.userDisplayName = this.userDisplayName.bind(this);
   }

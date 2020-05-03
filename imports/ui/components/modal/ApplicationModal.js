@@ -117,7 +117,6 @@ export default class ApplicantProfileModal extends Component {
 
   handleChange = (value, id) => {
     const { data } = this.state.data;
-    console.log(data);
     const {
       address,
       birthDate,
@@ -206,8 +205,6 @@ export default class ApplicantProfileModal extends Component {
         birthDate: value,
       });
     }
-
-    console.log(info);
     this.isSame = JSON.stringify(data) == JSON.stringify(info);
   };
 

@@ -146,15 +146,6 @@ export default class ProtectedRoute extends Component {
                 isLoad: true,
                 permissions: isLoginResult.permissions,
               });
-
-              console.log({
-                isLogin: isLoginResult.isLogin,
-                introspect: isLoginResult.introspect,
-                userinfo: isLoginResult.userinfo,
-                employeeInformation: employeeInformation,
-                isLoad: true,
-                permissions: isLoginResult.permissions
-              });
             }
           );
         } else {
@@ -177,7 +168,6 @@ export default class ProtectedRoute extends Component {
   selectApplicantsProfile = () => {
     Meteor.call('select-profiles', (error, result) => {
       if (!error) {
-        console.log(result);
         this.setState({
           applicantsProfiles: result,
         });
@@ -204,7 +194,6 @@ export default class ProtectedRoute extends Component {
       },
       (err, res) => {
         let religions = JSON.parse(res.content);
-        console.log(religions.data.religionList);
         let religionOptions = [];
         religions.data.religionList.forEach(element => {
           religionOptions.push(

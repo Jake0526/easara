@@ -136,7 +136,6 @@ export default class FakeRoute extends Component {
         });
       }
     );
-    console.log("queries will run");
     //Queries
     this.selectApplicantsProfile();
     this.selectApplicationALL();

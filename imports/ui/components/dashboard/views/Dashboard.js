@@ -1062,7 +1062,6 @@ export default class Dashboard extends Component {
     }
     let type = 'bar'
     if (false) {
-      console.log("state data is not equal to data previous")
       // console.log(this.state.data)
       // console.log(this.state.dataPrevious)
       //NEEDS TO BE OBSERVED IF IT CAUSES BUG ...
@@ -1180,7 +1179,6 @@ export default class Dashboard extends Component {
     let type = 'bar'
 
     if (false) {
-      console.log("state data is not equal to data previous")
       //NEEDS TO BE OBSERVED IF IT CAUSES BUG ...
       //this.createChart(ctx, dataChart, type, options)
       let chart = this.state.showAugmentationReport
@@ -1290,7 +1288,6 @@ export default class Dashboard extends Component {
     let type = 'bar'
 
     if (false) {
-      console.log("state data is not equal to data previous")
       //NEEDS TO BE OBSERVED IF IT CAUSES BUG ...
       // this.createChart(ctx, dataChart, type, options)
       let chart = this.state.showRankingReport
