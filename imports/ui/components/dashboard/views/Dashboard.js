@@ -2385,48 +2385,35 @@ export default class Dashboard extends Component {
 
                     </div>
                   </div>
-                  <div className="row">
-                    <div className="center">
-                      <div className="col-lg-12 " style={{ display: "block", paddingLeft:"5%", width: "50%", textAlign: "center" }} >
-
-
-                        <div style={{ paddingTop: "10px", paddingBottom: "15px", float: "left" }}>
-                          <DatePicker
-                            selected={this.state.fromDate}
-                            onChange={(date) => this.setStartDate(date)}
-                            showMonthDropdown
-                            showYearDropdown
-                            selectsStart
-                            style={{
-
-                            }}
-                            dropdownMode="select"
-                            popperPlacement="auto"
-                            startDate={this.state.fromDate}
-                            endDate={this.state.toDate}
-                            dateFormat="📅 MMMM dd yyyy"
-                          />
-                        </div>
-
-                        <div style={{ paddingTop: "50px", float: "left", width: "50%", paddingTop: "10px" }}>
-                          <DatePicker
-                            selected={this.state.toDate}
-                            onChange={(date) => this.setEndDate(date)}
-                            showMonthDropdown
-                            showYearDropdown
-                            selectsEnd
-                            style={{
-
-                            }}
-                            dropdownMode="select"
-                            popperPlacement="bottom"
-                            startDate={this.state.toDate}
-                            endDate={this.state.toDate}
-                            dateFormat="📅 MMMM dd yyyy"
-                            minDate={this.state.fromDate}
-
-                          />
-                        </div>
+                  <div className="row" style={{marginBottom: "10px"}}>
+                    <div className="col-lg-12">
+                      <div className="application-from-to">
+                        <DatePicker
+                          selected={this.state.fromDate}
+                          onChange={(date) => this.setStartDate(date)}
+                          showMonthDropdown
+                          showYearDropdown
+                          selectsStart
+                          dropdownMode="select"
+                          popperPlacement="auto"
+                          startDate={this.state.fromDate}
+                          endDate={this.state.toDate}
+                          dateFormat="📅 MMMM dd yyyy"
+                        />
+                      
+                        <DatePicker
+                          selected={this.state.toDate}
+                          onChange={(date) => this.setEndDate(date)}
+                          showMonthDropdown
+                          showYearDropdown
+                          selectsEnd
+                          dropdownMode="select"
+                          popperPlacement="bottom"
+                          startDate={this.state.toDate}
+                          endDate={this.state.toDate}
+                          dateFormat="📅 MMMM dd yyyy"
+                          minDate={this.state.fromDate}
+                        />
                       </div>
                     </div>
                   </div>

@@ -341,7 +341,7 @@ h6,
   justify-content: flex-start;
   margin: 0 0.6em;
   font-size: 19px !important;
-  line-height: 1.50;
+  line-height: 1.5;
 }
 
 .ReactTable .rt-thead {
@@ -442,12 +442,16 @@ body:not(.modal-close) {
 .grid-form fieldset legend {
   padding-bottom: 0px;
 }
-#reactTestDate .react-datepicker-wrapper{
+#reactTestDate .react-datepicker-wrapper {
   width: 35%;
 }
-.graph{
-  display:block
+.graph {
+  display: block;
 }
-.center{
+.center {
   text-align: center;
+}
+
+.application-from-to .react-datepicker-wrapper, .application-from-to .react-datepicker__input-container {
+  width: 182px;
 }
