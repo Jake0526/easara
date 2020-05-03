@@ -318,7 +318,9 @@ export default class ApplicantProfileModal extends Component {
         }
       case "birthdate":
         if (birthDate.length === 0) {
-          this.errors.includes("birthdate") ? null : this.errors.push("birthdate");
+          this.errors.includes("birthdate")
+            ? null
+            : this.errors.push("birthdate");
           return "error";
         } else {
           let index = this.errors.indexOf("birthdate");
@@ -1121,7 +1123,9 @@ export default class ApplicantProfileModal extends Component {
                               showYearDropdown
                               scrollableYearDropdown
                               selected={birthDate}
-                              yearDropdownItemNumber={100}
+                              showMonthDropdown
+                              showYearDropdown
+                              dropdownMode="select"
                               dateFormat="MM-dd-yyyy"
                               onChange={this.changeBirthDate}
                             />
