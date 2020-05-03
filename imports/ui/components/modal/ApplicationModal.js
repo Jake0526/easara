@@ -117,6 +117,7 @@ export default class ApplicantProfileModal extends Component {
 
   handleChange = (value, id) => {
     const { data } = this.state.data;
+    console.log(data);
     const {
       address,
       birthDate,
@@ -148,6 +149,8 @@ export default class ApplicantProfileModal extends Component {
       congressional_district: congressionalDistrict,
       contact_number: cellNumber,
       birth_date: birthDate,
+      date_from: data.date_from,
+      date_to: data.date_to,
       created_at: createdAt,
       updated_at: updatedAt,
     };
@@ -204,6 +207,7 @@ export default class ApplicantProfileModal extends Component {
       });
     }
 
+    console.log(info);
     this.isSame = JSON.stringify(data) == JSON.stringify(info);
   };
 
