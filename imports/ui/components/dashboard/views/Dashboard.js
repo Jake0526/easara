@@ -2395,7 +2395,7 @@ export default class Dashboard extends Component {
                           showYearDropdown
                           selectsStart
                           dropdownMode="select"
-                          popperPlacement="auto"
+                          popperPlacement="right"
                           startDate={this.state.fromDate}
                           endDate={this.state.toDate}
                           dateFormat="📅 MMMM dd yyyy"
