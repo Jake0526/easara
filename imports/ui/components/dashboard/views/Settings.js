@@ -517,7 +517,7 @@ export default class Settings extends Component {
                   <div className="box-header with-border">
                     <h4 className="box-title">
                       {this.update
-                        ? "Update Grouping #" + updateData.id
+                        ? "Update Grouping #" + ('00000' + updateData.id).slice(-6)
                         : "New Grouping"}
                     </h4>
                     {this.update ? (
