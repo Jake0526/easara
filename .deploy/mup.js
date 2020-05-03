@@ -1,11 +1,11 @@
 module.exports = {
   servers: {
     hrmo: {
-      host: '192.168.1.15',
-      username: 'hr_devtm',
-      password: 'd3vgrup@HR.m0',
+      host: '122.2.5.187',
+      username: 'marvin',
+      password: 'maskg1976',
       opts: {
-        port: 1212
+        port: 1215
       }
     }
   },

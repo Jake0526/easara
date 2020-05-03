@@ -38,7 +38,7 @@ export default class AppHeader extends Component {
             <b>E</b>
           </span>
           <span className="logo-lg">
-            <b>EASARA</b>
+            <b>EASARA v0.9.2</b>
           </span>
         </a>
 

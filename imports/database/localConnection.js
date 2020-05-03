@@ -23,7 +23,7 @@ export const easara = (sql, callback) => {
           host: "localhost",
           port: "3306",
           user: "root",
-          password: "password",
+          password: "secret",
           database: "easara",
           multipleStatements: true
         }

@@ -6,17 +6,20 @@ export default class ProtectedRoute extends Component {
     super(props);
 
     this.state = {
-      allEmployeeInformation: {},
+      applications: [],
+      existingPersonnelInformation: [],
       employeeInformation: {},
       applicantsProfiles: [],
+      applicantsProfilesALL: [],
       applicantsRanking: [],
-      application:[],
+      application: [],
       introspect: {},
       isLogin: null,
       isLoad: false,
       permissions: [],
-      permissions: [],
-      religionOptions: [],
+      settings: [],
+      activeSettings: [],
+      activeApplications: [],
     };
   }
 
@@ -158,63 +161,38 @@ export default class ProtectedRoute extends Component {
       }
     );
 
+    console.log("queries will run");
     //Queries
-    this.fetchReligions();
     this.selectApplicantsProfile();
-    this.selectApplicationALL()
+    this.selectApplicationALL();
+    this.selectApplicantsProfileALL();
     this.getRanking();
+    this.getSettings();
+    this.getAllCompleteProfile();
+    this.selectApplications();
+    this.getActiveSettings();
   }
-
-  selectApplicantsProfile = () => {
-    Meteor.call('select-profiles', (error, result) => {
+selectApplicantsProfile = () => {
+    Meteor.call("select-profiles", (error, result) => {
       if (!error) {
         this.setState({
-          applicantsProfiles: result,
+          activeApplications: result,
         });
+      } else {
+        console.log(error);
       }
     });
   };
 
-  fetchReligions = () => {
-    HTTP.post(
-      '/graphqlv2',
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          Accept: 'application/json',
-        },
-        data: {
-          query: `{
-              religionList {
-              religionCode
-             religionName
-              }
-         }`,
-        },
-      },
-      (err, res) => {
-        let religions = JSON.parse(res.content);
-        let religionOptions = [];
-        religions.data.religionList.forEach(element => {
-          religionOptions.push(
-            <option key={element.religionCode} value={element.religionCode}>
-              {element.religionName}
-            </option>
-          );
-        });
-        this.setState({
-          religionOptions,
-        });
-      }
-    );
-  };
-
-  getRanking = () => {
-    Meteor.call('select-ranking', (error, result) => {
+  selectApplicantsProfileALL = () => {
+    Meteor.call("select-profiles-ALL", (error, result) => {
       if (!error) {
         this.setState({
-          applicantsRanking: result,
+          applicantsProfiles: result,
+          applicantsProfilesALL: result,
         });
+      } else {
+        console.log(error);
       }
     });
   };
@@ -225,13 +203,83 @@ export default class ProtectedRoute extends Component {
         this.setState({
           application: result,
         });
-      }
-      else{
-        console.log(error)
+      } else {
+        console.log(error);
       }
     });
   };
 
+  selectApplications = () => {
+    Meteor.call("select-applications", (error, result) => {
+      if (!error) {
+        this.setState({
+          applications: result,
+        });
+      }
+    });
+  };
+
+  getRanking = () => {
+    Meteor.call("select-ranking", (error, result) => {
+      if (!error) {
+        this.setState({
+          applicantsRanking: result,
+        });
+      }
+    });
+  };
+
+  getActiveSettings = () => {
+    Meteor.call("active-settings", (error, result) => {
+      if (!error) {
+        this.setState({
+          activeSettings: result,
+        });
+      }
+    });
+  };
+
+  getSettings = () => {
+    Meteor.call("select-settings", (error, result) => {
+      if (!error) {
+        this.setState({
+          settings: result,
+        });
+      }
+    });
+  };
+
+  getAllCompleteProfile = () => {
+    HTTP.post(
+      "/graphqlv2",
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        data: {
+          query: `{
+            profileNonPlantilla {
+                  employeeNumber
+                  firstName
+                  middleName
+                  lastName
+                  maidenName
+                  suffixName
+                  dateFrom
+                  dateTo
+            }
+          }`,
+        },
+      },
+      (err, res) => {
+        let result = JSON.parse(res.content);
+        this.setState({
+          existingPersonnelInformation: result.data.profileNonPlantilla,
+        });
+      }
+    );
+  };
   render() {
     const { component: Component, ...props } = this.props;
     if (this.state.isLoad) {

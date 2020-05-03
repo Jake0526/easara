@@ -24,6 +24,7 @@ export const easara = (sql, callback) => {
         user: 'root',
         password: 'secret',
         database: 'easara',
+        multipleStatements: true
       }
     )
     .then(client => {
