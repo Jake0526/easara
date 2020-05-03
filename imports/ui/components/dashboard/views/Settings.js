@@ -590,7 +590,7 @@ export default class Settings extends Component {
                       NextComponent={NextIcon}
                       showPageSizeOptions={false}
                       style={{
-                        height: window.innerHeight - 320,
+                        height: window.innerHeight - 260,
                       }}
                       getTrProps={(state, rowInfo) => {
                         return {
