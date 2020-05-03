@@ -288,7 +288,7 @@ Meteor.method(
     check(code, String);
     var fut = new Future();
     let checker = `Select profile_code FROM applications
-      WHERE groupings_id = (SELECT id FROM settings ORDER BY id DESC LIMIT 1) AND profile_code = '${code}'`;
+      WHERE groupings_id = (SELECT id FROM settings WHERE is_active = 1 ORDER BY id DESC LIMIT 1) AND profile_code = '${code}'`;
     easara(checker, function (err, result) {
       if (err) {
         fut.return("bad");
@@ -316,7 +316,7 @@ Meteor.method(
   function (code) {
     check(code, String);
 
-    var sql = `INSERT INTO applications (profile_code, groupings_id) VALUES ('${code}', (SELECT id FROM settings ORDER BY id DESC LIMIT 1));`;
+    var sql = `INSERT INTO applications (profile_code, groupings_id) VALUES ('${code}', (SELECT id FROM settings WHERE is_active = 1 ORDER BY id DESC LIMIT 1));`;
     var fut = new Future();
     easara(sql, function (err, result) {
       if (err) {
