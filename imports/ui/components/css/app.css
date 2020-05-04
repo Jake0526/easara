@@ -440,6 +440,7 @@ body:not(.modal-close) {
   color: #120000;
 }
 .grid-form fieldset legend {
+  padding-top: 10px;
   padding-bottom: 0px;
 }
 #reactTestDate .react-datepicker-wrapper {

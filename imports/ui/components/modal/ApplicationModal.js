@@ -503,8 +503,8 @@ export default class ApplicantProfileModal extends Component {
       profileId,
     } = this.state;
     let personelLegend = existingPersonnel
-      ? "ID Number - " + employeeNumber
-      : "";
+      ? "Complete Name - #" + employeeNumber
+      : "Complete Name";
     let legend = personelLegend;
     return (
       <Modal bsSize="large" role="document" show={show}>
@@ -516,14 +516,14 @@ export default class ApplicantProfileModal extends Component {
         <Modal.Body>
           <GridForm>
             <Fieldset legend={legend} style={{ fontSize: "16px" }}>
-              <Row span={3}>
-                <Field span={1}>
+              <Row span={10}>
+                <Field span={2}>
                   {/* FIRSTNAME */}
                   <FormGroup
                     controlId="firstName"
                     validationState={this.getValidationState("firstName")}
                   >
-                    <ControlLabel>1. First Name</ControlLabel>
+                    <ControlLabel>First Name</ControlLabel>
                     <FormControl
                       autoComplete="off"
                       type="text"
@@ -535,13 +535,13 @@ export default class ApplicantProfileModal extends Component {
                     />
                   </FormGroup>
                 </Field>
-                <Field span={1}>
+                <Field span={2}>
                   {/* LASTNAME */}
                   <FormGroup
                     controlId="lastName"
                     validationState={this.getValidationState("lastName")}
                   >
-                    <ControlLabel>2. Last Name</ControlLabel>
+                    <ControlLabel>Last Name</ControlLabel>
                     <FormControl
                       autoComplete="off"
                       type="text"
@@ -554,12 +554,26 @@ export default class ApplicantProfileModal extends Component {
                   </FormGroup>
                 </Field>
                 <Field span={1}>
+                  {/* NAME EXTENSION */}
+                  <FormGroup controlId="nameExtension">
+                    <ControlLabel>Name Ext.</ControlLabel>
+                    <FormControl
+                      autoComplete="off"
+                      type="text"
+                      value={nameExtension}
+                      onChange={(e) =>
+                        this.handleChange(e.target.value, "nameExtension")
+                      }
+                    />
+                  </FormGroup>
+                </Field>
+                <Field span={2}>
                   {/* MIDDLE NAME */}
                   <FormGroup
                     controlId="middleName"
                     validationState={this.getValidationState("middleName")}
                   >
-                    <ControlLabel>3. Middle Name</ControlLabel>
+                    <ControlLabel>Middle Name</ControlLabel>
                     <FormControl
                       autoComplete="off"
                       type="text"
@@ -571,12 +585,10 @@ export default class ApplicantProfileModal extends Component {
                     />
                   </FormGroup>
                 </Field>
-              </Row>
-              <Row span={3}>
-                <Field span={1}>
+                <Field span={2}>
                   {/* MAIDEN NAME */}
                   <FormGroup controlId="maidenName">
-                    <ControlLabel>4. Maiden Name</ControlLabel>
+                    <ControlLabel>Maiden Name</ControlLabel>
                     <FormControl
                       autoComplete="off"
                       type="text"
@@ -587,30 +599,24 @@ export default class ApplicantProfileModal extends Component {
                     />
                   </FormGroup>
                 </Field>
+              </Row>
+            </Fieldset>
+            <Fieldset legend="Other Information">
+              <Row span={1}>
                 <Field span={1}>
-                  {/* NAME EXTENSION */}
-                  <FormGroup controlId="nameExtension">
-                    <ControlLabel>5. Name Ext.</ControlLabel>
+                  {/* ADDRESS */}
+                  <FormGroup
+                    controlId="address"
+                    validationState={this.getValidationState("address")}
+                  >
+                    <ControlLabel>Address</ControlLabel>
                     <FormControl
                       autoComplete="off"
                       type="text"
-                      value={nameExtension}
+                      value={address}
+                      placeholder="Required"
                       onChange={(e) =>
-                        this.handleChange(e.target.value, "nameExtension")
-                      }
-                    />
-                  </FormGroup>
-                </Field>
-                <Field span={1}>
-                  {/* CELL NUMBER */}
-                  <FormGroup controlId="cellNumber">
-                    <ControlLabel>6. Contact Number</ControlLabel>
-                    <FormControl
-                      autoComplete="off"
-                      type="text"
-                      value={cellNumber}
-                      onChange={(e) =>
-                        this.handleChange(e.target.value, "cellNumber")
+                        this.handleChange(e.target.value, "address")
                       }
                     />
                   </FormGroup>
@@ -620,7 +626,7 @@ export default class ApplicantProfileModal extends Component {
                 <Field span={1}>
                   {/* CONGRESSIONAL DISTRICT */}
                   <FormGroup controlId="congressionalDistrict">
-                    <ControlLabel>7. Congressional District</ControlLabel>
+                    <ControlLabel>Congressional District</ControlLabel>
                     <FormControl
                       autoComplete="off"
                       componentClass="select"
@@ -655,7 +661,7 @@ export default class ApplicantProfileModal extends Component {
                       "politicalDistrict"
                     )}
                   >
-                    <ControlLabel>8. Political District</ControlLabel>
+                    <ControlLabel>Political District</ControlLabel>
                     <FormControl
                       autoComplete="off"
                       componentClass="select"
@@ -680,11 +686,27 @@ export default class ApplicantProfileModal extends Component {
                     </FormControl>
                   </FormGroup>
                 </Field>
-
+                <Field span={1}>
+                  {/* CELL NUMBER */}
+                  <FormGroup controlId="cellNumber">
+                    <ControlLabel>Contact Number</ControlLabel>
+                    <FormControl
+                      autoComplete="off"
+                      type="text"
+                      value={cellNumber}
+                      onChange={(e) =>
+                        this.handleChange(e.target.value, "cellNumber")
+                      }
+                    />
+                  </FormGroup>
+                </Field>
                 <Field span={1}>
                   {/* BIRTH DATE */}
-                  <FormGroup controlId="birthDate">
-                    <ControlLabel>9. Birth Date:</ControlLabel>
+                  <FormGroup
+                    controlId="birthDate"
+                    validationState={this.getValidationState("birthdate")}
+                  >
+                    <ControlLabel>Birth Date:</ControlLabel>
 
                     <InputGroup>
                       <div
@@ -703,7 +725,9 @@ export default class ApplicantProfileModal extends Component {
                           showYearDropdown
                           scrollableYearDropdown
                           selected={birthDate}
-                          yearDropdownItemNumber={100}
+                          showMonthDropdown
+                          showYearDropdown
+                          dropdownMode="select"
                           dateFormat="MM-dd-yyyy"
                           onChange={this.changeBirthDate}
                         />
@@ -712,27 +736,6 @@ export default class ApplicantProfileModal extends Component {
                         🎂
                       </InputGroup.Addon>
                     </InputGroup>
-                  </FormGroup>
-                </Field>
-              </Row>
-
-              <Row span={1}>
-                <Field span={1}>
-                  {/* ADDRESS */}
-                  <FormGroup
-                    controlId="address"
-                    validationState={this.getValidationState("address")}
-                  >
-                    <ControlLabel>10. Address</ControlLabel>
-                    <FormControl
-                      autoComplete="off"
-                      type="text"
-                      value={address}
-                      placeholder="Required"
-                      onChange={(e) =>
-                        this.handleChange(e.target.value, "address")
-                      }
-                    />
                   </FormGroup>
                 </Field>
               </Row>
