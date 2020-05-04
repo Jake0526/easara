@@ -1,8 +1,8 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import React, { Component } from "react";
+import PropTypes from "prop-types";
 
-import AppHeaderNotificationMenu from './header_menus/AppHeaderNotificationMenu.js';
-import AppHeaderUserMenu from './header_menus/AppHeaderUserMenu.js';
+import AppHeaderNotificationMenu from "./header_menus/AppHeaderNotificationMenu.js";
+import AppHeaderUserMenu from "./header_menus/AppHeaderUserMenu.js";
 
 export default class AppHeader extends Component {
   constructor(props) {
@@ -25,7 +25,9 @@ export default class AppHeader extends Component {
       return this.employeeInfomation.employee.nickName;
     } else {
       return (
-        this.employeeInfomation.employee.firstName + ' ' + this.employeeInfomation.employee.lastName
+        this.employeeInfomation.employee.firstName +
+        " " +
+        this.employeeInfomation.employee.lastName
       );
     }
   }
@@ -38,19 +40,36 @@ export default class AppHeader extends Component {
             <b>E</b>
           </span>
           <span className="logo-lg">
-            <b>EASARA v0.9.2</b>
+            <b>EASARA</b>{" "}
+            <span
+              style={{
+                color: "black",
+                fontSize: "11px",
+                paddingLeft: "5px",
+              }}
+            >
+              v0.9.2
+            </span>
           </span>
         </a>
 
         <nav className="navbar navbar-static-top">
-          <a href="#" className="sidebar-toggle" data-toggle="push-menu" role="button">
+          <a
+            href="#"
+            className="sidebar-toggle"
+            data-toggle="push-menu"
+            role="button"
+          >
             <span className="sr-only">Toggle navigation</span>
           </a>
 
           <div className="navbar-custom-menu">
             <ul className="nav navbar-nav">
               <AppHeaderNotificationMenu />
-              <AppHeaderUserMenu middleware={this.props.middleware} history={history} />
+              <AppHeaderUserMenu
+                middleware={this.props.middleware}
+                history={history}
+              />
             </ul>
           </div>
         </nav>

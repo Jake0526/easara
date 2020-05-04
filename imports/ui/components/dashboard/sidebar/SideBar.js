@@ -29,7 +29,6 @@ export default class SideBar extends Component {
       <aside className="main-sidebar">
         <section className="sidebar">
           <SideBarUserPanel employeeInformation={this.employeeInfomation} />
-          <SideBarSearchPanel />
           <SideBarMenu page={this.props.page}/>
         </section>
       </aside>
