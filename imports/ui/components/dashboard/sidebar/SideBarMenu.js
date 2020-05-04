@@ -9,13 +9,6 @@ export default class SideBarMenu extends Component {
   }
 
   render() {
-    let ranking = this.page == "ranking" ? " active menu-open" : "";
-    let rankingHistory =
-      this.page == "ranking-history" ? " active menu-open" : "";
-
-    let application = this.page == "application" ? " active menu-open" : "";
-    let applicantProfiles =
-      this.page == "applicant-profiles" ? " active menu-open" : "";
     return (
       <ul className="sidebar-menu" data-widget="tree">
         <li className="header center">Main Navigation</li>
@@ -26,30 +19,16 @@ export default class SideBarMenu extends Component {
           </Link>
         </li>
 
-        <li
-          className={"treeview" + application + applicantProfiles}
-          style={{ height: "auto" }}
-        >
-          <a href="#">
-            <i className="fa fa-book"></i>
-            <span>Application</span>
-            <span className="pull-right-container">
-              <i className="fa fa-angle-left pull-right"></i>
-            </span>
-          </a>
-          <ul className="treeview-menu">
-            <li className={this.page == "application" ? "active" : ""}>
-              <Link to="/application">
-                <i className="fa fa-circle-o" /> <span> Applications </span>
-              </Link>
-            </li>
+        <li className={this.page == "applicant-profiles" ? "active" : ""}>
+          <Link to="/applicant-profiles">
+            <i className="fa fa-book" /> <span> Profiles </span>
+          </Link>
+        </li>
 
-            <li className={this.page == "applicant-profiles" ? "active" : ""}>
-              <Link to="/applicant-profiles">
-                <i className="fa fa-circle-o" /> <span> Profiles </span>
-              </Link>
-            </li>
-          </ul>
+        <li className={this.page == "application" ? "active" : ""}>
+          <Link to="/application">
+            <i className="fa fa-list" /> <span> Applications </span>
+          </Link>
         </li>
 
         {/* <li
@@ -74,7 +53,7 @@ export default class SideBarMenu extends Component {
 
         <li className={this.page == "ranking" ? "active" : ""}>
           <Link to="/ranking">
-            <i className="fa fa-circle-o" /> <span> Generate Ranking </span>
+            <i className="fa fa-users" /> <span> Generate Ranking </span>
           </Link>
         </li>
 
