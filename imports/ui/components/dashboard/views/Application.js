@@ -226,8 +226,8 @@ export default class Application extends Component {
           data={applicationModalData}
           profiles={data.state.applicantsProfiles}
           show={showApplicationModal}
-          selectApplications={data.selectApplications}
-          selectApplicantsProfile={data.selectApplicantsProfile}
+          selectApplications={data.selectApplicationALL}
+          selectApplicantsProfile={data.selectApplicantsProfileALL}
           toggleApplicationModal={this.toggleApplicationModal}
         />
       </div>

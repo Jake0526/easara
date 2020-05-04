@@ -87,6 +87,7 @@ export default class ApplicantProfileModal extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
+    this.isSame = true;
     this.setState({
       data: nextProps,
       lastName: nextProps.data.last_name ? nextProps.data.last_name : "",
