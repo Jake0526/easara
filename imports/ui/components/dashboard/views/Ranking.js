@@ -33,11 +33,13 @@ export default class Ranking extends Component {
 
   componentWillReceiveProps(nextProps) {
     this.setState({ data: nextProps });
-    
-    this.setState({
-      revolving: nextProps.state.activeSettings[0].revolving,
-      augmentation: nextProps.state.activeSettings[0].augmentation
-    })
+
+    if(nextProps.state.activeSettings.length != 0) {
+      this.setState({
+        revolving: nextProps.state.activeSettings[0].revolving,
+        augmentation: nextProps.state.activeSettings[0].augmentation
+      })
+    }
   }
 
   generateNewRanking = () => {

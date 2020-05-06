@@ -165,33 +165,33 @@ app.post('/user-permission', function(req, res) {
 });
 
 app.get('/image-server/:type/:filename', function(req, res) {
-  // var options = {
-  //   url:
-  //     'https://accounts.davaocity.gov.ph/image-server/' +
-  //     req.params.type +
-  //     '/' +
-  //     encodeURIComponent(req.params.filename),
-  //   method: 'GET',
-  //   encoding: null,
-  // };
+  var options = {
+    url:
+      'https://accounts.davaocity.gov.ph/image-server/' +
+      req.params.type +
+      '/' +
+      encodeURIComponent(req.params.filename),
+    method: 'GET',
+    encoding: null,
+  };
 
-  // request(options, function(error, response, body) {
-  //   if (body.toString == '404') {
-  //     res.set({ 'Content-Type': 'text/html' });
-  //     res.send('404');
-  //   } else {
-  //     if (!error && response.statusCode == 200) {
-  //       res.set({ 'Content-Type': 'image/jpg' });
-  //       res.send(body);
-  //     } else {
-  //       res.set({ 'Content-Type': 'image/jpg' });
-  //       res.send(body);
-  //     }
-  //   }
-  // });
+  request(options, function(error, response, body) {
+    if (body.toString == '404') {
+      res.set({ 'Content-Type': 'text/html' });
+      res.send('404');
+    } else {
+      if (!error && response.statusCode == 200) {
+        res.set({ 'Content-Type': 'image/jpg' });
+        res.send(body);
+      } else {
+        res.set({ 'Content-Type': 'image/jpg' });
+        res.send(body);
+      }
+    }
+  });
 
-  res.set({ 'Content-Type': 'text/html' });
-  res.send('404');
+  // res.set({ 'Content-Type': 'text/html' });
+  // res.send('404');
 });
 
 app.get('/signature-server/:type/:filename', function(req, res) {

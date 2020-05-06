@@ -149,6 +149,17 @@ export default class ProtectedRoute extends Component {
                 isLoad: true,
                 permissions: isLoginResult.permissions,
               });
+
+              console.log("queries will run");
+              //Queries
+              this.selectApplicantsProfile();
+              this.selectApplicationALL();
+              this.selectApplicantsProfileALL();
+              this.getRanking();
+              this.getSettings();
+              this.getAllCompleteProfile();
+              this.selectApplications();
+              this.getActiveSettings();
             }
           );
         } else {
@@ -160,19 +171,9 @@ export default class ProtectedRoute extends Component {
         }
       }
     );
-
-    console.log("queries will run");
-    //Queries
-    this.selectApplicantsProfile();
-    this.selectApplicationALL();
-    this.selectApplicantsProfileALL();
-    this.getRanking();
-    this.getSettings();
-    this.getAllCompleteProfile();
-    this.selectApplications();
-    this.getActiveSettings();
   }
-selectApplicantsProfile = () => {
+
+  selectApplicantsProfile = () => {
     Meteor.call("select-profiles", (error, result) => {
       if (!error) {
         this.setState({
@@ -280,6 +281,7 @@ selectApplicantsProfile = () => {
       }
     );
   };
+
   render() {
     const { component: Component, ...props } = this.props;
     if (this.state.isLoad) {

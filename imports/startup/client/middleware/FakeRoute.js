@@ -25,7 +25,7 @@ export default class FakeRoute extends Component {
 
   componentDidMount() {
     HTTP.post(
-      "http://111.125.114.29:13000/v2/graphql",
+      "graphqlv2",
       {
         // headers: {
         //   "Content-Type": "application/json",

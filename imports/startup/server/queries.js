@@ -1,6 +1,6 @@
 import { Meteor } from "meteor/meteor";
-import { easara } from "../../database/localConnection.js";
-// import { easara } from "../../database/connections.js";
+// import { easara } from "../../database/localConnection.js";
+import { easara } from "../../database/connections.js";
 import Future from "fibers/future";
 import { check } from "meteor/check";
 import { Random } from "meteor/random";
