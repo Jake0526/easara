@@ -23,12 +23,15 @@ export default class Ranking extends Component {
       rankingStatus: 0,
       rankingLength: 0,
       revolving: 0,
-      augmentation: 0
+      augmentation: 0,
+      personnelNewSlide: 0
     };
   }
 
   componentDidMount() {
     $("body").addClass("sidebar-mini");
+
+    $('#personnelNewForm').carousel('pause');
   }
 
   componentWillReceiveProps(nextProps) {
@@ -206,6 +209,38 @@ export default class Ranking extends Component {
     }
   };
   
+  personnelNew = () => {
+    $("#modal-personnelnew").modal("show");
+  }
+  
+  slideNext = () => {
+    let personnelNewSlide = this.state.personnelNewSlide + 1;
+
+    this.setState({
+      personnelNewSlide
+    });
+
+    $("#personnelNewForm").carousel(personnelNewSlide);
+  }
+
+  slideBack = () => {
+    let personnelNewSlide = this.state.personnelNewSlide - 1;
+
+    this.setState({
+      personnelNewSlide
+    });
+
+    $("#personnelNewForm").carousel(personnelNewSlide);
+  }
+
+  forwardToPersonnelNew = () => {
+    let personnelNewSlide = this.state.personnelNewSlide + 1;
+
+    this.setState({
+      personnelNewSlide
+    });
+  }
+
   render() {
     const contentMinHeight = {
       minHeight: `${window.innerHeight - 101}px`,
@@ -266,6 +301,7 @@ export default class Ranking extends Component {
         ],
       },
     ];
+
     return (
       <div className="wrapper">
         <AppHeader middleware={this.props.state} history={this.props.history} />
@@ -317,14 +353,23 @@ export default class Ranking extends Component {
                   />
                 </div>
               </div>
-              <Button
-                className="pull-right"
-                bsStyle="primary"
-                onClick={() => this.generateNewRanking()}
-              >
-                <i className="fa fa-pencil" aria-hidden="true"></i> Generate New
-                Ranking
-              </Button>
+
+              <div className="btn-group pull-right">
+                <button 
+                  type="button" 
+                  className="btn btn-primary" 
+                  onClick={() => this.personnelNew()}>
+                    <i className="fa fa-pencil" aria-hidden="true"></i> 
+                    Add as new personnel
+                </button>
+                <button 
+                  type="button" 
+                  className="btn btn-success" 
+                  onClick={() => this.generateNewRanking()}>
+                    <i className="fa fa-pencil" aria-hidden="true"></i> 
+                    Process to personnel ranking
+                </button>
+              </div>
             </section>
           </div>
         </div>
@@ -353,6 +398,150 @@ export default class Ranking extends Component {
                           "%",
                       }}
                     ></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Forward to personnelnew */}
+        <div className="modal fade" id="modal-personnelnew">
+          <div className="modal-dialog modal-lg">
+            <div className="modal-content">
+              <div className="modal-body" style={{ padding: "0px" }}>
+                <div id="personnelNewForm" className="carousel slide">
+                  {/* <ol className="carousel-indicators">
+                    <li data-target="#carousel-example-generic" data-slide-to="0" className="active"></li>
+                    <li data-target="#carousel-example-generic" data-slide-to="1" className=""></li>
+                    <li data-target="#carousel-example-generic" data-slide-to="2" className=""></li>
+                  </ol> */}
+                  <div className="progress progress-xxs carousel-indicators">
+                    <div className="progress-bar progress-bar-danger progress-bar-striped" role="progressbar" style={{ width: ((this.state.personnelNewSlide) * 33.33)+"%"}}>
+                      {/* <span className="sr-only">{this.state.personnelNewSlide}</span> */}
+                    </div>
+                  </div>
+                  <div className="carousel-inner">
+                    <div className="item active">
+                      <div className="box box-primary">
+                        <div className="box-body" style={{paddingBottom: "50px"}}>
+                          <div className="form-group">
+                            <label for="exampleInputEmail1">Position</label>
+                            <input type="email" className="form-control" placeholder="Search Position"/>
+                          </div>
+                          <div className="form-group">
+                            <label for="exampleInputEmail1">Begin Date</label>
+                            <input type="email" className="form-control" placeholder="mm/dd/yyyy"/>
+                          </div>
+                          <div className="form-group">
+                            <label for="exampleInputEmail1">Office</label>
+                            <input type="email" className="form-control" placeholder="Search Office"/>
+                          </div>
+                          <div className="form-group">
+                            <label for="exampleInputEmail1">Program</label>
+                            <input type="email" className="form-control" placeholder="Search Program"/>
+                          </div>
+
+                          <button 
+                            type="button" 
+                            className="btn btn-primary pull-right" 
+                            style={{marginTop: "10px"}}
+                            onClick={() => this.slideNext()}>
+                              <i className="fa fa-pencil" aria-hidden="true"></i> 
+                              Next
+                          </button>
+                        </div>
+                      </div>
+
+                      <div className="carousel-caption" style={{color: "black"}}>
+                        Revolving
+                      </div>
+                    </div>
+                    <div className="item">
+                      <div className="box box-primary">
+                        <div className="box-body" style={{paddingBottom: "50px"}}>
+                          <div className="form-group">
+                            <label for="exampleInputEmail1">Position</label>
+                            <input type="email" className="form-control" placeholder="Search Position"/>
+                          </div>
+                          <div className="form-group">
+                            <label for="exampleInputEmail1">Begin Date</label>
+                            <input type="email" className="form-control" placeholder="mm/dd/yyyy"/>
+                          </div>
+                          <div className="form-group">
+                            <label for="exampleInputEmail1">Office</label>
+                            <input type="email" className="form-control" placeholder="Search Office"/>
+                          </div>
+                          <div className="form-group">
+                            <label for="exampleInputEmail1">Program</label>
+                            <input type="email" className="form-control" placeholder="Search Program"/>
+                          </div>
+
+                          <button 
+                            type="button" 
+                            className="btn btn-primary pull-left" 
+                            style={{marginTop: "10px"}}
+                            onClick={() => this.slideBack()}>
+                              <i className="fa fa-pencil" aria-hidden="true"></i> 
+                              Back
+                          </button>
+                          <button 
+                            type="button" 
+                            className="btn btn-primary pull-right" 
+                            style={{marginTop: "10px"}}
+                            onClick={() => this.slideNext()}>
+                              <i className="fa fa-pencil" aria-hidden="true"></i> 
+                              Next
+                          </button>
+                        </div>
+                      </div>
+
+                      <div className="carousel-caption" style={{color: "black"}}>
+                        Augmentation
+                      </div>
+                    </div>
+                    <div className="item">
+                      <div className="box box-primary">
+                        <div className="box-body" style={{paddingBottom: "50px"}}>
+                          <div className="progress-group">
+                            <span className="progress-text">Forwarding Applicants</span>
+                            <span className="progress-number">
+                              <b>0</b>/10
+                            </span>
+
+                            <div className="progress sm">
+                              <div
+                                className="progress-bar progress-bar-aqua"
+                                style={{
+                                  width:
+                                    "80%",
+                                }}
+                              ></div>
+                            </div>
+
+                            <button 
+                              type="button" 
+                              className="btn btn-primary pull-left" 
+                              onClick={() => this.slideBack()}>
+                                <i className="fa fa-pencil" aria-hidden="true"></i> 
+                                Back
+                            </button>
+                            <button 
+                              type="button" 
+                              className="btn btn-primary pull-right" 
+                              style={{marginTop: "10px"}}
+                              onClick={() => this.forwardToPersonnelNew()}>
+                                <i className="fa fa-pencil" aria-hidden="true"></i> 
+                                Forward as new personnel
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="carousel-caption" style={{color: "black"}}>
+                        Forward
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>

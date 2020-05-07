@@ -8,32 +8,32 @@ import Ranking from "../../ui/components/dashboard/views/Ranking.js";
 import RankingHistory from "../../ui/components/dashboard/views/RankingHistory.js";
 import Settings from "../../ui/components/dashboard/views/Settings.js";
 // Middleware
-import ProtectedRoute from "./middleware/ProtectedRoute.js";
-// import FakeRoute from "./middleware/FakeRoute.js";
+// import ProtectedRoute from "./middleware/ProtectedRoute.js";
+import FakeRoute from "./middleware/FakeRoute.js";
 
 export default class Routes extends Component {
   render() {
     return (
       <Router>
         <Switch>
-          <ProtectedRoute
+          <FakeRoute
             path="/application"
             name="application"
             component={Application}
           />
-          <ProtectedRoute
+          <FakeRoute
             path="/applicant-profiles"
             name="applicant-profiles"
             component={ApplicantProfile}
           />
-          <ProtectedRoute path="/ranking" name="application" component={Ranking} />
-          <ProtectedRoute
+          <FakeRoute path="/ranking" name="application" component={Ranking} />
+          <FakeRoute
             path="/ranking-history"
             name="ranking-history"
             component={RankingHistory}
           />
-          <ProtectedRoute path="/settings" name="dashboard" component={Settings} />
-          <ProtectedRoute path="/" name="dashboard" component={Dashboard} />
+          <FakeRoute path="/settings" name="dashboard" component={Settings} />
+          <FakeRoute path="/" name="dashboard" component={Dashboard} />
         </Switch>
       </Router>
     );
