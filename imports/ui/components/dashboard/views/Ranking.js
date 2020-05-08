@@ -86,8 +86,7 @@ export default class Ranking extends Component {
           timer: 2500,
         });
 
-        this.props.selectApplicationALL();
-        this.props.getRanking();
+        this.props.refreshData();
 
         this.setState({
           rankingStatus: 0,
