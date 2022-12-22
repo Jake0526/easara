@@ -23,7 +23,7 @@
     "express-session": "^1.15.6",
     "fibers": "^3.1.1",
     "future": "^2.3.1",
-    "jsonwebtoken": "^8.5.1",
+    "jsonwebtoken": "^9.0.0",
     "meteor-node-stubs": "~0.3.3",
     "moment": "^2.24.0",
     "mysql": "^2.16.0",
